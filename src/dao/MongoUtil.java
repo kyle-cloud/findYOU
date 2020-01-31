@@ -1,5 +1,6 @@
 package dao;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -232,16 +233,16 @@ public enum MongoUtil {
        // coll.createIndex(new Document("ut_wos",1),new IndexOptions().unique(true));//创建唯一索引
         //coll.dropIndexes();//删除索引
         //coll.dropIndex("validata_1");//根据索引名删除某个索引
-        ListIndexesIterable<Document> list = coll.listIndexes();//查询所有索引
-        for (Document document : list) {
-            System.out.println(document.toJson());
-        }
-        coll.find(Filters.and(Filters.eq("x", 1), Filters.lt("y", 3)));
-        coll.find(and(eq("x", 1), lt("y", 3)));
-        coll.find().sort(ascending("title"));  
-        coll.find().sort(new Document("id",1)); 
-        coll.find(new Document("$or", Arrays.asList(new Document("owner", "tom"), new Document("words", new Document("$gt", 350)))));
-        coll.find().projection(fields(include("title", "owner"), excludeId()));  
+//        ListIndexesIterable<Document> list = coll.listIndexes();//查询所有索引
+//        for (Document document : list) {
+//            System.out.println(document.toJson());
+//        }
+//        coll.find(Filters.and(Filters.eq("x", 1), Filters.lt("y", 3)));
+//        coll.find(and(eq("x", 1), lt("y", 3)));
+//        coll.find().sort(ascending("title"));  
+//        coll.find().sort(new Document("id",1)); 
+//        coll.find(new Document("$or", Arrays.asList(new Document("owner", "tom"), new Document("words", new Document("$gt", 350)))));
+//        coll.find().projection(fields(include("title", "owner"), excludeId()));  
         // coll.updateMany(Filters.eq("validata", 1), Updates.set("validata", 0));
         //coll.updateMany(Filters.eq("validata", 1), new Document("$unset", new Document("jigou", "")));//删除某个字段
         //coll.updateMany(Filters.eq("validata", 1), new Document("$rename", new Document("affiliation", "affiliation_full")));//修改某个字段名
@@ -274,19 +275,20 @@ public enum MongoUtil {
 //            System.out.println(sd.toJson());
 //            
 //        }
-        MongoUtil.instance.close();
+        //MongoUtil.instance.close();
         // 插入多条
-//         for (int i = 1; i <= 4; i++) {
-//         Document doc = new Document();
-//         doc.put("name", "zhoulf");
-//         doc.put("school", "NEFU" + i);
-//         Document interests = new Document();
-//         interests.put("game", "game" + i);
-//         interests.put("ball", "ball" + i);
-//         doc.put("interests", interests);
-//         coll.insertOne(doc);
-//         }
-//       
+         for (int i = 1; i <= 4; i++) {
+         Document doc = new Document();
+         doc.put("name", "zhoulf");
+         doc.put("school", "NEFU" + i);
+         Document interests = new Document();
+         interests.put("game", "game" + i);
+         interests.put("ball", "ball" + i);
+         doc.put("interests", interests);
+         coll.insertOne(doc);
+         System.err.println(doc.toString());
+         }
+       
        /* MongoCursor<Document> sd =coll.find().iterator();
         while(sd.hasNext()){
             Document doc = sd.next();
