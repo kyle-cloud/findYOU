@@ -1,6 +1,6 @@
 package trail;
 
-import java.sql.Date;
+import java.util.Date;
 
 public class Point {
 	private double lng;
