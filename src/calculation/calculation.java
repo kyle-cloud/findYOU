@@ -38,6 +38,48 @@ public class calculation {
 	/**
 	 * @author kyle_cloud
 	 *
+	 *细粒度降维
+	 */
+	public ArrayList<ArrayList<Object>> fineCompress(ArrayList<Trail> trail, Integer l, Integer lambda) {
+		ArrayList<ArrayList<Object>> result = null;
+		ArrayList<Point> minTra = null;
+		Point minp = null;
+		for(int i = 0; i < trail.size(); i ++) {
+			Trail subTra = trail.get(i);
+			minTra.add(subTra.getPoints().get(0));
+			ArrayList<Point> points = subTra.getPoints();
+			for(int j = 1; j < points.size(); j ++) {
+				if(calcDistance(points.get(j), minTra.get(0)) >= l || calcDistOfDate(points.get(j), minTra.get(0)) >= lambda) {
+					
+				}
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * @author kyle_cloud
+	 *
+	 *两点之间的距离
+	 */
+	public double calcDistance(Point first, Point second) {
+		double ma_x = first.getLng() - second.getLng();
+        double ma_y = first.getLat() - second.getLat();
+        return Math.sqrt(ma_x * ma_x + ma_y * ma_y);
+	}
+	
+	/**
+	 * @author kyle_cloud
+	 *
+	 *两点时间差
+	 */
+	public double calcDistOfDate(Point p1, Point p2) {
+		return p1.getDate().getTime() - p1.getDate().getTime();
+	}
+	
+	/**
+	 * @author kyle_cloud
+	 *
 	 *平均时间
 	 */
 	public Date meanDate(Date d1, Date d2) {
