@@ -3,6 +3,15 @@ package calculation;
 import java.util.ArrayList;
 import java.util.Date;
 
+import com.sun.corba.se.impl.protocol.MinimalServantCacheLocalCRDImpl;
+import com.sun.javafx.collections.MappingChange.Map;
+import com.sun.org.apache.xpath.internal.operations.And;
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
+
+import javafx.geometry.Pos;
+import jdk.nashorn.internal.codegen.MethodEmitter;
+import sun.awt.windows.WPrinterJob;
+import sun.net.TelnetOutputStream;
 import trail.Point;
 import trail.Trail;
 
@@ -50,7 +59,46 @@ public class calculation {
 			ArrayList<Point> points = subTra.getPoints();
 			for(int j = 1; j < points.size(); j ++) {
 				if(calcDistance(points.get(j), minTra.get(0)) >= l || calcDistOfDate(points.get(j), minTra.get(0)) >= lambda) {
+					double sumTime = calcDistOfDate(minTra.get(0), minTra.get(minTra.size()-1));
+					//求权重
+					ArrayList<Double> wp = null;
+					ArrayList<Point> qc_points = null;
+					for(int k = 0; k < minTra.size(); k ++) {
+						int stay = k;
+						for(int h = k; h < minTra.size(); h ++) {//查看最后停留在此点的时间
+							if(points.get(h).getLng() == points.get(k).getLng() && points.get(h).getLat() == points.get(k).getLat()) {
+								stay = h;
+							} else {
+								break;
+							}
+						}
+						double tp = 0;
+						double lp = 0;
+						if(stay == k) {
+							if(k == 0 && minTra.size() > 1) {
+								tp = calcDistOfDate(minTra.get(1), minTra.get(0)) / 2;
+							} else if(k == 0 && minTra.size() == 1) {
+								tp = lambda;
+							} else if(k == minTra.size() && minTra.size() > 1) {
+								tp = calcDistOfDate(minTra.get(k), minTra.get(k - 1)) / 2;
+							} else {
+								tp = calcDistOfDate(minTra.get(k + 1), minTra.get(k - 1)) / 2;
+							}
+						} else {
+							tp = calcDistOfDate(points.get(stay), points.get(k)) / sumTime;
+						}
+						lp = (stay - k + 1) / minTra.size();
+						wp.add(tp * lp);
+						qc_points.add(minTra.get(k));
+					}
+					//求聚合点
+					int qc_sum = qc_points.size();
 					
+					
+					minTra.clear();
+					minTra.add(points.get(j));
+				} else {
+					minTra.add(points.get(i));
 				}
 			}
 		}
@@ -71,10 +119,10 @@ public class calculation {
 	/**
 	 * @author kyle_cloud
 	 *
-	 *两点时间差
+	 *两点时间差,绝对值
 	 */
 	public double calcDistOfDate(Point p1, Point p2) {
-		return p1.getDate().getTime() - p1.getDate().getTime();
+		return Math.abs(p1.getDate().getTime() - p1.getDate().getTime());
 	}
 	
 	/**
