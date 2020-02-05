@@ -1,8 +1,15 @@
 package calculation;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Collections;
+
+import sun.util.logging.resources.logging;
 import trail.Point;
 import trail.Trail;
 
@@ -171,4 +178,50 @@ public class calculation {
         double angleAMB = Math.acos((a2 + b2 - c2) / (2 * a * b));
         return angleAMB;
     }
+	
+	/**
+	 * @author kyle_cloud
+	 *
+	 *信息熵划分轨迹
+	 */
+	public ArrayList<Object> findTopk(ArrayList<Trail> trail, ArrayList<Integer> Sum, double belta) {
+		ArrayList<Object> result = new ArrayList<Object>();
+		for(int i = 0; i < trail.size(); i ++) {
+			
+		}
+		return result;
+	}
+	
+	/**
+	 * @author kyle_cloud
+	 *
+	 *计算某一轨迹信息熵
+	 */
+	public double calcHm(Trail trail, int sum) {
+		double Hm = 0;
+		ArrayList<Point> points = new ArrayList<>();
+		points.sort(new Comparator<Point>() {
+            @Override
+            public int compare(Point p1, Point p2) {
+            	if(p1.getLng() > p2.getLng())
+    				return 1;
+    			else if(p1.getLat() > p2.getLat())
+    				return 1;
+    			else return -1;
+            }
+        });
+		for(int i = 0; i < points.size(); i ++) {
+			int same_num = 1;
+			for(int j = i; j < points.size(); j ++) {
+				if(points.get(i).getLng() != points.get(j).getLng() || points.get(i).getLat() != points.get(j).getLat()) {
+					break;
+				}
+				same_num ++;
+			}
+			double pi = same_num / sum;
+			Hm -= pi * Math.log(pi) / Math.log(2);
+			i += (same_num - 1);
+		}
+		return Hm;
+	}
 }
