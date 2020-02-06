@@ -1,15 +1,10 @@
 package calculation;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Collections;
-
-import sun.util.logging.resources.logging;
 import trail.Point;
 import trail.Trail;
 
@@ -20,7 +15,7 @@ public class calculation {
 	 *粗粒度降维
 	 */
 	public ArrayList<Point> coarseCompress(ArrayList<Trail> trail, ArrayList<Integer> sum) throws Exception{
-		ArrayList<Point> subp = new ArrayList<Point>(trail.size());
+		ArrayList<Point> subp = new ArrayList<>(trail.size());
 		for(int i = 0; i < trail.size(); i ++) {
 			int sumLng = 0;
 			int sumLat = 0;
@@ -48,10 +43,10 @@ public class calculation {
 	 *细粒度降维
 	 */
 	public ArrayList<Object> fineCompress(ArrayList<Trail> trail, Integer l, Integer lambda) {
-		ArrayList<Object> result = new ArrayList<Object>();
-		ArrayList<Trail> finTra = new ArrayList<Trail>(); //最终轨迹
-		ArrayList<Point> tmpTra = new ArrayList<Point>(); //子轨迹降维之后
-		ArrayList<Integer> fSum = new ArrayList<Integer>(); //最终轨迹每段点个数
+		ArrayList<Object> result = new ArrayList<>();
+		ArrayList<Trail> finTra = new ArrayList<>(); //最终轨迹
+		ArrayList<Point> tmpTra = new ArrayList<>(); //子轨迹降维之后
+		ArrayList<Integer> fSum = new ArrayList<>(); //最终轨迹每段点个数
 		int fsum = 0; //子轨迹降维后的点个数
 		ArrayList<Point> minTra = new ArrayList<Point>();
 		Point minp = new Point();
@@ -63,8 +58,8 @@ public class calculation {
 				if(calcDistance(points.get(j), minTra.get(0)) >= l || calcDistOfDate(points.get(j), minTra.get(0)) >= lambda) {
 					double sumTime = calcDistOfDate(minTra.get(0), minTra.get(minTra.size()-1));
 					//求权重
-					ArrayList<Double> wp = new ArrayList<Double>();
-					ArrayList<Point> qc_points = new ArrayList<Point>();
+					ArrayList<Double> wp = new ArrayList<>();
+					ArrayList<Point> qc_points = new ArrayList<>();
 					for(int k = 0; k < minTra.size(); k ++) {
 						int stay = k;
 						for(int h = k; h < minTra.size(); h ++) {//查看最后停留在此点的时间
@@ -184,12 +179,40 @@ public class calculation {
 	 *
 	 *信息熵划分轨迹
 	 */
-	public ArrayList<Object> findTopk(ArrayList<Trail> trail, ArrayList<Integer> Sum, double belta) {
-		ArrayList<Object> result = new ArrayList<Object>();
+	public ArrayList<Trail> findTopk(ArrayList<Trail> trail, ArrayList<Integer> Sum, double belta) {
+		ArrayList<Trail> topTra = new ArrayList<>();
+		double hm = 0;
+		int H_sum = 0;
+		int H_num = 0;
 		for(int i = 0; i < trail.size(); i ++) {
-			
+			hm = calcHm(trail.get(i), Sum.get(i));
+			trail.get(i).setHm(hm);
+			if(hm > 0) {
+				H_sum ++;
+				topTra.add(trail.get(i));
+			}
 		}
-		return result;
+		H_num = (int) (H_sum * belta);
+		topTra.sort(new Comparator<Trail>() {
+            @Override
+            public int compare(Trail t1, Trail t2) {
+            	if(t1.getHm() > t2.getHm())
+    				return 1;
+    			return -1;
+            }
+        });
+		List<Trail> sublist = topTra.subList(H_num, topTra.size());
+        topTra.removeAll(sublist);
+        topTra.sort(new Comparator<Trail>() {
+            @Override
+            public int compare(Trail t1, Trail t2) {
+            	if(t1.getTstart().compareTo(t2.getTstart()) == 1)
+    				return 1;
+    			return -1;
+            }
+        });
+		
+		return topTra;
 	}
 	
 	/**
@@ -200,6 +223,7 @@ public class calculation {
 	public double calcHm(Trail trail, int sum) {
 		double Hm = 0;
 		ArrayList<Point> points = new ArrayList<>();
+		points = trail.getPoints();
 		points.sort(new Comparator<Point>() {
             @Override
             public int compare(Point p1, Point p2) {
@@ -224,4 +248,6 @@ public class calculation {
 		}
 		return Hm;
 	}
+	
+	
 }
