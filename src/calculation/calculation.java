@@ -248,4 +248,44 @@ public class calculation {
 		}
 		return Hm;
 	}
+	
+	/**
+	 * @author kyle_cloud
+	 *
+	 *相似度聚类
+	 */
+	public ArrayList<Object> structCluster() {
+		ArrayList<Object> result = new ArrayList<>();
+		
+		
+		return result;
+	}
+	
+	/**
+	 * @author kyle_cloud
+	 *
+	 *两轨迹相似度
+	 */
+	public double sim(Trail trail1, Trail trail2) {
+		
+	}
+	
+	/**
+	 * @author kyle_cloud
+	 *
+	 *两轨迹位置距离
+	 */
+	public double locD(Trail trail1, Trail trail2) {
+		
+	}
+	
+	/**
+	 * @author kyle_cloud
+	 *
+	 *两轨迹形状距离
+	 */
+	public double AngleD(Trail trail1, Trail trail2) {
+		
+	}
+	
 }
