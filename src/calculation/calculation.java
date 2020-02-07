@@ -266,8 +266,8 @@ public class calculation {
 	 *
 	 *¡ΩπÏº£œ‡À∆∂»
 	 */
-	public double sim(Trail trail1, Trail trail2) {
-		
+	public double sim(Trail trail1, Trail trail2, double alpha) {
+		return 1 - alpha * locD(trail1, trail2) + (1 - alpha) * AngleD(trail1, trail2);
 	}
 	
 	/**
@@ -276,7 +276,17 @@ public class calculation {
 	 *¡ΩπÏº£Œª÷√æ‡¿Î
 	 */
 	public double locD(Trail trail1, Trail trail2) {
-		
+		double res = 0;		double tmp = 0;
+		double min = Integer.MAX_VALUE;		double max = 0;
+		for(int i = 0; i < trail1.getPoints().size(); i ++) {
+			tmp = calcDistance(trail1.getPoints().get(i), trail2.getPoints().get(i));
+			min = Math.min(min, tmp);
+			max = Math.max(max, tmp);
+			res += tmp;
+		}
+		res /= trail1.getPoints().size();
+		res = (res - min) / (max - min);
+		return res;
 	}
 	
 	/**
@@ -285,7 +295,17 @@ public class calculation {
 	 *¡ΩπÏº£–Œ◊¥æ‡¿Î
 	 */
 	public double AngleD(Trail trail1, Trail trail2) {
-		
+		double res = 0;		double tmp = 0;
+		double min = Integer.MAX_VALUE;		double max = 0;
+		for(int i = 0; i < trail1.getPoints().size(); i ++) {
+			tmp = Math.abs(trail1.getPoints().get(i).getCor() - trail2.getPoints().get(i).getCor());
+			min = Math.min(min, tmp);
+			max = Math.max(max, tmp);
+			res += tmp;
+		}
+		res /= trail1.getPoints().size();
+		res = (res - min) / (max - min);
+		return res;
 	}
 	
 }
