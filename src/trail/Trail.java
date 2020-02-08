@@ -8,6 +8,7 @@ public class Trail {
 	private Date Tstart;
 	private Date Tend;
 	private double hm = 0;
+	int cluster_id = 0;
 	
 	public Trail() {
 		// TODO Auto-generated constructor stub
@@ -29,6 +30,10 @@ public class Trail {
 		return hm;
 	}
 	
+	public int getCluster_id() {
+		return cluster_id;
+	}
+	
 	public void setPoints(ArrayList<Point> points) {
 		this.points = points;
 	}
@@ -43,5 +48,9 @@ public class Trail {
 	
 	public void setHm(double hm) {
 		this.hm = hm;
+	}
+	
+	public void setCluster_id(int cluster_id) {
+		this.cluster_id = cluster_id;
 	}
 }

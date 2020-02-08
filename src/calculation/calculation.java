@@ -254,20 +254,56 @@ public class calculation {
 	 *
 	 *相似度聚类
 	 */
-	public ArrayList<Object> structCluster() {
-		ArrayList<Object> result = new ArrayList<>();
-		
-		
-		return result;
+	public ArrayList<Trail> structCluster(ArrayList<Trail> trails, double alpha, double theta, int Minpts) {
+		//ArrayList<Object> result = new ArrayList<>();
+		ArrayList<Trail> cores = new ArrayList<>();
+		ArrayList<ArrayList<Trail>> Ntheta = new ArrayList<>();
+		ArrayList<Trail> N_tmp = new ArrayList<>();
+		for(int i = 0; i < trails.size(); i ++) {
+			N_tmp.clear();
+			for(int j = 0; j < trails.size(); j ++) {
+				double sim = calcSim(trails.get(i), trails.get(j), alpha);
+				if(sim >= theta && j != i) {
+					N_tmp.add(trails.get(j));
+				}
+			}
+			if(N_tmp.size() >= Minpts) {
+				cores.add(trails.get(i));
+				Ntheta.add(N_tmp);
+			}
+		}
+		int k = 0;
+		for(int i = 0; i < cores.size(); i ++) {
+			k ++;
+			cores.get(i).setCluster_id(k);
+			connectDensity(cores.get(i), cores, Ntheta, i, k);
+		}
+		return cores;
 	}
+	
+	/**
+	 * @author kyle_cloud
+	 *
+	 *连通集标记
+	 */
+	public void connectDensity(Trail core, ArrayList<Trail> cores, ArrayList<ArrayList<Trail>> N_trails, int index, int id) {
+		for(int i = 0; i < N_trails.get(index).size(); i ++) {
+			N_trails.get(index).get(i).setCluster_id(id);
+			int index_tmp = cores.indexOf(N_trails.get(index).get(i));
+			if(index_tmp != -1) {
+				connectDensity(N_trails.get(index).get(i), cores, N_trails, index_tmp, id);
+			}
+		}
+	}
+	
 	
 	/**
 	 * @author kyle_cloud
 	 *
 	 *两轨迹相似度
 	 */
-	public double sim(Trail trail1, Trail trail2, double alpha) {
-		return 1 - alpha * locD(trail1, trail2) + (1 - alpha) * AngleD(trail1, trail2);
+	public double calcSim(Trail trail1, Trail trail2, double alpha) {
+		return 1 - alpha * calcLocD(trail1, trail2) + (1 - alpha) * calcAngleD(trail1, trail2);
 	}
 	
 	/**
@@ -275,7 +311,7 @@ public class calculation {
 	 *
 	 *两轨迹位置距离
 	 */
-	public double locD(Trail trail1, Trail trail2) {
+	public double calcLocD(Trail trail1, Trail trail2) {
 		double res = 0;		double tmp = 0;
 		double min = Integer.MAX_VALUE;		double max = 0;
 		for(int i = 0; i < trail1.getPoints().size(); i ++) {
@@ -294,7 +330,7 @@ public class calculation {
 	 *
 	 *两轨迹形状距离
 	 */
-	public double AngleD(Trail trail1, Trail trail2) {
+	public double calcAngleD(Trail trail1, Trail trail2) {
 		double res = 0;		double tmp = 0;
 		double min = Integer.MAX_VALUE;		double max = 0;
 		for(int i = 0; i < trail1.getPoints().size(); i ++) {
