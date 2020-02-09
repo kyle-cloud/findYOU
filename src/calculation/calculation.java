@@ -344,4 +344,12 @@ public class calculation {
 		return res;
 	}
 	
+	/**
+	 * @author kyle_cloud
+	 *
+	 *时间插值相似度计算
+	 */
+	public double innerSimilarity(ArrayList<Trail> topTra, ArrayList<Trail> finTra) {
+		
+	}
 }
