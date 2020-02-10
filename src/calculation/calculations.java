@@ -8,7 +8,7 @@ import java.util.List;
 import trail.Point;
 import trail.Trail;
 
-public class calculation {
+public class calculations {
 	/**
 	 * @author kyle_cloud
 	 *
@@ -125,6 +125,92 @@ public class calculation {
 	/**
 	 * @author kyle_cloud
 	 *
+	 *移动轨迹段提取（信息熵）
+	 */
+	public ArrayList<Trail> findTopk(ArrayList<Trail> trail, ArrayList<Integer> Sum, double belta) {
+		ArrayList<Trail> topTra = new ArrayList<>();
+		double hm = 0;
+		int H_sum = 0;
+		int H_num = 0;
+		for(int i = 0; i < trail.size(); i ++) {
+			hm = calcHm(trail.get(i), Sum.get(i));
+			trail.get(i).setHm(hm);
+			if(hm > 0) {
+				H_sum ++;
+				topTra.add(trail.get(i));
+			}
+		}
+		H_num = (int) (H_sum * belta);
+		topTra.sort(new Comparator<Trail>() {
+            @Override
+            public int compare(Trail t1, Trail t2) {
+            	if(t1.getHm() > t2.getHm())
+    				return 1;
+    			return -1;
+            }
+        });
+		List<Trail> sublist = topTra.subList(H_num, topTra.size());
+        topTra.removeAll(sublist);
+        topTra.sort(new Comparator<Trail>() {
+            @Override
+            public int compare(Trail t1, Trail t2) {
+            	if(t1.getTstart().compareTo(t2.getTstart()) == 1)
+    				return 1;
+    			return -1;
+            }
+        });
+		
+		return topTra;
+	}
+	
+	/**
+	 * @author kyle_cloud
+	 *
+	 *相似度聚类
+	 */
+	public ArrayList<Trail> structCluster(ArrayList<Trail> trails, double alpha, double theta, int Minpts) {
+		//ArrayList<Object> result = new ArrayList<>();
+		ArrayList<Trail> cores = new ArrayList<>();
+		ArrayList<ArrayList<Trail>> Ntheta = new ArrayList<>();
+		ArrayList<Trail> N_tmp = new ArrayList<>();
+		for(int i = 0; i < trails.size(); i ++) {
+			N_tmp.clear();
+			for(int j = 0; j < trails.size(); j ++) {
+				double sim = calcSim(trails.get(i), trails.get(j), alpha);
+				if(sim >= theta && j != i) {
+					N_tmp.add(trails.get(j));
+				}
+			}
+			if(N_tmp.size() >= Minpts) {
+				cores.add(trails.get(i));
+				Ntheta.add(N_tmp);
+			}
+		}
+		int k = 0;
+		for(int i = 0; i < cores.size(); i ++) {
+			k ++;
+			cores.get(i).setCluster_id(k);
+			connectDensity(cores.get(i), cores, Ntheta, i, k);
+		}
+		return cores;
+	}
+	
+	/**
+	 * @author kyle_cloud
+	 *
+	 *时间插值相似度计算
+	 */
+	public double innerSimilarity(ArrayList<Trail> topTra, ArrayList<Trail> finTra) {
+		for(int i = 0; i < topTra.size(); i ++) {
+			for(int j = 0; j < finTra.size(); j ++) {
+				
+			}
+		}
+	}
+	
+	/**
+	 * @author kyle_cloud
+	 *
 	 *两点之间的距离
 	 */
 	public double calcDistance(Point first, Point second) {
@@ -177,47 +263,6 @@ public class calculation {
 	/**
 	 * @author kyle_cloud
 	 *
-	 *信息熵划分轨迹
-	 */
-	public ArrayList<Trail> findTopk(ArrayList<Trail> trail, ArrayList<Integer> Sum, double belta) {
-		ArrayList<Trail> topTra = new ArrayList<>();
-		double hm = 0;
-		int H_sum = 0;
-		int H_num = 0;
-		for(int i = 0; i < trail.size(); i ++) {
-			hm = calcHm(trail.get(i), Sum.get(i));
-			trail.get(i).setHm(hm);
-			if(hm > 0) {
-				H_sum ++;
-				topTra.add(trail.get(i));
-			}
-		}
-		H_num = (int) (H_sum * belta);
-		topTra.sort(new Comparator<Trail>() {
-            @Override
-            public int compare(Trail t1, Trail t2) {
-            	if(t1.getHm() > t2.getHm())
-    				return 1;
-    			return -1;
-            }
-        });
-		List<Trail> sublist = topTra.subList(H_num, topTra.size());
-        topTra.removeAll(sublist);
-        topTra.sort(new Comparator<Trail>() {
-            @Override
-            public int compare(Trail t1, Trail t2) {
-            	if(t1.getTstart().compareTo(t2.getTstart()) == 1)
-    				return 1;
-    			return -1;
-            }
-        });
-		
-		return topTra;
-	}
-	
-	/**
-	 * @author kyle_cloud
-	 *
 	 *计算某一轨迹信息熵
 	 */
 	public double calcHm(Trail trail, int sum) {
@@ -247,38 +292,6 @@ public class calculation {
 			i += (same_num - 1);
 		}
 		return Hm;
-	}
-	
-	/**
-	 * @author kyle_cloud
-	 *
-	 *相似度聚类
-	 */
-	public ArrayList<Trail> structCluster(ArrayList<Trail> trails, double alpha, double theta, int Minpts) {
-		//ArrayList<Object> result = new ArrayList<>();
-		ArrayList<Trail> cores = new ArrayList<>();
-		ArrayList<ArrayList<Trail>> Ntheta = new ArrayList<>();
-		ArrayList<Trail> N_tmp = new ArrayList<>();
-		for(int i = 0; i < trails.size(); i ++) {
-			N_tmp.clear();
-			for(int j = 0; j < trails.size(); j ++) {
-				double sim = calcSim(trails.get(i), trails.get(j), alpha);
-				if(sim >= theta && j != i) {
-					N_tmp.add(trails.get(j));
-				}
-			}
-			if(N_tmp.size() >= Minpts) {
-				cores.add(trails.get(i));
-				Ntheta.add(N_tmp);
-			}
-		}
-		int k = 0;
-		for(int i = 0; i < cores.size(); i ++) {
-			k ++;
-			cores.get(i).setCluster_id(k);
-			connectDensity(cores.get(i), cores, Ntheta, i, k);
-		}
-		return cores;
 	}
 	
 	/**
@@ -342,14 +355,5 @@ public class calculation {
 		res /= trail1.getPoints().size();
 		res = (res - min) / (max - min);
 		return res;
-	}
-	
-	/**
-	 * @author kyle_cloud
-	 *
-	 *时间插值相似度计算
-	 */
-	public double innerSimilarity(ArrayList<Trail> topTra, ArrayList<Trail> finTra) {
-		
 	}
 }
