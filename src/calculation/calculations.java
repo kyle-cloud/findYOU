@@ -211,6 +211,29 @@ public class calculations {
 	/**
 	 * @author kyle_cloud
 	 *
+	 *计算Hausdorff
+	 */
+	public double calcH(ArrayList<Trail> trail1, ArrayList<Trail> trail2) {
+		double min1 = Integer.MAX_VALUE, min2 = Integer.MAX_VALUE;
+		double max1 = Integer.MIN_VALUE, max2 = Integer.MIN_VALUE;
+		for(int i = 0; i < trail1.size(); i ++) {
+			for(int j = 0; j < trail2.size(); j ++) {
+				min1 = Math.min(min1, calcLocD(trail1.get(i), trail2.get(j)));
+			}
+			max1 = Math.max(max1, min1);
+		}
+		for(int i = 0; i < trail2.size(); i ++) {
+			for(int j = 0; j < trail1.size(); j ++) {
+				min2 = Math.min(min2, calcLocD(trail2.get(i), trail1.get(j)));
+			}
+			max2 = Math.max(max2, min2);
+		}
+		return 
+	}
+	
+	/**
+	 * @author kyle_cloud
+	 *
 	 *两点之间的距离
 	 */
 	public double calcDistance(Point first, Point second) {
