@@ -5,6 +5,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
+
 import trail.Point;
 import trail.Trail;
 
@@ -211,24 +213,38 @@ public class calculations {
 	/**
 	 * @author kyle_cloud
 	 *
-	 *º∆À„Hausdorff
+	 *º∆À„◊”πÏº£∂ŒHausdorff
 	 */
 	public double calcH(ArrayList<Trail> trail1, ArrayList<Trail> trail2) {
+		double res = 0;
+		for(int i = 0; i < trail1.size(); i ++) {
+			res += calcHk(trail1.get(i).getPoints(), trail2.get(i).getPoints());
+		}
+		return res/trail1.size();
+	}
+	
+	
+	/**
+	 * @author kyle_cloud
+	 *
+	 *º∆À„◊”πÏº£∂ŒHausdorff
+	 */
+	public double calcHk(ArrayList<Point> trail1, ArrayList<Point> trail2) {
 		double min1 = Integer.MAX_VALUE, min2 = Integer.MAX_VALUE;
 		double max1 = Integer.MIN_VALUE, max2 = Integer.MIN_VALUE;
 		for(int i = 0; i < trail1.size(); i ++) {
 			for(int j = 0; j < trail2.size(); j ++) {
-				min1 = Math.min(min1, calcLocD(trail1.get(i), trail2.get(j)));
+				min1 = Math.min(min1, calcDistance(trail1.get(i), trail2.get(j)));
 			}
 			max1 = Math.max(max1, min1);
 		}
 		for(int i = 0; i < trail2.size(); i ++) {
 			for(int j = 0; j < trail1.size(); j ++) {
-				min2 = Math.min(min2, calcLocD(trail2.get(i), trail1.get(j)));
+				min2 = Math.min(min2, calcDistance(trail2.get(i), trail1.get(j)));
 			}
 			max2 = Math.max(max2, min2);
 		}
-		return 
+		return Math.max(max1, max2);
 	}
 	
 	/**
