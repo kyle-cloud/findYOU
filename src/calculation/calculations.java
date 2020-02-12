@@ -1,9 +1,12 @@
 package calculation;
 
+import java.awt.datatransfer.Transferable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+
+import org.eclipse.jdt.internal.compiler.ast.DoubleLiteral;
 
 import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
@@ -15,6 +18,7 @@ public class calculations {
 	 * @author kyle_cloud
 	 *
 	 *粗粒度降维
+	 *输入：一条轨迹
 	 */
 	public ArrayList<Point> coarseCompress(ArrayList<Trail> trail, ArrayList<Integer> sum) throws Exception{
 		ArrayList<Point> subp = new ArrayList<>(trail.size());
@@ -43,6 +47,7 @@ public class calculations {
 	 * @author kyle_cloud
 	 *
 	 *细粒度降维
+	 *输入：一条轨迹
 	 */
 	public ArrayList<Object> fineCompress(ArrayList<Trail> trail, Integer l, Integer lambda) {
 		ArrayList<Object> result = new ArrayList<>();
@@ -128,6 +133,7 @@ public class calculations {
 	 * @author kyle_cloud
 	 *
 	 *移动轨迹段提取（信息熵）
+	 *输入：一条轨迹
 	 */
 	public ArrayList<Trail> findTopk(ArrayList<Trail> trail, ArrayList<Integer> Sum, double belta) {
 		ArrayList<Trail> topTra = new ArrayList<>();
@@ -169,6 +175,7 @@ public class calculations {
 	 * @author kyle_cloud
 	 *
 	 *相似度聚类
+	 *输入：多条轨迹
 	 */
 	public ArrayList<Trail> structCluster(ArrayList<Trail> trails, double alpha, double theta, int Minpts) {
 		//ArrayList<Object> result = new ArrayList<>();
@@ -201,14 +208,33 @@ public class calculations {
 	 * @author kyle_cloud
 	 *
 	 *时间插值相似度计算
+	 *输入：两条轨迹
 	 */
 	public double innerSimilarity(ArrayList<Trail> topTra, ArrayList<Trail> finTra) {
+		double H = 0;
 		for(int i = 0; i < topTra.size(); i ++) {
 			for(int j = 0; j < finTra.size(); j ++) {
-				
+				if(topTra.get(i).getTstart() != finTra.get(j).getTstart()) continue;
+				Trail trail1 = new Trail();
+				Trail trail2 = new Trail();
+				trail1 = topTra.get(i);
+				trail2 = finTra.get(j);
+				insertPoints(trail1, trail2);
+				H += calcHk(trail1.getPoints(), trail2.getPoints());
 			}
 		}
+		int Pset = topTra.size();
+		H /= Pset;
+		return H;
 	}
+	
+	/**
+	 * @author kyle_cloud
+	 *
+	 *时间插值
+	 *输入：两条子轨迹段
+	 */
+	
 	
 	/**
 	 * @author kyle_cloud
