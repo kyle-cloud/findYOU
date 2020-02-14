@@ -234,7 +234,9 @@ public class calculations {
 	 *时间插值
 	 *输入：两条子轨迹段
 	 */
-	
+	public void insertPoints(Trail trail1, Trail trail2) {
+		
+	}
 	
 	/**
 	 * @author kyle_cloud
