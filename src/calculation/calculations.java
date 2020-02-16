@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.eclipse.jdt.internal.compiler.ast.DoubleLiteral;
 
+import com.mongodb.client.model.ParallelCollectionScanOptions;
 import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 import trail.Point;
@@ -241,14 +242,17 @@ public class calculations {
 	 *输入：两条子轨迹段
 	 */
 	public void insertPoints(ArrayList<Point> points1, ArrayList<Point> points2, Point pre_1, Point pre_2, Point nxt_1, Point nxt2) {
-		int i, j;
-		for(i = 0; i < points1.size(); i ++) {
-			for(j = 0; j < points2.size(); j ++) {
+		int i = 0, j = 0;
+		for(; i < points1.size(); i ++) {
+			for(; j < points2.size(); j ++) {
 				if(points2.get(j).getDate().getTime() > pre_1.getDate().getTime() && points2.get(j).getDate().getTime() < points1.get(i).getDate().getTime()) {
-					points1.add(i, element); i ++;
+					Point point_tmp = new Point();
+					point_tmp.setLat((points1.get(i).getLat() + pre_1.getLat()) / 2);
+					point_tmp.setLng((points1.get(i).getLng() + pre_1.getLng()) / 2);
+					points1.add(i, point_tmp); i ++;
 				}
-				
 			}
+			pre_1 = points1.get(i);
 		}
 	}
 	
