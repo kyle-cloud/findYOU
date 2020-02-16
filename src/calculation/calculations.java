@@ -241,11 +241,17 @@ public class calculations {
 	 *时间插值
 	 *输入：两条子轨迹段
 	 */
-	public void insertPoints(ArrayList<Point> points1, ArrayList<Point> points2, Point pre_1, Point pre_2, Point nxt_1, Point nxt2) {
+	public void insertPoints(ArrayList<Point> points1, ArrayList<Point> points2, Point pre_1, Point pre_2, Point nxt_1, Point nxt_2) {
+		//在points1里插入points2的值
 		int i = 0, j = 0;
 		for(; i < points1.size(); i ++) {
+			if(pre_1 == null) i ++;
 			for(; j < points2.size(); j ++) {
-				if(points2.get(j).getDate().getTime() > pre_1.getDate().getTime() && points2.get(j).getDate().getTime() < points1.get(i).getDate().getTime()) {
+				if(points2.get(j).getDate().getTime() < pre_1.getDate().getTime()) { 
+					j ++;
+				} else if(points2.get(j).getDate().getTime() > points1.get(i).getDate().getTime()) {
+					break;
+				} else {
 					Point point_tmp = new Point();
 					point_tmp.setLat((points1.get(i).getLat() + pre_1.getLat()) / 2);
 					point_tmp.setLng((points1.get(i).getLng() + pre_1.getLng()) / 2);
@@ -254,6 +260,18 @@ public class calculations {
 			}
 			pre_1 = points1.get(i);
 		}
+		if(nxt_1 != null && j < points2.size()) {
+			for(; j < points2.size(); j ++) {
+				if(points2.get(j).getDate().getTime() > pre_1.getDate().getTime() && points2.get(j).getDate().getTime() < nxt_1.getDate().getTime()) {
+					Point point_tmp = new Point();
+					point_tmp.setLat((nxt_1.getLat() + pre_1.getLat()) / 2);
+					point_tmp.setLng((nxt_1.getLng() + pre_1.getLng()) / 2);
+					points1.add(i, point_tmp); i ++;
+				}
+			}
+		}
+		
+		//在points1里插入points2的值
 	}
 	
 	/**
