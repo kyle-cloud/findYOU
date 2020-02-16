@@ -247,6 +247,7 @@ public class calculations {
 				if(points2.get(j).getDate().getTime() > pre_1.getDate().getTime() && points2.get(j).getDate().getTime() < points1.get(i).getDate().getTime()) {
 					points1.add(i, element); i ++;
 				}
+				
 			}
 		}
 	}
