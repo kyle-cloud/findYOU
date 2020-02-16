@@ -219,7 +219,13 @@ public class calculations {
 				Trail trail2 = new Trail();
 				trail1 = topTra.get(i);
 				trail2 = finTra.get(j);
-				insertPoints(trail1, trail2);
+				Point pre_trail1 = null;	Point pre_trail2 = null;
+				Point nxt_trail1 = null; Point nxt_trail2 = null;
+				if(i > 0) pre_trail1 = topTra.get(i-1).getPoints().get(topTra.get(i-1).getPoints().size() - 1);
+				if(j > 0) pre_trail2 = finTra.get(j-1).getPoints().get(finTra.get(j-1).getPoints().size() - 1);
+				if(i < topTra.size()-1) nxt_trail1 = topTra.get(i+1).getPoints().get(0);
+				if(j < finTra.size()-1) nxt_trail2 = finTra.get(j+1).getPoints().get(0);
+				insertPoints(trail1.getPoints(), trail2.getPoints(), pre_trail1, pre_trail2, nxt_trail1, nxt_trail2);
 				H += calcHk(trail1.getPoints(), trail2.getPoints());
 			}
 		}
@@ -234,8 +240,15 @@ public class calculations {
 	 *时间插值
 	 *输入：两条子轨迹段
 	 */
-	public void insertPoints(Trail trail1, Trail trail2) {
-		
+	public void insertPoints(ArrayList<Point> points1, ArrayList<Point> points2, Point pre_1, Point pre_2, Point nxt_1, Point nxt2) {
+		int i, j;
+		for(i = 0; i < points1.size(); i ++) {
+			for(j = 0; j < points2.size(); j ++) {
+				if(points2.get(j).getDate().getTime() > pre_1.getDate().getTime() && points2.get(j).getDate().getTime() < points1.get(i).getDate().getTime()) {
+					points1.add(i, element); i ++;
+				}
+			}
+		}
 	}
 	
 	/**
