@@ -217,8 +217,10 @@ public class calculations {
 			for(int j = 0; j < finTra.size(); j ++) {
 				if(topTra.get(i).getTstart() != finTra.get(j).getTstart()) continue;
 				Trail trail1 = new Trail();
+				Trail trail1_copy = new Trail();
 				Trail trail2 = new Trail();
 				trail1 = topTra.get(i);
+				trail1_copy = topTra.get(i);
 				trail2 = finTra.get(j);
 				Point pre_trail1 = null;	Point pre_trail2 = null;
 				Point nxt_trail1 = null; Point nxt_trail2 = null;
@@ -226,7 +228,8 @@ public class calculations {
 				if(j > 0) pre_trail2 = finTra.get(j-1).getPoints().get(finTra.get(j-1).getPoints().size() - 1);
 				if(i < topTra.size()-1) nxt_trail1 = topTra.get(i+1).getPoints().get(0);
 				if(j < finTra.size()-1) nxt_trail2 = finTra.get(j+1).getPoints().get(0);
-				insertPoints(trail1.getPoints(), trail2.getPoints(), pre_trail1, pre_trail2, nxt_trail1, nxt_trail2);
+				insertPoints(trail1.getPoints(), trail2.getPoints(), pre_trail1, nxt_trail1);
+				insertPoints(trail2.getPoints(), trail1_copy.getPoints(), pre_trail2, nxt_trail2);
 				H += calcHk(trail1.getPoints(), trail2.getPoints());
 			}
 		}
@@ -241,15 +244,18 @@ public class calculations {
 	 *时间插值
 	 *输入：两条子轨迹段
 	 */
-	public void insertPoints(ArrayList<Point> points1, ArrayList<Point> points2, Point pre_1, Point pre_2, Point nxt_1, Point nxt_2) {
+	public void insertPoints(ArrayList<Point> points1, ArrayList<Point> points2, Point pre_1, Point nxt_1) {
 		//在points1里插入points2的值
 		int i = 0, j = 0;
 		for(; i < points1.size(); i ++) {
 			if(pre_1 == null) i ++;
 			for(; j < points2.size(); j ++) {
-				if(points2.get(j).getDate().getTime() < pre_1.getDate().getTime()) { 
+				if(points2.get(j).getDate().getTime() <= pre_1.getDate().getTime()) { 
 					j ++;
 				} else if(points2.get(j).getDate().getTime() > points1.get(i).getDate().getTime()) {
+					break;
+				} else if(points2.get(j).getDate().getTime() == points1.get(i).getDate().getTime()) {
+					j ++;
 					break;
 				} else {
 					Point point_tmp = new Point();
@@ -270,7 +276,6 @@ public class calculations {
 				}
 			}
 		}
-		
 		//在points1里插入points2的值
 	}
 	
