@@ -1,15 +1,9 @@
 package calculation;
 
-import java.awt.datatransfer.Transferable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-
-import org.eclipse.jdt.internal.compiler.ast.DoubleLiteral;
-
-import com.mongodb.client.model.ParallelCollectionScanOptions;
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 import trail.Point;
 import trail.Trail;

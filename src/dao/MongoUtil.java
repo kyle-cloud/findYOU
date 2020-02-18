@@ -1,41 +1,25 @@
 package dao;
 
-import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
 import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoClientOptions.Builder;
 import com.mongodb.WriteConcern;
-import com.mongodb.client.AggregateIterable;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.ListIndexesIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.MongoIterable;
 import com.mongodb.client.model.Filters;
-import static com.mongodb.client.model.Filters.*;  
-import static com.mongodb.client.model.Projections.*;  
-import static com.mongodb.client.model.Sorts.*;
-import static com.mongodb.client.model.Accumulators.*;  
-import static com.mongodb.client.model.Aggregates.*; 
-import com.mongodb.client.model.IndexOptions;
-import com.mongodb.client.model.Projections;
-import com.mongodb.client.model.UpdateOptions;
-import com.mongodb.client.model.Updates.*;
 import com.mongodb.client.result.DeleteResult;
 
 
+@SuppressWarnings("deprecation")
 public enum MongoUtil {
      /**
      * 定义一个枚举的元素，它代表此类的一个实例
@@ -48,7 +32,7 @@ public enum MongoUtil {
         System.out.println("===============MongoDBUtil初始化========================");
         String ip = "localhost";
         int port =27017;
-        instance.mongoClient = new MongoClient(ip, port);
+        MongoUtil.mongoClient = new MongoClient(ip, port);
         // 大部分用户使用mongodb都在安全内网下，但如果将mongodb设为安全验证模式，就需要在客户端提供用户名和密码：
         // boolean auth = db.authenticate(myUserName, myPassword);
         Builder options = new MongoClientOptions.Builder();
