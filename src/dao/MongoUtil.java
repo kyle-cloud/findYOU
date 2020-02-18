@@ -160,7 +160,7 @@ public enum MongoUtil {
         } catch (Exception e) {
             return 0;
         }
-        Bson filter = Filters.eq("_id", _id);
+        Bson filter = Filters.eq("_id", _id);	
         DeleteResult deleteResult = coll.deleteOne(filter);
         count = (int) deleteResult.getDeletedCount();
         return count;
@@ -262,15 +262,15 @@ public enum MongoUtil {
         //MongoUtil.instance.close();
         // ≤Â»Î∂‡Ãı
          for (int i = 1; i <= 4; i++) {
-         Document doc = new Document();
-         doc.put("name", "zhoulf");
-         doc.put("school", "NEFU" + i);
-         Document interests = new Document();
-         interests.put("game", "game" + i);
-         interests.put("ball", "ball" + i);
-         doc.put("interests", interests);
-         coll.insertOne(doc);
-         System.err.println(doc.toString());
+	         Document doc = new Document();
+	         doc.put("name", "zhoulf");
+	         doc.put("school", "NEFU" + i);
+	         Document interests = new Document();
+	         interests.put("game", "game" + i);
+	         interests.put("ball", "ball" + i);
+	         doc.put("interests", interests);
+	         coll.insertOne(doc);
+	         System.err.println(doc.toString());
          }
        
        /* MongoCursor<Document> sd =coll.find().iterator();
