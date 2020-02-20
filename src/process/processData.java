@@ -49,6 +49,7 @@ public class processData {
 		} finally {
 			try {
 				bReader.close();
+				MongoUtil.instance.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
