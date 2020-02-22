@@ -5,6 +5,7 @@ import java.util.Date;
 
 public class Trail {
 	ArrayList<Point> points = null;
+	private String IMSI = null;
 	private Date Tstart;
 	private Date Tend;
 	private double hm = 0;
@@ -16,6 +17,10 @@ public class Trail {
 	
 	public ArrayList<Point> getPoints() {
 		return points;
+	}
+	
+	public String getIMSI() {
+		return IMSI;
 	}
 	
 	public Date getTstart() {
@@ -36,6 +41,10 @@ public class Trail {
 	
 	public void setPoints(ArrayList<Point> points) {
 		this.points = points;
+	}
+	
+	public void setIMSI(String iMSI) {
+		IMSI = iMSI;
 	}
 	
 	public void setTstart(Date tstart) {
