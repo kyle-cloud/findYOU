@@ -4,8 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import org.bson.Document;
@@ -15,8 +13,6 @@ import com.mongodb.client.MongoCollection;
 import dao.MongoUtil;
 
 public class uploadData {
-	static DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	
 	public static void readFile(String path) {
 		File file = new File(path);
 		BufferedReader bReader = null;
