@@ -14,13 +14,13 @@ import com.mongodb.client.MongoCollection;
 
 import dao.MongoUtil;
 
-public class processData {
+public class uploadData {
 	static DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	public static void readFile(String path) {
 		File file = new File(path);
 		BufferedReader bReader = null;
-		String IMIE = null;
+		String IMSI = null;
 		ArrayList<String> dates = new ArrayList<>();
 		ArrayList<Double> longitudes = new ArrayList<>();
 		ArrayList<Double> latitudes = new ArrayList<>();
@@ -40,16 +40,16 @@ public class processData {
 						else break;
 					}
 					String[] strs = line.split(",");
-					IMIE = strs[0];
+					IMSI = strs[0];
 					dates.add(strs[1]);
 					longitudes.add(Double.parseDouble(strs[2]));
 					latitudes.add(Double.parseDouble(strs[3]));
 				}
 				Document document = new Document();
-				document.put("IMIE", IMIE);
-				document.put("Date", dates);
-				document.put("longitude", longitudes);
-				document.put("latitude", latitudes);
+				document.put("IMSI", IMSI);
+				document.put("TraceTimes", dates);
+				document.put("Longitudes", longitudes);
+				document.put("Latitudes", latitudes);
 				MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", "trail");
 				coll.insertOne(document);
 				bReader.reset();
