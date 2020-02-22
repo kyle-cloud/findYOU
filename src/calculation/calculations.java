@@ -32,7 +32,7 @@ public class calculations {
 			subp.get(i).setDate(meanDate);
 		}
 		for(int i = 1; i < subp.size() - 1; i ++) {
-			double angle = calAngle(subp.get(i), subp.get(i-1), subp.get(i+1));
+			double angle = calcAngle(subp.get(i), subp.get(i-1), subp.get(i+1));
 			subp.get(i).setCor(angle);
 		}
 		return subp;
@@ -346,7 +346,7 @@ public class calculations {
 	 *
 	 *计算转角大小
 	 */
-	public double calAngle(Point cen, Point first, Point second) {
+	public double calcAngle(Point cen, Point first, Point second) {
 		double ma_x = first.getLng() - cen.getLng();
         double ma_y = first.getLat() - cen.getLat();
         double mb_x = second.getLng() - cen.getLng();

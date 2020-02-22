@@ -5,7 +5,6 @@ import java.util.Date;
 
 import org.bson.Document;
 
-import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 
@@ -15,7 +14,7 @@ import trail.Trail;
 
 public class downloadData {
 	@SuppressWarnings("unchecked")
-	public static ArrayList<Trail> main(String[] args) {
+	public static ArrayList<Trail> downloadData() {
 		ArrayList<Trail> trails = new ArrayList<>();
 		ArrayList<Point> points = new ArrayList<>();
 		String IMSI = null;
@@ -39,7 +38,7 @@ public class downloadData {
 					point.setDate(dates.get(i));
 					point.setLng(longitudes.get(i));
 					point.setLat(latitudes.get(i));
-					point.setCor();
+					//point.setCor(); 哦哦，这是原始轨迹，得等粗粒度降维的时候在计算转角，敲上瘾了-_-!
 					points.add(point);
 				}
 				Trail trail = new Trail();
@@ -57,8 +56,12 @@ public class downloadData {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			return trails;
 			MongoUtil.instance.close();
 		}
+		return trails;
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(downloadData().get(0));
 	}
 }
