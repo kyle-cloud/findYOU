@@ -24,23 +24,40 @@ public class processData {
 	public static void readFile(String path) {
 		File file = new File(path);
 		BufferedReader bReader = null;
+		String IMIE = null;
 		ArrayList<String> dates = new ArrayList<>();
 		ArrayList<Double> longitudes = new ArrayList<>();
 		ArrayList<Double> latitudes = new ArrayList<>();
 		try {
 			bReader = new BufferedReader(new FileReader(file));
-			for(String line = new String(bReader.readLine().getBytes(), "utf-8"); line != null; line = bReader.readLine()) {
-				String[] strs = line.split(",");
-				dates.add(strs[1]);
-				longitudes.add(Double.parseDouble(strs[2]));
-				latitudes.add(Double.parseDouble(strs[3]));
+			bReader.mark((int)file.length() + 1);
+			for(int i = 0; i < 20; i ++) {
+				for(int j = 0; j < i; j++) {
+					bReader.readLine();
+				}
+				dates.clear();
+				longitudes.clear();
+				latitudes.clear();
+				for(String line = new String(bReader.readLine().getBytes(), "utf-8"); line != null; line = bReader.readLine()) {
+					for(int j = 0; j < 19; j ++) {
+						if(bReader.readLine() != null);
+						else break;
+					}
+					String[] strs = line.split(",");
+					IMIE = strs[0];
+					dates.add(strs[1]);
+					longitudes.add(Double.parseDouble(strs[2]));
+					latitudes.add(Double.parseDouble(strs[3]));
+				}
+				Document document = new Document();
+				document.put("IMIE", IMIE);
+				document.put("Date", dates);
+				document.put("longitude", longitudes);
+				document.put("latitude", latitudes);
+				MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", "trail");
+				coll.insertOne(document);
+				bReader.reset();
 			}
-			Document document = new Document();
-			document.put("Date", dates);
-			document.put("longitude", longitudes);
-			document.put("latitude", latitudes);
-			MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", "trail");
-			coll.insertOne(document);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
