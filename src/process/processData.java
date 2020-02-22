@@ -5,16 +5,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 import org.bson.Document;
 
-import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoCursor;
 
 import dao.MongoUtil;
 
@@ -69,9 +65,17 @@ public class processData {
 		}
 	}
 	
-	@SuppressWarnings("deprecation")
 	public static void main(String[] args) throws Exception {
-		readFile("D:\\Trail_Data\\taxi_log_2008_by_id\\1.txt");
+		readFile("D:\\Trail_Data\\taxi_log_2008_by_id\\10.txt");
+		readFile("D:\\Trail_Data\\taxi_log_2008_by_id\\16.txt");
+		readFile("D:\\Trail_Data\\taxi_log_2008_by_id\\28.txt");
+		readFile("D:\\Trail_Data\\taxi_log_2008_by_id\\34.txt");
+		readFile("D:\\Trail_Data\\taxi_log_2008_by_id\\35.txt");
+		readFile("D:\\Trail_Data\\taxi_log_2008_by_id\\131.txt");
+		readFile("D:\\Trail_Data\\taxi_log_2008_by_id\\490.txt");
+		readFile("D:\\Trail_Data\\taxi_log_2008_by_id\\799.txt");
+		readFile("D:\\Trail_Data\\taxi_log_2008_by_id\\820.txt");
+		readFile("D:\\Trail_Data\\taxi_log_2008_by_id\\839.txt");
 		
 //		查看时间格式		
 //		MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", "trail");
