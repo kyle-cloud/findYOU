@@ -5,10 +5,22 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import com.sun.media.sound.AlawCodec;
+
 import trail.Point;
 import trail.Trail;
 
 public class calculations {
+	/**
+	 * @author kyle_cloud
+	 *
+	 *粗粒度降维
+	 *输入：一条轨迹
+	 */
+	public void divideTrace(Trail trail, double theta) {
+		ArrayList<Trail> subTrails = new ArrayList<>();
+		
+	}
 	/**
 	 * @author kyle_cloud
 	 *
@@ -44,8 +56,7 @@ public class calculations {
 	 *细粒度降维
 	 *输入：一条轨迹
 	 */
-	public ArrayList<Object> fineCompress(ArrayList<Trail> trail, Integer l, Integer lambda) {
-		ArrayList<Object> result = new ArrayList<>();
+	public ArrayList<Trail> fineCompress(ArrayList<Trail> trail, Integer l, Integer lambda) {
 		ArrayList<Trail> finTra = new ArrayList<>(); //最终轨迹
 		ArrayList<Point> tmpTra = new ArrayList<>(); //子轨迹降维之后
 		ArrayList<Integer> fSum = new ArrayList<>(); //最终轨迹每段点个数
@@ -113,15 +124,14 @@ public class calculations {
 				}
 			}
 			Trail tmpTrail = new Trail();
+			tmpTrail.setSum_points(tmpTra.size());
 			tmpTrail.setPoints(tmpTra);
 			finTra.add(tmpTrail);
 			fSum.add(fsum);
 			tmpTra.clear();
 			fsum = 0;
 		}
-		result.add(finTra);
-		result.add(fsum);
-		return result;
+		return finTra;
 	}
 	
 	/**

@@ -45,6 +45,7 @@ public class downloadData {
 					points.add(point);
 				}
 				Trail trail = new Trail();
+				trail.setSum_points(points.size());
 				trail.setPoints(points);
 				trail.setIMSI(IMSI);
 				trail.setTstart(points.get(0).getDate());

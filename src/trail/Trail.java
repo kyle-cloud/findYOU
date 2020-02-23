@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Trail {
+	int sum_points = 0;
 	ArrayList<Point> points = null;
 	private String IMSI = null;
 	private Date Tstart;
@@ -13,6 +14,10 @@ public class Trail {
 	
 	public Trail() {
 		// TODO Auto-generated constructor stub
+	}
+	
+	public int getSum_points() {
+		return sum_points;
 	}
 	
 	public ArrayList<Point> getPoints() {
@@ -37,6 +42,10 @@ public class Trail {
 	
 	public int getCluster_id() {
 		return cluster_id;
+	}
+	
+	public void setSum_points(int sum_points) {
+		this.sum_points = sum_points;
 	}
 	
 	public void setPoints(ArrayList<Point> points) {
