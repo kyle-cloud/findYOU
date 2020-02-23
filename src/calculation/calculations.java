@@ -14,13 +14,36 @@ public class calculations {
 	/**
 	 * @author kyle_cloud
 	 *
-	 *粗粒度降维
-	 *输入：一条轨迹
+	 *分时段划分轨迹
 	 */
-	public void divideTrace(Trail trail, double theta) {
+	public ArrayList<Trail> divideTrace(Trail trail, Integer theta) {
 		ArrayList<Trail> subTrails = new ArrayList<>();
-		
+		ArrayList<Date> segTimes = divideTime(theta, trail.getTstart(), trail.getTend());
+		ArrayList<Point> points = trail.getPoints();
+		Trail sub_trail = new Trail();
+		ArrayList<Point> sub_points = new ArrayList<>();
+		int current = 1;
+		for(int i = 0; i < points.size(); i ++) {
+			if(points.get(i).getDate().compareTo(segTimes.get(current)) >= 0) {
+				current ++;
+				sub_trail.setPoints(sub_points);
+				sub_trail.setSum_points(sub_points.size());
+				sub_trail.setTstart(sub_points.get(0).getDate());
+				sub_trail.setTend(sub_points.get(sub_points.size()-1).getDate());
+				subTrails.add(sub_trail);
+				sub_points.clear();
+			}
+			sub_points.add(points.get(i));
+		}
+		//加进来最后一段
+		sub_trail.setPoints(sub_points);
+		sub_trail.setSum_points(sub_points.size());
+		sub_trail.setTstart(sub_points.get(0).getDate());
+		sub_trail.setTend(sub_points.get(sub_points.size()-1).getDate());
+		subTrails.add(sub_trail);
+		return subTrails;
 	}
+	
 	/**
 	 * @author kyle_cloud
 	 *
@@ -329,6 +352,22 @@ public class calculations {
 		double ma_x = first.getLng() - second.getLng();
         double ma_y = first.getLat() - second.getLat();
         return Math.sqrt(ma_x * ma_x + ma_y * ma_y);
+	}
+	
+	/**
+	 * @author kyle_cloud
+	 *
+	 *分离时间段
+	 */
+	public ArrayList<Date> divideTime(Integer theta, Date dStart, Date dEnd) {
+		ArrayList<Date> segs = new ArrayList<>();
+		segs.add(dStart);
+		while(dStart.compareTo(dEnd) <= 0) {
+			dStart = new Date(dStart.getTime() + theta);
+			segs.add(dStart);
+		}
+		segs.add(new Date(dStart.getTime() + theta));
+		return segs;
 	}
 	
 	/**
