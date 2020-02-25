@@ -3,11 +3,11 @@ package process;
 import java.util.ArrayList;
 
 import org.bson.Document;
-
 import com.mongodb.client.MongoCollection;
 
 import calculation.calculations;
 import dao.MongoUtil;
+import net.sf.json.JSONArray;
 import trail.Point;
 import trail.Trail;
 
@@ -24,7 +24,8 @@ public class findYOU {
 				dividedTrail = calculations.divideTrace(trails.get(i), 60*60*1000);
 				coarseTrail = calculations.coarseCompress(dividedTrail);
 				Document document = new Document();
-				document.put("Trail", coarseTrail);
+				JSONArray jsonArray = JSONArray.fromObject(coarseTrail);
+				document.put("Trail", jsonArray);
 				MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", "coarseTrail");
 				coll.insertOne(document);
 			}
