@@ -16,6 +16,7 @@ public class findYOU {
 		ArrayList<Trail> dividedTrail = new ArrayList<>();
 		ArrayList<Point> coarseTrail = new ArrayList<>();
 		try{
+//			MongoUtil.instance.dropCollection("liu", "coarseTrail");
 			//获取轨迹数据
 			ArrayList<Trail> trails = downloadData.getTrails();
 			System.out.println("共有" + trails.size() + "条轨迹");

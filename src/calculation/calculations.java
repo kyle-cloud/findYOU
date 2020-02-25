@@ -75,7 +75,7 @@ public class calculations {
 		}
 		for(int i = 1; i < subp.size() - 1; i ++) {
 			double angle = calcAngle(subp.get(i), subp.get(i-1), subp.get(i+1));
-			subp.get(i).setCor(angle);
+			subp.get(i).setCor((double) Math.round(angle * 100000) / 100000);
 		}
 		return subp;
 	}

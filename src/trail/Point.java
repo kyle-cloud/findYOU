@@ -29,15 +29,15 @@ public class Point {
 	}
 	
 	public void setLng(double lng) {
-		this.lng = lng;
+		this.lng = (double) Math.round(lng * 100000) / 100000;
 	}
 	
 	public void setLat(double lat) {
-		this.lat = lat;
+		this.lat = (double) Math.round(lat * 100000) / 100000;
 	}
 	
 	public void setCor(double cor) {
-		this.cor = cor;
+		this.cor = (double) Math.round(cor * 100000) / 100000;
 	}
 	
 	public void setDate(Date time) {
