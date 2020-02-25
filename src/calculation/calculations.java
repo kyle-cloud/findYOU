@@ -5,8 +5,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import com.sun.media.sound.AlawCodec;
-
 import trail.Point;
 import trail.Trail;
 

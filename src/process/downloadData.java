@@ -59,8 +59,6 @@ public class downloadData {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			MongoUtil.instance.close();
 		}
 		return trails;
 	}

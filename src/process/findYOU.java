@@ -23,15 +23,13 @@ public class findYOU {
 			for(int i = 0; i < trails.size(); i ++) {
 				dividedTrail = calculations.divideTrace(trails.get(i), 60*60*1000);
 				coarseTrail = calculations.coarseCompress(dividedTrail);
-//				Document document = new Document();
-//				document.put("Trail", coarseTrail);
-//				MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", "coarseTrail");
-//				coll.insertOne(document);
+				Document document = new Document();
+				document.put("Trail", coarseTrail);
+				MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", "coarseTrail");
+				coll.insertOne(document);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-//			MongoUtil.instance.close();
 		}
 	}
 }

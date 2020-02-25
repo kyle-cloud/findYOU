@@ -81,6 +81,5 @@ public class uploadData {
 //        	ArrayList<String> result = (ArrayList<String>)doc.get("Date");
 //        	System.out.println((Date)format.parse(result.get(0)));
 //        }
-        MongoUtil.instance.close();
 	}
 }
