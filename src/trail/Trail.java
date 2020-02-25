@@ -5,7 +5,7 @@ import java.util.Date;
 
 public class Trail {
 	int sum_points = 0;
-	ArrayList<Point> points = null;
+	ArrayList<Point> points = new ArrayList<>();
 	private String IMSI = null;
 	private Date Tstart;
 	private Date Tend;

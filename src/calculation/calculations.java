@@ -16,17 +16,22 @@ public class calculations {
 	 *
 	 *分时段划分轨迹
 	 */
-	public ArrayList<Trail> divideTrace(Trail trail, Integer theta) {
+	@SuppressWarnings("unchecked")
+	public static ArrayList<Trail> divideTrace(Trail trail, Integer theta) {
 		ArrayList<Trail> subTrails = new ArrayList<>();
 		ArrayList<Date> segTimes = divideTime(theta, trail.getTstart(), trail.getTend());
+//		System.out.println(trail.getPoints().get(0).getDate());
+//		System.out.println(trail.getPoints().get(1).getDate());
+//		System.out.println(trail.getPoints().get(0).getDate().getTime());
+//		System.out.println(trail.getPoints().get(1).getDate().getTime());
 		ArrayList<Point> points = trail.getPoints();
-		Trail sub_trail = new Trail();
 		ArrayList<Point> sub_points = new ArrayList<>();
 		int current = 1;
 		for(int i = 0; i < points.size(); i ++) {
 			if(points.get(i).getDate().compareTo(segTimes.get(current)) >= 0) {
 				current ++;
-				sub_trail.setPoints(sub_points);
+				Trail sub_trail = new Trail();
+				sub_trail.setPoints((ArrayList<Point>)sub_points.clone());
 				sub_trail.setSum_points(sub_points.size());
 				sub_trail.setTstart(sub_points.get(0).getDate());
 				sub_trail.setTend(sub_points.get(sub_points.size()-1).getDate());
@@ -36,6 +41,7 @@ public class calculations {
 			sub_points.add(points.get(i));
 		}
 		//加进来最后一段
+		Trail sub_trail = new Trail();
 		sub_trail.setPoints(sub_points);
 		sub_trail.setSum_points(sub_points.size());
 		sub_trail.setTstart(sub_points.get(0).getDate());
@@ -50,21 +56,24 @@ public class calculations {
 	 *粗粒度降维
 	 *输入：一条轨迹
 	 */
-	public ArrayList<Point> coarseCompress(ArrayList<Trail> trail, ArrayList<Integer> sum) throws Exception{
-		ArrayList<Point> subp = new ArrayList<>(trail.size());
+	public static ArrayList<Point> coarseCompress(ArrayList<Trail> trail) throws Exception{
+		ArrayList<Point> subp = new ArrayList<>();
 		for(int i = 0; i < trail.size(); i ++) {
-			int sumLng = 0;
-			int sumLat = 0;
+			double sumLng = 0;
+			double sumLat = 0;
 			Trail subTra = trail.get(i);
+			int sum_points = subTra.getPoints().size();
 			for(int j = 0; j < subTra.getPoints().size(); j ++) {
 				sumLng += subTra.getPoints().get(j).getLng();
 				sumLat += subTra.getPoints().get(j).getLat();
 			}
-			subp.get(i).setLng(sumLng / sum.get(i));
-			subp.get(i).setLat(sumLat / sum.get(i));
 			Date meanDate = new Date();
 			meanDate = meanDate(subTra.getTstart(), subTra.getTend());
-			subp.get(i).setDate(meanDate);
+			Point point_tmp = new Point();
+			point_tmp.setLng(sumLng / sum_points);
+			point_tmp.setLat(sumLat / sum_points);
+			point_tmp.setDate(meanDate);
+			subp.add(point_tmp);
 		}
 		for(int i = 1; i < subp.size() - 1; i ++) {
 			double angle = calcAngle(subp.get(i), subp.get(i-1), subp.get(i+1));
@@ -79,7 +88,7 @@ public class calculations {
 	 *细粒度降维
 	 *输入：一条轨迹
 	 */
-	public ArrayList<Trail> fineCompress(ArrayList<Trail> trail, Integer l, Integer lambda) {
+	public static ArrayList<Trail> fineCompress(ArrayList<Trail> trail, Integer l, Integer lambda) {
 		ArrayList<Trail> finTra = new ArrayList<>(); //最终轨迹
 		ArrayList<Point> tmpTra = new ArrayList<>(); //子轨迹降维之后
 		ArrayList<Integer> fSum = new ArrayList<>(); //最终轨迹每段点个数
@@ -163,7 +172,7 @@ public class calculations {
 	 *移动轨迹段提取（信息熵）
 	 *输入：一条轨迹
 	 */
-	public ArrayList<Trail> findTopk(ArrayList<Trail> trail, ArrayList<Integer> Sum, double belta) {
+	public static ArrayList<Trail> findTopk(ArrayList<Trail> trail, ArrayList<Integer> Sum, double belta) {
 		ArrayList<Trail> topTra = new ArrayList<>();
 		double hm = 0;
 		int H_sum = 0;
@@ -205,7 +214,7 @@ public class calculations {
 	 *相似度聚类
 	 *输入：多条轨迹
 	 */
-	public ArrayList<Trail> structCluster(ArrayList<Trail> trails, double alpha, double theta, int Minpts) {
+	public static ArrayList<Trail> structCluster(ArrayList<Trail> trails, double alpha, double theta, int Minpts) {
 		//ArrayList<Object> result = new ArrayList<>();
 		ArrayList<Trail> cores = new ArrayList<>();
 		ArrayList<ArrayList<Trail>> Ntheta = new ArrayList<>();
@@ -238,7 +247,7 @@ public class calculations {
 	 *时间插值相似度计算
 	 *输入：两条轨迹
 	 */
-	public double innerSimilarity(ArrayList<Trail> topTra, ArrayList<Trail> finTra) {
+	public static double innerSimilarity(ArrayList<Trail> topTra, ArrayList<Trail> finTra) {
 		double H = 0;
 		for(int i = 0; i < topTra.size(); i ++) {
 			for(int j = 0; j < finTra.size(); j ++) {
@@ -271,7 +280,7 @@ public class calculations {
 	 *时间插值
 	 *输入：两条子轨迹段
 	 */
-	public void insertPoints(ArrayList<Point> points1, ArrayList<Point> points2, Point pre_1, Point nxt_1) {
+	public static void insertPoints(ArrayList<Point> points1, ArrayList<Point> points2, Point pre_1, Point nxt_1) {
 		//在points1里插入points2的值
 		int i = 0, j = 0;
 		for(; i < points1.size(); i ++) {
@@ -311,7 +320,7 @@ public class calculations {
 	 *
 	 *计算子轨迹段Hausdorff
 	 */
-	public double calcH(ArrayList<Trail> trail1, ArrayList<Trail> trail2) {
+	public static double calcH(ArrayList<Trail> trail1, ArrayList<Trail> trail2) {
 		double res = 0;
 		for(int i = 0; i < trail1.size(); i ++) {
 			res += calcHk(trail1.get(i).getPoints(), trail2.get(i).getPoints());
@@ -325,7 +334,7 @@ public class calculations {
 	 *
 	 *计算子轨迹段Hausdorff
 	 */
-	public double calcHk(ArrayList<Point> trail1, ArrayList<Point> trail2) {
+	public static double calcHk(ArrayList<Point> trail1, ArrayList<Point> trail2) {
 		double min1 = Integer.MAX_VALUE, min2 = Integer.MAX_VALUE;
 		double max1 = Integer.MIN_VALUE, max2 = Integer.MIN_VALUE;
 		for(int i = 0; i < trail1.size(); i ++) {
@@ -348,7 +357,7 @@ public class calculations {
 	 *
 	 *两点之间的距离
 	 */
-	public double calcDistance(Point first, Point second) {
+	public static double calcDistance(Point first, Point second) {
 		double ma_x = first.getLng() - second.getLng();
         double ma_y = first.getLat() - second.getLat();
         return Math.sqrt(ma_x * ma_x + ma_y * ma_y);
@@ -359,7 +368,7 @@ public class calculations {
 	 *
 	 *分离时间段
 	 */
-	public ArrayList<Date> divideTime(Integer theta, Date dStart, Date dEnd) {
+	public static ArrayList<Date> divideTime(Integer theta, Date dStart, Date dEnd) {
 		ArrayList<Date> segs = new ArrayList<>();
 		segs.add(dStart);
 		while(dStart.compareTo(dEnd) <= 0) {
@@ -375,7 +384,7 @@ public class calculations {
 	 *
 	 *两点时间差,绝对值
 	 */
-	public double calcDistOfDate(Point p1, Point p2) {
+	public static double calcDistOfDate(Point p1, Point p2) {
 		return Math.abs(p1.getDate().getTime() - p1.getDate().getTime());
 	}
 	
@@ -384,7 +393,7 @@ public class calculations {
 	 *
 	 *平均时间
 	 */
-	public Date meanDate(Date d1, Date d2) {
+	public static Date meanDate(Date d1, Date d2) {
 		Date meanDate = new Date();
 		meanDate.setTime((d1.getTime() + d2.getTime()) / 2);
 		return meanDate;
@@ -395,7 +404,7 @@ public class calculations {
 	 *
 	 *计算转角大小
 	 */
-	public double calcAngle(Point cen, Point first, Point second) {
+	public static double calcAngle(Point cen, Point first, Point second) {
 		double ma_x = first.getLng() - cen.getLng();
         double ma_y = first.getLat() - cen.getLat();
         double mb_x = second.getLng() - cen.getLng();
@@ -407,7 +416,7 @@ public class calculations {
         double c2 = mc_x * mc_x + mc_y * mc_y;
         double a = Math.sqrt(a2);
         double b = Math.sqrt(b2);
-        double angleAMB = Math.acos((a2 + b2 - c2) / (2 * a * b));
+        double angleAMB = 180 * Math.acos((a2 + b2 - c2) / (2 * a * b)) / Math.PI;
         return angleAMB;
     }
 	
@@ -416,7 +425,7 @@ public class calculations {
 	 *
 	 *计算某一轨迹信息熵
 	 */
-	public double calcHm(Trail trail, int sum) {
+	public static double calcHm(Trail trail, int sum) {
 		double Hm = 0;
 		ArrayList<Point> points = new ArrayList<>();
 		points = trail.getPoints();
@@ -450,7 +459,7 @@ public class calculations {
 	 *
 	 *连通集标记
 	 */
-	public void connectDensity(Trail core, ArrayList<Trail> cores, ArrayList<ArrayList<Trail>> N_trails, int index, int id) {
+	public static void connectDensity(Trail core, ArrayList<Trail> cores, ArrayList<ArrayList<Trail>> N_trails, int index, int id) {
 		for(int i = 0; i < N_trails.get(index).size(); i ++) {
 			N_trails.get(index).get(i).setCluster_id(id);
 			int index_tmp = cores.indexOf(N_trails.get(index).get(i));
@@ -466,7 +475,7 @@ public class calculations {
 	 *
 	 *两轨迹相似度
 	 */
-	public double calcSim(Trail trail1, Trail trail2, double alpha) {
+	public static double calcSim(Trail trail1, Trail trail2, double alpha) {
 		return 1 - alpha * calcLocD(trail1, trail2) + (1 - alpha) * calcAngleD(trail1, trail2);
 	}
 	
@@ -475,7 +484,7 @@ public class calculations {
 	 *
 	 *两轨迹位置距离
 	 */
-	public double calcLocD(Trail trail1, Trail trail2) {
+	public static double calcLocD(Trail trail1, Trail trail2) {
 		double res = 0;		double tmp = 0;
 		double min = Integer.MAX_VALUE;		double max = 0;
 		for(int i = 0; i < trail1.getPoints().size(); i ++) {
@@ -494,7 +503,7 @@ public class calculations {
 	 *
 	 *两轨迹形状距离
 	 */
-	public double calcAngleD(Trail trail1, Trail trail2) {
+	public static double calcAngleD(Trail trail1, Trail trail2) {
 		double res = 0;		double tmp = 0;
 		double min = Integer.MAX_VALUE;		double max = 0;
 		for(int i = 0; i < trail1.getPoints().size(); i ++) {
