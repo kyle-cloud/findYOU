@@ -43,12 +43,12 @@ public class findYOU {
 //				coarse_dividedTrail = calculations.divideTrace(trails.get(i), 120*60*1000);
 				fineTrail = calculations.fineCompress(dividedTrail, 0.03, (long)1000000);
 				
-				Document document = new Document();
-				JSONArray jsonArray = JSONArray.fromObject(fineTrail);
-				document.put("IMSI", trails.get(i).getIMSI());
-				document.put("Trail", jsonArray);
-				MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", "fineTrail");
-				coll.insertOne(document);
+//				Document document = new Document();
+//				JSONArray jsonArray = JSONArray.fromObject(fineTrail);
+//				document.put("IMSI", trails.get(i).getIMSI());
+//				document.put("Trail", jsonArray);
+//				MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", "fineTrail");
+//				coll.insertOne(document);
 			}
 			//0.023063427759107163 0.03214076850356164 0.10369409288864134
 			//8203000 9409500 12219000
