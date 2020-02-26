@@ -5,6 +5,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import com.sun.org.apache.xpath.internal.operations.And;
+
 import trail.Point;
 import trail.Trail;
 
@@ -90,64 +92,15 @@ public class calculations {
 	public static ArrayList<Trail> fineCompress(ArrayList<Trail> trail, double l, long lambda) {
 		ArrayList<Trail> finTra = new ArrayList<>(); //最终轨迹
 		ArrayList<Point> tmpTra = new ArrayList<>(); //子轨迹降维之后
-		ArrayList<Integer> fSum = new ArrayList<>(); //最终轨迹每段点个数
-		int fsum = 0; //子轨迹降维后的点个数
 		ArrayList<Point> minTra = new ArrayList<Point>();
-		Point minp = new Point();
 		for(int i = 0; i < trail.size(); i ++) {
 			Trail subTra = trail.get(i);
 			ArrayList<Point> points = subTra.getPoints();
+			minTra.clear();
 			minTra.add(subTra.getPoints().get(0)); //存储每一个分段
 			for(int j = 1; j < points.size(); j ++) {
 				if(calcDistance(points.get(j), minTra.get(0)) >= l || calcDistOfDate(points.get(j), minTra.get(0)) >= lambda) {
-					double sumTime = calcDistOfDate(minTra.get(0), minTra.get(minTra.size()-1));
-					//求权重
-					ArrayList<Double> wp = new ArrayList<>();
-					ArrayList<Point> qc_points = new ArrayList<>();
-					for(int k = 0; k < minTra.size(); k ++) {
-						int stay = k;
-						for(int h = k; h < minTra.size(); h ++) {//查看最后停留在此点的时间
-							if(minTra.get(h).getLng() == minTra.get(k).getLng() && minTra.get(h).getLat() == minTra.get(k).getLat()) {
-								stay = h;
-							} else {
-								break;
-							}
-						}
-						double tp = 0;
-						double lp = 0;
-						if(stay == k) {
-							if(k == 0 && minTra.size() > 1) {
-								tp = calcDistOfDate(minTra.get(1), minTra.get(0)) / 2;
-							} else if(k == 0 && minTra.size() == 1) {
-								tp = lambda;
-							} else if(k == minTra.size()-1 && minTra.size() > 1) {
-								tp = calcDistOfDate(minTra.get(k), minTra.get(k - 1)) / 2;
-							} else {
-								tp = calcDistOfDate(minTra.get(k + 1), minTra.get(k - 1)) / 2;
-							}
-						} else {
-							tp = calcDistOfDate(minTra.get(stay), minTra.get(k)) / sumTime;
-						}
-						lp = (stay - k + 1) / minTra.size();
-						wp.add(tp * lp);
-						qc_points.add(minTra.get(k));
-					}
-					//求聚合点
-					double minp_lng = 0;
-					double minp_lat = 0;
-					double minp_wp = 0;
-					int qc_sum = qc_points.size();
-					for(int k = 0; k < qc_sum; k ++) {
-						minp_lng += qc_points.get(k).getLng() * wp.get(k);
-						minp_lat += qc_points.get(k).getLat() * wp.get(k);
-						minp_wp += wp.get(k);
-					}
-					minp.setLng(minp_lng / minp_wp);
-					minp.setLat(minp_lat / minp_wp);
-					minp.setDate(meanDate(minTra.get(0).getDate(), minTra.get(minTra.size()-1).getDate()));
-					tmpTra.add(minp);
-					fsum ++;
-					
+					tmpTra.add(calcWeightedTogether(minTra, lambda));
 					minTra.clear();
 					minTra.add(points.get(j));
 				} else {
@@ -155,14 +108,72 @@ public class calculations {
 				}
 			}
 			Trail tmpTrail = new Trail();
-			tmpTrail.setSum_points(tmpTra.size());
+			//聚合一下minTra
+			//加入tmpTra
+			tmpTra.add(calcWeightedTogether(minTra, lambda));
 			tmpTrail.setPoints((ArrayList<Point>)tmpTra.clone());
+			tmpTrail.setSum_points(tmpTra.size());
 			finTra.add(tmpTrail);
-			fSum.add(fsum);
 			tmpTra.clear();
-			fsum = 0;
 		}
 		return finTra;
+	}
+	
+	/**
+	 * @author kyle_cloud
+	 *
+	 *求权重并聚合
+	 *输入：一条轨迹
+	 */
+	public static Point calcWeightedTogether(ArrayList<Point> minTra, long lambda) {
+		Point minp = new Point();
+		double sumTime = calcDistOfDate(minTra.get(0), minTra.get(minTra.size()-1));
+		//求权重
+		ArrayList<Double> wp = new ArrayList<>();
+		ArrayList<Point> qc_points = new ArrayList<>();
+		for(int k = 0; k < minTra.size(); k ++) {
+			int stay = k;
+			for(int h = k; h < minTra.size(); h ++) {//查看最后停留在此点的时间
+				if(minTra.get(h).getLng() == minTra.get(k).getLng() && minTra.get(h).getLat() == minTra.get(k).getLat()) {
+					stay = h;
+				} else {
+					break;
+				}
+			}
+			double tp = 0;
+			double lp = 0;
+			if(stay == k) {
+				if(k == 0 && minTra.size() > 1) {
+					tp = calcDistOfDate(minTra.get(1), minTra.get(0)) / 2;
+				} else if(k == 0 && minTra.size() == 1) {
+					tp = lambda;
+				} else if(k == minTra.size()-1 && minTra.size() > 1) {
+					tp = calcDistOfDate(minTra.get(k), minTra.get(k - 1)) / 2;
+				} else {
+					tp = calcDistOfDate(minTra.get(k + 1), minTra.get(k - 1)) / 2;
+				}
+			} else {
+				tp = calcDistOfDate(minTra.get(stay), minTra.get(k)) / sumTime;
+			}
+			lp = ((stay - k + 1) / (double)minTra.size());
+			wp.add(tp * lp);
+			qc_points.add(minTra.get(k));
+			k = stay;
+		}
+		//求聚合点
+		double minp_lng = 0;
+		double minp_lat = 0;
+		double minp_wp = 0;
+		int qc_sum = qc_points.size();
+		for(int k = 0; k < qc_sum; k ++) {
+			minp_lng += qc_points.get(k).getLng() * wp.get(k);
+			minp_lat += qc_points.get(k).getLat() * wp.get(k);
+			minp_wp += wp.get(k);
+		}
+		minp.setLng(minp_lng / minp_wp);
+		minp.setLat(minp_lat / minp_wp);
+		minp.setDate(meanDate(minTra.get(0).getDate(), minTra.get(minTra.size()-1).getDate()));
+		return minp;
 	}
 	
 	/**
