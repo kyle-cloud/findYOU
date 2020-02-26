@@ -5,8 +5,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import com.sun.org.apache.xpath.internal.operations.And;
-
 import trail.Point;
 import trail.Trail;
 
@@ -31,6 +29,7 @@ public class calculations {
 			if(points.get(i).getDate().compareTo(segTimes.get(current)) >= 0) {
 				current ++;
 				Trail sub_trail = new Trail();
+				sub_trail.setIMSI(trail.getIMSI());
 				sub_trail.setPoints((ArrayList<Point>)sub_points.clone());
 				sub_trail.setSum_points(sub_points.size());
 				sub_trail.setTstart(sub_points.get(0).getDate());
@@ -42,6 +41,7 @@ public class calculations {
 		}
 		//加进来最后一段
 		Trail sub_trail = new Trail();
+		sub_trail.setIMSI(trail.getIMSI());
 		sub_trail.setPoints(sub_points);
 		sub_trail.setSum_points(sub_points.size());
 		sub_trail.setTstart(sub_points.get(0).getDate());
@@ -113,6 +113,9 @@ public class calculations {
 			tmpTra.add(calcWeightedTogether(minTra, lambda));
 			tmpTrail.setPoints((ArrayList<Point>)tmpTra.clone());
 			tmpTrail.setSum_points(tmpTra.size());
+			tmpTrail.setIMSI(trail.get(0).getIMSI());
+			tmpTrail.setTstart(tmpTra.get(0).getDate());
+			tmpTrail.setTend(tmpTra.get(tmpTra.size()-1).getDate());
 			finTra.add(tmpTrail);
 			tmpTra.clear();
 		}

@@ -14,8 +14,7 @@ import trail.Trail;
 
 public class findYOU {
 	public static void main(String[] args){
-		ArrayList<Trail> coarse_dividedTrail = new ArrayList<>();
-		ArrayList<Trail> fine_dividedTrail = new ArrayList<>();
+		ArrayList<Trail> dividedTrail = new ArrayList<>();
 		ArrayList<Point> coarseTrail = new ArrayList<>();
 		ArrayList<Trail> fineTrail = new ArrayList<>();
 		ArrayList<Trail> finTrails = new ArrayList<>();
@@ -26,8 +25,8 @@ public class findYOU {
 			System.out.println("共有" + trails.size() + "条轨迹");
 			//分时段，并粗粒度降维 + 细粒度降维
 			for(int i = 0; i < trails.size(); i ++) {
-				coarse_dividedTrail = calculations.divideTrace(trails.get(i), 60*60*1000);
-				coarseTrail = calculations.coarseCompress(coarse_dividedTrail);
+				dividedTrail = calculations.divideTrace(trails.get(i), 120*60*1000);
+				coarseTrail = calculations.coarseCompress(dividedTrail);
 				Trail coarse_finTrail = new Trail();
 				coarse_finTrail.setIMSI(trails.get(i).getIMSI());
 				coarse_finTrail.setPoints(coarseTrail);
@@ -41,9 +40,8 @@ public class findYOU {
 //				document.put("Trail", jObject);
 //				MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", "coarseTrail");
 //				coll.insertOne(document);
-				
-				fine_dividedTrail = calculations.divideTrace(coarse_finTrail, 240*60*1000);
-				fineTrail = calculations.fineCompress(fine_dividedTrail, 0.05, (long)10000000);
+//				coarse_dividedTrail = calculations.divideTrace(trails.get(i), 120*60*1000);
+				fineTrail = calculations.fineCompress(dividedTrail, 0.03, (long)1000000);
 				
 				Document document = new Document();
 				JSONArray jsonArray = JSONArray.fromObject(fineTrail);
