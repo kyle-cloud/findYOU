@@ -15,7 +15,7 @@ public class calculations {
 	 *分时段划分轨迹
 	 */
 	@SuppressWarnings("unchecked")
-	public static ArrayList<Trail> divideTrace(Trail trail, Integer theta) {
+	public static ArrayList<Trail> divideTrace(Trail trail, long theta) {
 		ArrayList<Trail> subTrails = new ArrayList<>();
 		ArrayList<Date> segTimes = divideTime(theta, trail.getTstart(), trail.getTend());
 //		System.out.println(trail.getPoints().get(0).getDate());
@@ -86,7 +86,8 @@ public class calculations {
 	 *细粒度降维
 	 *输入：一条轨迹
 	 */
-	public static ArrayList<Trail> fineCompress(ArrayList<Trail> trail, Integer l, Integer lambda) {
+	@SuppressWarnings("unchecked")
+	public static ArrayList<Trail> fineCompress(ArrayList<Trail> trail, double l, long lambda) {
 		ArrayList<Trail> finTra = new ArrayList<>(); //最终轨迹
 		ArrayList<Point> tmpTra = new ArrayList<>(); //子轨迹降维之后
 		ArrayList<Integer> fSum = new ArrayList<>(); //最终轨迹每段点个数
@@ -106,7 +107,7 @@ public class calculations {
 					for(int k = 0; k < minTra.size(); k ++) {
 						int stay = k;
 						for(int h = k; h < minTra.size(); h ++) {//查看最后停留在此点的时间
-							if(points.get(h).getLng() == points.get(k).getLng() && points.get(h).getLat() == points.get(k).getLat()) {
+							if(minTra.get(h).getLng() == minTra.get(k).getLng() && minTra.get(h).getLat() == minTra.get(k).getLat()) {
 								stay = h;
 							} else {
 								break;
@@ -119,13 +120,13 @@ public class calculations {
 								tp = calcDistOfDate(minTra.get(1), minTra.get(0)) / 2;
 							} else if(k == 0 && minTra.size() == 1) {
 								tp = lambda;
-							} else if(k == minTra.size() && minTra.size() > 1) {
+							} else if(k == minTra.size()-1 && minTra.size() > 1) {
 								tp = calcDistOfDate(minTra.get(k), minTra.get(k - 1)) / 2;
 							} else {
 								tp = calcDistOfDate(minTra.get(k + 1), minTra.get(k - 1)) / 2;
 							}
 						} else {
-							tp = calcDistOfDate(points.get(stay), points.get(k)) / sumTime;
+							tp = calcDistOfDate(minTra.get(stay), minTra.get(k)) / sumTime;
 						}
 						lp = (stay - k + 1) / minTra.size();
 						wp.add(tp * lp);
@@ -155,7 +156,7 @@ public class calculations {
 			}
 			Trail tmpTrail = new Trail();
 			tmpTrail.setSum_points(tmpTra.size());
-			tmpTrail.setPoints(tmpTra);
+			tmpTrail.setPoints((ArrayList<Point>)tmpTra.clone());
 			finTra.add(tmpTrail);
 			fSum.add(fsum);
 			tmpTra.clear();
@@ -366,7 +367,7 @@ public class calculations {
 	 *
 	 *分离时间段
 	 */
-	public static ArrayList<Date> divideTime(Integer theta, Date dStart, Date dEnd) {
+	public static ArrayList<Date> divideTime(long theta, Date dStart, Date dEnd) {
 		ArrayList<Date> segs = new ArrayList<>();
 		segs.add(dStart);
 		while(dStart.compareTo(dEnd) <= 0) {
@@ -382,8 +383,8 @@ public class calculations {
 	 *
 	 *两点时间差,绝对值
 	 */
-	public static double calcDistOfDate(Point p1, Point p2) {
-		return Math.abs(p1.getDate().getTime() - p1.getDate().getTime());
+	public static long calcDistOfDate(Point p1, Point p2) {
+		return Math.abs(p1.getDate().getTime() - p2.getDate().getTime());
 	}
 	
 	/**
