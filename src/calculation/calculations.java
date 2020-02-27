@@ -5,6 +5,9 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import com.sun.javafx.tk.Toolkit.Task;
+import com.sun.org.apache.xpath.internal.operations.And;
+
 import trail.Point;
 import trail.Trail;
 
@@ -227,14 +230,18 @@ public class calculations {
 	 *相似度聚类
 	 *输入：多条轨迹
 	 */
-	public static ArrayList<Trail> structCluster(ArrayList<Trail> trails, double alpha, double theta, int Minpts) {
+	@SuppressWarnings("unchecked")
+	public static ArrayList<Trail> structCluster(ArrayList<Trail> trails, Trail objTrail, double alpha, double theta, int Minpts) {
 		//ArrayList<Object> result = new ArrayList<>();
+		trails.add(objTrail);
 		ArrayList<Trail> cores = new ArrayList<>();
 		ArrayList<ArrayList<Trail>> Ntheta = new ArrayList<>();
 		ArrayList<Trail> N_tmp = new ArrayList<>();
+		ArrayList<Trail> cluster = new ArrayList<>();
 		for(int i = 0; i < trails.size(); i ++) {
 			N_tmp.clear();
 			for(int j = 0; j < trails.size(); j ++) {
+				if(j == i) continue;
 				double sim = calcSim(trails.get(i), trails.get(j), alpha);
 				if(sim >= theta && j != i) {
 					N_tmp.add(trails.get(j));
@@ -242,7 +249,7 @@ public class calculations {
 			}
 			if(N_tmp.size() >= Minpts) {
 				cores.add(trails.get(i));
-				Ntheta.add(N_tmp);
+				Ntheta.add((ArrayList<Trail>) N_tmp.clone());
 			}
 		}
 		int k = 0;
@@ -251,7 +258,15 @@ public class calculations {
 			cores.get(i).setCluster_id(k);
 			connectDensity(cores.get(i), cores, Ntheta, i, k);
 		}
-		return cores;
+		//找出相似轨迹集
+		int objCluster = objTrail.getCluster_id();
+		trails.remove(objTrail);
+		for(int i = 0; i < trails.size(); i ++) {
+			if(trails.get(i).getCluster_id() == objCluster) {
+				cluster.add(trails.get(i));
+			}
+		}
+		return cluster;
 	}
 	
 	/**
@@ -499,7 +514,7 @@ public class calculations {
 	public static double calcLocD(Trail trail1, Trail trail2) {
 		double res = 0;		double tmp = 0;
 		double min = Integer.MAX_VALUE;		double max = 0;
-		for(int i = 0; i < trail1.getPoints().size(); i ++) {
+		for(int i = 0; i < trail1.getPoints().size() && i < trail2.getPoints().size(); i ++) {
 			tmp = calcDistance(trail1.getPoints().get(i), trail2.getPoints().get(i));
 			min = Math.min(min, tmp);
 			max = Math.max(max, tmp);
@@ -518,7 +533,7 @@ public class calculations {
 	public static double calcAngleD(Trail trail1, Trail trail2) {
 		double res = 0;		double tmp = 0;
 		double min = Integer.MAX_VALUE;		double max = 0;
-		for(int i = 0; i < trail1.getPoints().size(); i ++) {
+		for(int i = 0; i < trail1.getPoints().size() && i < trail2.getPoints().size(); i ++) {
 			tmp = Math.abs(trail1.getPoints().get(i).getCor() - trail2.getPoints().get(i).getCor());
 			min = Math.min(min, tmp);
 			max = Math.max(max, tmp);
