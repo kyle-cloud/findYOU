@@ -9,5 +9,12 @@ Trail:
 
 coarseTrail:
 {
-	[point1, point2, point3, ，，，]
+	"Trail" : Trail
 }
+
+fineTrail:
+{
+	"IMSI" : "10"
+	"Trail": [subTrail1, subTrail2, subTrail3, ，，，]
+}
+	

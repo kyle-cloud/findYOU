@@ -257,6 +257,21 @@ public class calculations {
 	/**
 	 * @author kyle_cloud
 	 *
+	 *连通集标记
+	 */
+	public static void connectDensity(Trail core, ArrayList<Trail> cores, ArrayList<ArrayList<Trail>> N_trails, int index, int id) {
+		for(int i = 0; i < N_trails.get(index).size(); i ++) {
+			N_trails.get(index).get(i).setCluster_id(id);
+			int index_tmp = cores.indexOf(N_trails.get(index).get(i));
+			if(index_tmp != -1) {
+				connectDensity(N_trails.get(index).get(i), cores, N_trails, index_tmp, id);
+			}
+		}
+	}
+	
+	/**
+	 * @author kyle_cloud
+	 *
 	 *时间插值相似度计算
 	 *输入：两条轨迹
 	 */
@@ -465,23 +480,7 @@ public class calculations {
 			i += (same_num - 1);
 		}
 		return Hm;
-	}
-	
-	/**
-	 * @author kyle_cloud
-	 *
-	 *连通集标记
-	 */
-	public static void connectDensity(Trail core, ArrayList<Trail> cores, ArrayList<ArrayList<Trail>> N_trails, int index, int id) {
-		for(int i = 0; i < N_trails.get(index).size(); i ++) {
-			N_trails.get(index).get(i).setCluster_id(id);
-			int index_tmp = cores.indexOf(N_trails.get(index).get(i));
-			if(index_tmp != -1) {
-				connectDensity(N_trails.get(index).get(i), cores, N_trails, index_tmp, id);
-			}
-		}
-	}
-	
+	}	
 	
 	/**
 	 * @author kyle_cloud
