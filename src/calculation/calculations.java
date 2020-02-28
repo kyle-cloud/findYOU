@@ -238,6 +238,7 @@ public class calculations {
 		ArrayList<ArrayList<Trail>> Ntheta = new ArrayList<>();
 		ArrayList<Trail> N_tmp = new ArrayList<>();
 		ArrayList<Trail> cluster = new ArrayList<>();
+		ArrayList<Trail> noises = new ArrayList<>();
 		for(int i = 0; i < trails.size(); i ++) {
 			N_tmp.clear();
 			for(int j = 0; j < trails.size(); j ++) {
@@ -264,6 +265,9 @@ public class calculations {
 		for(int i = 0; i < trails.size(); i ++) {
 			if(trails.get(i).getCluster_id() == objCluster) {
 				cluster.add(trails.get(i));
+			}
+			if(trails.get(i).getCluster_id() == 0) {
+				noises.add(trails.get(i));
 			}
 		}
 		return cluster;
