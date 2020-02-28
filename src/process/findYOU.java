@@ -18,6 +18,7 @@ public class findYOU {
 		ArrayList<Point> coarseTrail = new ArrayList<>();
 		ArrayList<Trail> fineTrail = new ArrayList<>();
 		ArrayList<Trail> finTrails = new ArrayList<>();
+		ArrayList<Trail> cluseredTrails = new ArrayList<>();
 		try{
 //			MongoUtil.instance.dropCollection("liu", "coarseTrail");
 			//获取轨迹数据
@@ -54,7 +55,8 @@ public class findYOU {
 			//8203000 9409500 12219000
 			//System.out.println(calculations.calcDistance(finTrails.get(0).getPoints().get(0), finTrails.get(0).getPoints().get(3)));
 			//System.out.println(calculations.calcDistOfDate(finTrails.get(0).getPoints().get(0), finTrails.get(0).getPoints().get(1)));
-			calculations.structCluster(finTrails, finTrails.get(0), 0.9, 0.88, 50);
+			cluseredTrails = calculations.structCluster(finTrails, finTrails.get(0), 0.9, 0.88, 50);
+			//calculations.innerSimilarity(topTra, finTra)
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -282,7 +282,7 @@ public class calculations {
 		for(int i = 0; i < N_trails.get(index).size(); i ++) {
 			N_trails.get(index).get(i).setCluster_id(id);
 			int index_tmp = cores.indexOf(N_trails.get(index).get(i));
-			if(index_tmp != -1) {
+			if(index_tmp != -1 && N_trails.get(index).get(i).getCluster_id() != id) {
 				connectDensity(N_trails.get(index).get(i), cores, N_trails, index_tmp, id);
 			}
 		}
