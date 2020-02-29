@@ -296,25 +296,23 @@ public class calculations {
 	 */
 	public static double innerSimilarity(ArrayList<Trail> topTra, ArrayList<Trail> finTra) {
 		double H = 0;
-		for(int i = 0; i < topTra.size(); i ++) {
-			for(int j = 0; j < finTra.size(); j ++) {
-				if(topTra.get(i).getTstart() != finTra.get(j).getTstart()) continue;
+		for(int i = 0; i < topTra.size() && i < finTra.size(); i ++) {
+				//if(topTra.get(i).getTstart() != finTra.get(j).getTstart()) continue;
 				Trail trail1 = new Trail();
 				Trail trail1_copy = new Trail();
 				Trail trail2 = new Trail();
 				trail1 = topTra.get(i);
 				trail1_copy = topTra.get(i);
-				trail2 = finTra.get(j);
+				trail2 = finTra.get(i);
 				Point pre_trail1 = null;	Point pre_trail2 = null;
 				Point nxt_trail1 = null; Point nxt_trail2 = null;
 				if(i > 0) pre_trail1 = topTra.get(i-1).getPoints().get(topTra.get(i-1).getPoints().size() - 1);
-				if(j > 0) pre_trail2 = finTra.get(j-1).getPoints().get(finTra.get(j-1).getPoints().size() - 1);
+				if(i > 0) pre_trail2 = finTra.get(i-1).getPoints().get(finTra.get(i-1).getPoints().size() - 1);
 				if(i < topTra.size()-1) nxt_trail1 = topTra.get(i+1).getPoints().get(0);
-				if(j < finTra.size()-1) nxt_trail2 = finTra.get(j+1).getPoints().get(0);
+				if(i < finTra.size()-1) nxt_trail2 = finTra.get(i+1).getPoints().get(0);
 				//insertPoints(trail1.getPoints(), trail2.getPoints(), pre_trail1, nxt_trail1);
 				//insertPoints(trail2.getPoints(), trail1_copy.getPoints(), pre_trail2, nxt_trail2);
 				H += calcHk(trail1.getPoints(), trail2.getPoints());
-			}
 		}
 		int Pset = topTra.size();
 		H /= Pset;

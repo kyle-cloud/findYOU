@@ -58,7 +58,7 @@ public class findYOU {
 			cluseredTrails = calculations.structCluster(finTrails, finTrails.get(0), 0.9, 0.88, 50);
 			ArrayList<Trail> objTrail = calculations.divideTrace(finTrails.get(0), 120*60*1000);
 			ArrayList<Trail> objFineTrail = calculations.fineCompress(objTrail, 0.03, (long)1000000);
-			ArrayList<Trail> cmpTrail = calculations.divideTrace(cluseredTrails.get(0), 120*60*1000);
+			ArrayList<Trail> cmpTrail = calculations.divideTrace(cluseredTrails.get(2), 120*60*1000);
 			ArrayList<Trail> cmpFineTrail = calculations.fineCompress(cmpTrail, 0.03, (long)1000000);
 			
 			System.out.println(calculations.innerSimilarity(objFineTrail, cmpFineTrail));
