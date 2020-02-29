@@ -311,8 +311,8 @@ public class calculations {
 				if(j > 0) pre_trail2 = finTra.get(j-1).getPoints().get(finTra.get(j-1).getPoints().size() - 1);
 				if(i < topTra.size()-1) nxt_trail1 = topTra.get(i+1).getPoints().get(0);
 				if(j < finTra.size()-1) nxt_trail2 = finTra.get(j+1).getPoints().get(0);
-				insertPoints(trail1.getPoints(), trail2.getPoints(), pre_trail1, nxt_trail1);
-				insertPoints(trail2.getPoints(), trail1_copy.getPoints(), pre_trail2, nxt_trail2);
+				//insertPoints(trail1.getPoints(), trail2.getPoints(), pre_trail1, nxt_trail1);
+				//insertPoints(trail2.getPoints(), trail1_copy.getPoints(), pre_trail2, nxt_trail2);
 				H += calcHk(trail1.getPoints(), trail2.getPoints());
 			}
 		}

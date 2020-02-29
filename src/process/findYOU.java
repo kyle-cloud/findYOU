@@ -16,7 +16,6 @@ public class findYOU {
 	public static void main(String[] args){
 		ArrayList<Trail> dividedTrail = new ArrayList<>();
 		ArrayList<Point> coarseTrail = new ArrayList<>();
-		ArrayList<Trail> fineTrail = new ArrayList<>();
 		ArrayList<Trail> finTrails = new ArrayList<>();
 		ArrayList<Trail> cluseredTrails = new ArrayList<>();
 		try{
@@ -24,7 +23,7 @@ public class findYOU {
 			//获取轨迹数据
 			ArrayList<Trail> trails = downloadData.getTrails();
 			System.out.println("共有" + trails.size() + "条轨迹");
-			//分时段，并粗粒度降维 + 细粒度降维
+			//分时段，并粗粒度降维
 			for(int i = 0; i < trails.size(); i ++) {
 				dividedTrail = calculations.divideTrace(trails.get(i), 120*60*1000);
 				coarseTrail = calculations.coarseCompress(dividedTrail);
@@ -42,7 +41,7 @@ public class findYOU {
 //				MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", "coarseTrail");
 //				coll.insertOne(document);
 //				coarse_dividedTrail = calculations.divideTrace(trails.get(i), 120*60*1000);
-				fineTrail = calculations.fineCompress(dividedTrail, 0.03, (long)1000000);
+//细粒度降维		fineTrail = calculations.fineCompress(dividedTrail, 0.03, (long)1000000);
 				
 //				Document document = new Document();
 //				JSONArray jsonArray = JSONArray.fromObject(fineTrail);
@@ -55,8 +54,14 @@ public class findYOU {
 			//8203000 9409500 12219000
 			//System.out.println(calculations.calcDistance(finTrails.get(0).getPoints().get(0), finTrails.get(0).getPoints().get(3)));
 			//System.out.println(calculations.calcDistOfDate(finTrails.get(0).getPoints().get(0), finTrails.get(0).getPoints().get(1)));
+			//聚类 + 细粒度降维 + 插值相似度
 			cluseredTrails = calculations.structCluster(finTrails, finTrails.get(0), 0.9, 0.88, 50);
-			//calculations.innerSimilarity(topTra, finTra)
+			ArrayList<Trail> objTrail = calculations.divideTrace(finTrails.get(0), 120*60*1000);
+			ArrayList<Trail> objFineTrail = calculations.fineCompress(objTrail, 0.03, (long)1000000);
+			ArrayList<Trail> cmpTrail = calculations.divideTrace(cluseredTrails.get(0), 120*60*1000);
+			ArrayList<Trail> cmpFineTrail = calculations.fineCompress(cmpTrail, 0.03, (long)1000000);
+			
+			System.out.println(calculations.innerSimilarity(objFineTrail, cmpFineTrail));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
