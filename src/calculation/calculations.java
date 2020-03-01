@@ -233,7 +233,7 @@ public class calculations {
 	@SuppressWarnings("unchecked")
 	public static ArrayList<Trail> structCluster(ArrayList<Trail> trails, Trail objTrail, double alpha, double theta, int Minpts) {
 		//ArrayList<Object> result = new ArrayList<>();
-		trails.add(objTrail);
+		trails.add(objTrail);//我的目标轨迹例子拿的就是里边的一条轨迹，再加上一次，之后remove只会去掉一个
 		ArrayList<Trail> cores = new ArrayList<>();
 		ArrayList<ArrayList<Trail>> Ntheta = new ArrayList<>();
 		ArrayList<Trail> N_tmp = new ArrayList<>();
