@@ -56,11 +56,23 @@ public class findYOU {
 			//System.out.println(calculations.calcDistOfDate(finTrails.get(0).getPoints().get(0), finTrails.get(0).getPoints().get(1)));
 			//聚类 + 细粒度降维 + 插值相似度
 			cluseredTrails = calculations.structCluster(finTrails, finTrails.get(0), 0.9, 0.88, 50);
+			
 			ArrayList<Trail> objTrail = calculations.divideTrace(finTrails.get(0), 120*60*1000);
 			ArrayList<Trail> objFineTrail = calculations.fineCompress(objTrail, 0.03, (long)1000000);
-			ArrayList<Trail> cmpTrail = calculations.divideTrace(cluseredTrails.get(2), 120*60*1000);
-			ArrayList<Trail> cmpFineTrail = calculations.fineCompress(cmpTrail, 0.03, (long)1000000);
 			
+			for(int i = 0; i < cluseredTrails.size(); i ++) {
+				ArrayList<Trail> cmpTrail = calculations.divideTrace(cluseredTrails.get(i), 120*60*1000);
+				ArrayList<Trail> cmpFineTrail = calculations.fineCompress(cmpTrail, 0.03, (long)1000000);
+				System.out.println(calculations.innerSimilarity(objFineTrail, cmpFineTrail));
+			}
+			System.out.println("/////////////////////");
+			
+			ArrayList<Trail> cmpTrail = calculations.divideTrace(finTrails.get(59), 120*60*1000);
+			ArrayList<Trail> cmpFineTrail = calculations.fineCompress(cmpTrail, 0.03, (long)1000000);
+			System.out.println(calculations.innerSimilarity(objFineTrail, cmpFineTrail));
+			
+			cmpTrail = calculations.divideTrace(finTrails.get(60), 120*60*1000);
+			cmpFineTrail = calculations.fineCompress(cmpTrail, 0.03, (long)1000000);
 			System.out.println(calculations.innerSimilarity(objFineTrail, cmpFineTrail));
 		} catch (Exception e) {
 			e.printStackTrace();
