@@ -312,6 +312,7 @@ public class calculations {
 				if(i < finTra.size()-1) nxt_trail2 = finTra.get(i+1).getPoints().get(0);
 				insertPoints(trail1.getPoints(), trail2.getPoints(), pre_trail1, nxt_trail1);
 				insertPoints(trail2.getPoints(), trail1_copy.getPoints(), pre_trail2, nxt_trail2);
+				//看一下插入的结果
 				H += calcHk(trail1.getPoints(), trail2.getPoints());
 		}
 		int Pset = topTra.size();
