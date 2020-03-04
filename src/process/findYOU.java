@@ -60,12 +60,12 @@ public class findYOU {
 			ArrayList<Trail> objTrail = calculations.divideTrace(finTrails.get(0), 120*60*1000);
 			ArrayList<Trail> objFineTrail = calculations.fineCompress(objTrail, 0.03, (long)1000000);
 			
-			for(int i = 0; i < cluseredTrails.size(); i ++) {
-				ArrayList<Trail> cmpTrail = calculations.divideTrace(cluseredTrails.get(i), 120*60*1000);
-				ArrayList<Trail> cmpFineTrail = calculations.fineCompress(cmpTrail, 0.03, (long)1000000);
-				System.out.println(calculations.innerSimilarity(objFineTrail, cmpFineTrail));
-			}
-			System.out.println("/////////////////////");
+//			for(int i = 0; i < cluseredTrails.size(); i ++) {
+//				ArrayList<Trail> cmpTrail = calculations.divideTrace(cluseredTrails.get(i), 120*60*1000);
+//				ArrayList<Trail> cmpFineTrail = calculations.fineCompress(cmpTrail, 0.03, (long)1000000);
+//				System.out.println(calculations.innerSimilarity(objFineTrail, cmpFineTrail));
+//			}
+//			System.out.println("/////////////////////");
 			
 			ArrayList<Trail> cmpTrail = calculations.divideTrace(finTrails.get(59), 120*60*1000);
 			ArrayList<Trail> cmpFineTrail = calculations.fineCompress(cmpTrail, 0.03, (long)1000000);

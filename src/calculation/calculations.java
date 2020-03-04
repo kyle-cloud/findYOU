@@ -330,7 +330,10 @@ public class calculations {
 		//在points1里插入points2的值
 		int i = 0, j = 0;
 		for(; i < points1.size(); i ++) {
-			if(pre_1 == null) i ++;
+			if(pre_1 == null) {
+				pre_1 = points1.get(0);
+				continue;
+			}
 			for(; j < points2.size(); j ++) {
 				if(points2.get(j).getDate().getTime() <= pre_1.getDate().getTime()) { 
 					j ++;
@@ -341,6 +344,7 @@ public class calculations {
 					break;
 				} else {
 					Point point_tmp = new Point();
+					point_tmp.setDate(points2.get(j).getDate());
 					point_tmp.setLat((points1.get(i).getLat() + pre_1.getLat()) / 2);
 					point_tmp.setLng((points1.get(i).getLng() + pre_1.getLng()) / 2);
 					points1.add(i, point_tmp); i ++;
