@@ -21,7 +21,7 @@ public class findYOU {
 		try{
 //			MongoUtil.instance.dropCollection("liu", "coarseTrail");
 			//获取轨迹数据
-			ArrayList<Trail> trails = downloadData.getTrails();
+			ArrayList<Trail> trails = downloadData.getTrails("trail");
 			System.out.println("共有" + trails.size() + "条轨迹");
 			//分时段，并粗粒度降维
 			for(int i = 0; i < trails.size(); i ++) {

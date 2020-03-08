@@ -17,7 +17,7 @@ public class downloadData {
 	static DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	@SuppressWarnings("unchecked")
-	public static ArrayList<Trail> getTrails() {
+	public static ArrayList<Trail> getTrails(String collname) {
 		ArrayList<Trail> trails = new ArrayList<>();
 		ArrayList<Point> points = new ArrayList<>();
 		String IMSI = null;
@@ -25,7 +25,7 @@ public class downloadData {
 		ArrayList<Double> longitudes = new ArrayList<>();
 		ArrayList<Double> latitudes = new ArrayList<>();
 		try {
-			MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", "trail");
+			MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", collname);
 			MongoCursor<Document> cursor = coll.find().iterator();
 			while(cursor.hasNext()) {
 				Document document = cursor.next();
@@ -65,7 +65,7 @@ public class downloadData {
 	
 	public static void main(String[] args) {
 		ArrayList<Trail> trails = new ArrayList<>();
-		trails = getTrails();
+		trails = getTrails("trail");
 		for(int i = 0; i < 5; i ++) {
 			System.out.println(trails.get(i).getTstart());
 			System.out.println(trails.get(i).getTstart().getTime());

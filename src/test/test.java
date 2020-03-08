@@ -1,7 +1,11 @@
 package test;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.map.HashedMap;
 
@@ -15,7 +19,7 @@ import trail.Trail;
 public class test {
 	public static void testTimeSegment() {
 		HashMap<Double, Integer> map = new HashMap<Double, Integer>();
-		ArrayList<Trail> trails = downloadData.getTrails();
+		ArrayList<Trail> trails = downloadData.getTrails("trail");
 		for(int i = 0; i < trails.size(); i ++) {
 			ArrayList<Trail> dividedTrail = calculations.divideTrace(trails.get(i), 420*60*1000);
 			int sum = 0;
@@ -37,7 +41,12 @@ public class test {
 		);
 	}
 	
+	public ArrayList<Trail> testCompress() throws Exception {
+		ArrayList<Trail> trails = downloadData.getTrails("trail");
+		return trails;
+	}
+	
 	public static void main(String[] args) {
-		testTimeSegment();
+		//testTimeSegment();
 	}
 }

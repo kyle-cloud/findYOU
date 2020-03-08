@@ -1,5 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ page language="java" import="java.util.*"%>
+<%@ page language="java" import="java.io.*"%>
+<%@ page language="java" import="trail.*"%>
+<%@ page language="java" import="test.test"%>
+<% ArrayList<Trail> trails = new test().testCompress(); %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -19,20 +24,23 @@
 		var map = new BMap.Map("allmap");
 		map.centerAndZoom(new BMap.Point(116.404, 39.915), 14);
 		map.enableScrollWheelZoom(true);
-		var pois = [
-			new BMap.Point(116.350658, 39.938285),
-			new BMap.Point(116.386446, 39.939281),
-			new BMap.Point(116.389034, 39.913828),
-			new BMap.Point(116.442501, 39.914603)
-		];
-		var polyline = new BMap.Polyline(pois, {
-			enableEditing: false,
-			enableClicking: true,
-			strokeWeight: 8,
-			strokeOpacity: 0.8,
-			strokeColor: "red"
-		});
-		map.addOverlay(polyline);
+		<%System.out.println(trails.size());
+		for(int i = 0; i < 1; i ++) {
+			List<Point> points = trails.get(i).getPoints();%>
+			var pois = [
+				<%for(int j = 0; j < 10; j ++) {%>
+					new BMap.Point(<%=points.get(j).getLng()%>, <%=points.get(j).getLat()%>),
+				<%}%>
+			];
+			var polyline = new BMap.Polyline(pois, {
+				enableEditing: false,
+				enableClicking: true,
+				strokeWeight: 2,
+				strokeOpacity: 0.8,
+				strokeColor: "red"
+			});
+			map.addOverlay(polyline);
+		<%}%>
 </script>
 
 </html>
