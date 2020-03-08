@@ -22,13 +22,13 @@
 
 <script>
 		var map = new BMap.Map("allmap");
-		map.centerAndZoom(new BMap.Point(116.404, 39.915), 14);
+		map.centerAndZoom(new BMap.Point(116.404, 39.915), 12);
 		map.enableScrollWheelZoom(true);
 		<%System.out.println(trails.size());
 		for(int i = 0; i < 1; i ++) {
 			List<Point> points = trails.get(i).getPoints();%>
 			var pois = [
-				<%for(int j = 0; j < 10; j ++) {%>
+				<%for(int j = 0; j < 50; j ++) {%>
 					new BMap.Point(<%=points.get(j).getLng()%>, <%=points.get(j).getLat()%>),
 				<%}%>
 			];
