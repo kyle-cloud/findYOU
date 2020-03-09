@@ -13,10 +13,10 @@ public class test {
 		HashMap<Double, Integer> map = new HashMap<Double, Integer>();
 		ArrayList<Trail> trails = downloadData.getTrails("trail");
 		for(int i = 0; i < trails.size(); i ++) {
-			ArrayList<Trail> dividedTrail = calculations.divideTrace(trails.get(i), 420*60*1000);
+			ArrayList<Trail> dividedTrail = calculations.divideTrace(trails.get(i), 240*60*1000);
 			int sum = 0;
 			for(int j = 0; j < dividedTrail.size(); j ++) {
-				if(dividedTrail.get(j).getSum_points() >= 10) {
+				if(dividedTrail.get(j).getSum_points() >= 5) {
 					sum ++;
 				}
 			}
@@ -38,7 +38,7 @@ public class test {
 		ArrayList<Trail> trails = downloadData.getTrails("trail");
 		ArrayList<Trail> finTrails = new ArrayList<>();
 		for(int i = 0; i < trails.size(); i ++) {
-			ArrayList<Trail> dividedTrail = calculations.divideTrace(trails.get(i), 120*60*1000);
+			ArrayList<Trail> dividedTrail = calculations.divideTrace(trails.get(i), 240*60*1000);
 			ArrayList<Point> coarseTrail = calculations.coarseCompress(dividedTrail);
 			Trail coarse_finTrail = new Trail();
 			coarse_finTrail.setIMSI(trails.get(i).getIMSI());
@@ -54,6 +54,6 @@ public class test {
 	}
 	
 	public static void main(String[] args) {
-		//testTimeSegment();
+		testTimeSegment();
 	}
 }
