@@ -4,7 +4,9 @@
 <%@ page language="java" import="java.io.*"%>
 <%@ page language="java" import="trail.*"%>
 <%@ page language="java" import="test.test"%>
-<% ArrayList<Trail> trails = new test().testCompress(); %>
+<% ArrayList<Object> result = new test().testCompress(); 
+   ArrayList<Trail> trails = (ArrayList<Trail>)result.get(0);
+   ArrayList<Trail> coarseTrails = (ArrayList<Trail>)result.get(1);%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -28,7 +30,7 @@
 		for(int i = 0; i < 1; i ++) {
 			List<Point> points = trails.get(i).getPoints();%>
 			var pois = [
-				<%for(int j = 0; j < 50; j ++) {%>
+				<%for(int j = 0; j < points.size(); j ++) {%>
 					new BMap.Point(<%=points.get(j).getLng()%>, <%=points.get(j).getLat()%>),
 				<%}%>
 			];
@@ -38,6 +40,24 @@
 				strokeWeight: 2,
 				strokeOpacity: 0.8,
 				strokeColor: "red"
+			});
+			map.addOverlay(polyline);
+		<%}%>
+		
+		<%System.out.println(coarseTrails.size());
+		for(int i = 0; i < 1; i ++) {
+			List<Point> points = coarseTrails.get(i).getPoints();%>
+			var pois = [
+				<%for(int j = 0; j < points.size(); j ++) {%>
+					new BMap.Point(<%=points.get(j).getLng()%>, <%=points.get(j).getLat()%>),
+				<%}%>
+			];
+			var polyline = new BMap.Polyline(pois, {
+				enableEditing: false,
+				enableClicking: true,
+				strokeWeight: 2,
+				strokeOpacity: 0.8,
+				strokeColor: "blue"
 			});
 			map.addOverlay(polyline);
 		<%}%>

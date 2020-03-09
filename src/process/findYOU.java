@@ -25,7 +25,7 @@ public class findYOU {
 			System.out.println("共有" + trails.size() + "条轨迹");
 			//分时段，并粗粒度降维
 			for(int i = 0; i < trails.size(); i ++) {
-				dividedTrail = calculations.divideTrace(trails.get(i), 120*60*1000);
+				dividedTrail = calculations.divideTrace(trails.get(i), 420*60*1000);
 				coarseTrail = calculations.coarseCompress(dividedTrail);
 				Trail coarse_finTrail = new Trail();
 				coarse_finTrail.setIMSI(trails.get(i).getIMSI());
@@ -35,12 +35,12 @@ public class findYOU {
 				coarse_finTrail.setTend(coarseTrail.get(coarseTrail.size()-1).getDate());
 				finTrails.add(coarse_finTrail);
 
-//				Document document = new Document();
-//				net.sf.json.JSONObject jObject = net.sf.json.JSONObject.fromObject(coarse_finTrail);
-//				document.put("Trail", jObject);
-//				MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", "coarseTrail");
-//				coll.insertOne(document);
-//				coarse_dividedTrail = calculations.divideTrace(trails.get(i), 120*60*1000);
+				Document document = new Document();
+				net.sf.json.JSONObject jObject = net.sf.json.JSONObject.fromObject(coarse_finTrail);
+				document.put("Trail", jObject);
+				MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", "coarseTrail");
+				coll.insertOne(document);
+//				coarse_dividedTrail = calculations.divideTrace(trails.get(i), 420*60*1000);
 //细粒度降维		fineTrail = calculations.fineCompress(dividedTrail, 0.03, (long)1000000);
 				
 //				Document document = new Document();
@@ -52,10 +52,10 @@ public class findYOU {
 			}
 			cluseredTrails = calculations.structCluster(finTrails, finTrails.get(0), 0.9, 0.88, 50);
 			
-			ArrayList<Trail> objTrail = calculations.divideTrace(finTrails.get(0), 120*60*1000);
+			ArrayList<Trail> objTrail = calculations.divideTrace(finTrails.get(0), 420*60*1000);
 			ArrayList<Trail> objFineTrail = calculations.fineCompress(objTrail, 0.03, (long)1000000);
 			
-			ArrayList<Trail> cmpTrail = calculations.divideTrace(cluseredTrails.get(59), 120*60*1000);
+			ArrayList<Trail> cmpTrail = calculations.divideTrace(cluseredTrails.get(59), 420*60*1000);
 			ArrayList<Trail> cmpFineTrail = calculations.fineCompress(cmpTrail, 0.03, (long)1000000);
 			System.out.println(calculations.innerSimilarity(objFineTrail, cmpFineTrail));
 

@@ -1,19 +1,11 @@
 package test;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.collections.map.HashedMap;
-
-import com.sun.corba.se.impl.oa.poa.ActiveObjectMap.Key;
-import com.sun.javafx.collections.MappingChange.Map;
-
 import calculation.calculations;
 import process.downloadData;
+import trail.Point;
 import trail.Trail;
 
 public class test {
@@ -41,9 +33,24 @@ public class test {
 		);
 	}
 	
-	public ArrayList<Trail> testCompress() throws Exception {
+	public ArrayList<Object> testCompress() throws Exception {
+		ArrayList<Object> result = new ArrayList<>();
 		ArrayList<Trail> trails = downloadData.getTrails("trail");
-		return trails;
+		ArrayList<Trail> finTrails = new ArrayList<>();
+		for(int i = 0; i < trails.size(); i ++) {
+			ArrayList<Trail> dividedTrail = calculations.divideTrace(trails.get(i), 120*60*1000);
+			ArrayList<Point> coarseTrail = calculations.coarseCompress(dividedTrail);
+			Trail coarse_finTrail = new Trail();
+			coarse_finTrail.setIMSI(trails.get(i).getIMSI());
+			coarse_finTrail.setPoints(coarseTrail);
+			coarse_finTrail.setSum_points(coarseTrail.size());
+			coarse_finTrail.setTstart(coarseTrail.get(0).getDate());
+			coarse_finTrail.setTend(coarseTrail.get(coarseTrail.size()-1).getDate());
+			finTrails.add(coarse_finTrail);
+		}
+		result.add(trails);
+		result.add(finTrails);
+		return result;
 	}
 	
 	public static void main(String[] args) {
