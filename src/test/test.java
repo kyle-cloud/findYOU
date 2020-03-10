@@ -36,20 +36,25 @@ public class test {
 	public ArrayList<Object> testCompress() throws Exception {
 		ArrayList<Object> result = new ArrayList<>();
 		ArrayList<Trail> trails = downloadData.getTrails("trail");
-		ArrayList<Trail> finTrails = new ArrayList<>();
+		ArrayList<Trail> coarseTrails = new ArrayList<>();
+		ArrayList<ArrayList<Trail>> fineTrails = new ArrayList<>();
 		for(int i = 0; i < trails.size(); i ++) {
 			ArrayList<Trail> dividedTrail = calculations.divideTrace(trails.get(i), 240*60*1000);
 			ArrayList<Point> coarseTrail = calculations.coarseCompress(dividedTrail);
-			Trail coarse_finTrail = new Trail();
-			coarse_finTrail.setIMSI(trails.get(i).getIMSI());
-			coarse_finTrail.setPoints(coarseTrail);
-			coarse_finTrail.setSum_points(coarseTrail.size());
-			coarse_finTrail.setTstart(coarseTrail.get(0).getDate());
-			coarse_finTrail.setTend(coarseTrail.get(coarseTrail.size()-1).getDate());
-			finTrails.add(coarse_finTrail);
+			Trail coarse_Trail = new Trail();
+			coarse_Trail.setIMSI(trails.get(i).getIMSI());
+			coarse_Trail.setPoints(coarseTrail);
+			coarse_Trail.setSum_points(coarseTrail.size());
+			coarse_Trail.setTstart(coarseTrail.get(0).getDate());
+			coarse_Trail.setTend(coarseTrail.get(coarseTrail.size()-1).getDate());
+			coarseTrails.add(coarse_Trail);
+			
+			ArrayList<Trail> fineTrail = calculations.fineCompress(dividedTrail, 0.03, (long)1000000);
+			fineTrails.add(fineTrail);
 		}
 		result.add(trails);
-		result.add(finTrails);
+		result.add(coarseTrails);
+		result.add(fineTrails);
 		return result;
 	}
 	

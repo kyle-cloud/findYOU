@@ -6,7 +6,8 @@
 <%@ page language="java" import="test.test"%>
 <% ArrayList<Object> result = new test().testCompress(); 
    ArrayList<Trail> trails = (ArrayList<Trail>)result.get(0);
-   ArrayList<Trail> coarseTrails = (ArrayList<Trail>)result.get(1);%>
+   ArrayList<Trail> coarseTrails = (ArrayList<Trail>)result.get(1);
+   ArrayList<ArrayList<Trail>> fineTrails = (ArrayList<ArrayList<Trail>>)result.get(2);%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -58,6 +59,28 @@
 				strokeWeight: 2,
 				strokeOpacity: 0.8,
 				strokeColor: "blue"
+			});
+			map.addOverlay(polyline);
+		<%}%>
+		
+		<%System.out.println(fineTrails.size());
+		for(int i = 0; i < 1; i ++) {
+			List<Trail> trail = fineTrails.get(i);%>
+			var pois = [
+				<%
+				for(int j = 0; j < trail.size(); j ++) {
+					List<Point> points = trail.get(j).getPoints();
+					for(int k = 0; k < points.size(); k ++) {%>
+						new BMap.Point(<%=points.get(k).getLng()%>, <%=points.get(k).getLat()%>),
+				<%	}
+				}%>
+			];
+			var polyline = new BMap.Polyline(pois, {
+				enableEditing: false,
+				enableClicking: true,
+				strokeWeight: 2,
+				strokeOpacity: 0.8,
+				strokeColor: "green"
 			});
 			map.addOverlay(polyline);
 		<%}%>
