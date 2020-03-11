@@ -5,9 +5,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import com.sun.javafx.tk.Toolkit.Task;
-import com.sun.org.apache.xpath.internal.operations.And;
-
 import trail.Point;
 import trail.Trail;
 
