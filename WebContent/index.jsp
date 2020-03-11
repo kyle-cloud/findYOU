@@ -4,7 +4,7 @@
 <%@ page language="java" import="java.io.*"%>
 <%@ page language="java" import="trail.*"%>
 <%@ page language="java" import="test.test"%>
-<% ArrayList<Object> result = new test().testCompress(); 
+<% ArrayList<Object> result = new test().testCompressOnMap(); 
    ArrayList<Trail> trails = (ArrayList<Trail>)result.get(0);
    ArrayList<Trail> coarseTrails = (ArrayList<Trail>)result.get(1);
    ArrayList<ArrayList<Trail>> fineTrails = (ArrayList<ArrayList<Trail>>)result.get(2);%>
