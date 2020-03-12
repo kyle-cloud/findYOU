@@ -6,7 +6,10 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.sun.javafx.geom.PickRay;
+
 import calculation.calculations;
+import javafx.css.PseudoClass;
 import process.downloadData;
 import trail.Point;
 import trail.Trail;
@@ -61,22 +64,27 @@ public class test {
 		return result;
 	}
 	
-	public static void testCompress() throws Exception {
+	public static void testCompressOnNumber() throws Exception {
 		ArrayList<Trail> trails = downloadData.getTrails("trail");
-		ArrayList<Trail> coarseTrails = new ArrayList<>();
+		ArrayList<ArrayList<Point>> evenTrails = new ArrayList<>();
+		ArrayList<ArrayList<Point>> coarseTrails = new ArrayList<>();
 		ArrayList<ArrayList<Trail>> fineTrails = new ArrayList<>();
 		for(int i = 0; i < trails.size(); i ++) {
+			ArrayList<Point> temp_points = new ArrayList<>();
+			for(int j = 0; j < trails.get(i).getPoints().size(); j += 10) {
+				temp_points.add(trails.get(i).getPoints().get(j));
+			}
+			evenTrails.add(temp_points);
+			
 			ArrayList<Trail> dividedTrail = calculations.divideTrace(trails.get(i), 240*60*1000);
 			
 			ArrayList<Point> coarseTrail = calculations.coarseCompress(dividedTrail);
-			Trail coarse_Trail = new Trail();
-			coarse_Trail.setPoints(coarseTrail);
-			coarseTrails.add(coarse_Trail);
+			coarseTrails.add(coarseTrail);
 			
 			ArrayList<Trail> fineTrail = calculations.fineCompress(dividedTrail, 3000, (long)30*60*1000);
 			fineTrails.add(fineTrail);
 		}
-		File f = new File("trails.txt");
+		File f = new File("number_trails.txt");
 		if(!f.exists()) f.createNewFile();
 		FileWriter fWriter = new FileWriter(f, true);
 		BufferedWriter bWriter = new BufferedWriter(fWriter);
@@ -85,16 +93,16 @@ public class test {
 		}
 		bWriter.close();
 		
-		File f1 = new File("coarseTrails.txt");
+		File f1 = new File("number_coarseTrails.txt");
 		if(!f1.exists()) f1.createNewFile();
 		fWriter = new FileWriter(f1, true);
 		bWriter = new BufferedWriter(fWriter);
 		for(int i = 0; i < coarseTrails.size(); i ++) {
-			bWriter.write("" + i + ":" + coarseTrails.get(i).getPoints().size() + "\n");
+			bWriter.write("" + i + ":" + coarseTrails.get(i).size() + "\n");
 		}
 		bWriter.close();
 		
-		File f2 = new File("fineTrails.txt");
+		File f2 = new File("number_fineTrails.txt");
 		if(!f2.exists()) f2.createNewFile();
 		fWriter = new FileWriter(f2, true);
 		bWriter = new BufferedWriter(fWriter);
@@ -106,10 +114,85 @@ public class test {
 			bWriter.write("" + i + ":" + sum + "\n");
 		}
 		bWriter.close();
+		
+		File f3 = new File("number_evenTrails.txt");
+		if(!f3.exists()) f3.createNewFile();
+		fWriter = new FileWriter(f3, true);
+		bWriter = new BufferedWriter(fWriter);
+		for(int i = 0; i < evenTrails.size(); i ++) {
+			bWriter.write("" + i + ":" + evenTrails.get(i).size() + "\n");
+		}
+		bWriter.close();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static void testCompressOnHausdorff() throws Exception {
+		ArrayList<Trail> trails = downloadData.getTrails("trail");
+		ArrayList<ArrayList<Point>> evenTrails = new ArrayList<>();
+		ArrayList<ArrayList<Point>> coarseTrails = new ArrayList<>();
+		ArrayList<ArrayList<Trail>> fineTrails = new ArrayList<>();
+		for(int i = 0; i < trails.size(); i ++) {
+			ArrayList<Point> temp_points = new ArrayList<>();
+			for(int j = 0; j < trails.get(i).getPoints().size(); j += 10) {
+				temp_points.add(trails.get(i).getPoints().get(j));
+			}
+			evenTrails.add(temp_points);
+			
+			ArrayList<Trail> dividedTrail = calculations.divideTrace(trails.get(i), 240*60*1000);
+			
+			ArrayList<Point> coarseTrail = calculations.coarseCompress(dividedTrail);
+			coarseTrails.add(coarseTrail);
+			
+			ArrayList<Trail> fineTrail = calculations.fineCompress(dividedTrail, 3000, (long)30*60*1000);
+			fineTrails.add(fineTrail);
+		}
+		File f = new File("hausdorff_trails.txt");
+		if(!f.exists()) f.createNewFile();
+		FileWriter fWriter = new FileWriter(f, true);
+		BufferedWriter bWriter = new BufferedWriter(fWriter);
+		for(int i = 0; i < trails.size(); i ++) {
+			bWriter.write("" + i + ":" + calculations.calcHk(trails.get(0).getPoints(), trails.get(i).getPoints()) + "\n");
+		}
+		bWriter.close();
+		
+		File f1 = new File("hausdorff_coarseTrails.txt");
+		if(!f1.exists()) f1.createNewFile();
+		fWriter = new FileWriter(f1, true);
+		bWriter = new BufferedWriter(fWriter);
+		for(int i = 0; i < coarseTrails.size(); i ++) {
+			bWriter.write("" + i + ":" + calculations.calcHk(coarseTrails.get(0), coarseTrails.get(i)) + "\n");
+		}
+		bWriter.close();
+		
+		File f2 = new File("hausdorff_fineTrails.txt");
+		if(!f2.exists()) f2.createNewFile();
+		fWriter = new FileWriter(f2, true);
+		bWriter = new BufferedWriter(fWriter);
+		ArrayList<Point> fixed_points = new ArrayList<>();
+		for(int i = 0; i < fineTrails.size(); i ++) {
+			ArrayList<Trail> trail = fineTrails.get(i);
+			ArrayList<Point> points = new ArrayList<>();
+			for(int j = 0; j < trail.size(); j ++) {
+				points.addAll(trail.get(j).getPoints());
+			}
+			if(i == 0) fixed_points = (ArrayList<Point>) points.clone();
+			bWriter.write("" + i + ":" + calculations.calcHk(fixed_points, points) + "\n");
+		}
+		bWriter.close();
+		
+		File f3 = new File("hausdorff_evenTrails.txt");
+		if(!f3.exists()) f3.createNewFile();
+		fWriter = new FileWriter(f3, true);
+		bWriter = new BufferedWriter(fWriter);
+		for(int i = 0; i < evenTrails.size(); i ++) {
+			bWriter.write("" + i + ":" + calculations.calcHk(evenTrails.get(0), evenTrails.get(i)) + "\n");
+		}
+		bWriter.close();
 	}
 	
 	public static void main(String[] args) throws Exception {
 		//testTimeSegment();
-		testCompress();
+		//testCompressOnNumber();
+		testCompressOnHausdorff(); // 最后是要计算与（原始轨迹-原始轨迹-距离）的结果进行比较（差值）
 	}
 }
