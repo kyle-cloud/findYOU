@@ -20,6 +20,7 @@ public class downloadData {
 	public static ArrayList<Trail> getTrails(String collname) {
 		ArrayList<Trail> trails = new ArrayList<>();
 		ArrayList<Point> points = new ArrayList<>();
+		String ID = null;
 		String IMSI = null;
 		ArrayList<String> dates = new ArrayList<>();
 		ArrayList<Double> longitudes = new ArrayList<>();
@@ -29,6 +30,8 @@ public class downloadData {
 			MongoCursor<Document> cursor = coll.find().iterator();
 			while(cursor.hasNext()) {
 				Document document = cursor.next();
+				
+				ID = (String)document.get("id");
 				IMSI = (String)document.get("IMSI"); 
 				dates = (ArrayList<String>) document.get("TraceTimes");
 				longitudes = (ArrayList<Double>) document.get("Longitudes");
@@ -47,6 +50,7 @@ public class downloadData {
 				Trail trail = new Trail();
 				trail.setSum_points(points.size());
 				trail.setPoints((ArrayList<Point>)points.clone());
+				trail.setID(ID);
 				trail.setIMSI(IMSI);
 				trail.setTstart(points.get(0).getDate());
 				trail.setTend(points.get(dates.size()-1).getDate());

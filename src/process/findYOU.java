@@ -18,7 +18,7 @@ public class findYOU {
 		ArrayList<Trail> dividedTrail = new ArrayList<>();
 		ArrayList<Point> coarseTrail = new ArrayList<>();
 		ArrayList<Trail> finTrails = new ArrayList<>();
-		ArrayList<Trail> cluseredTrails = new ArrayList<>();
+		ArrayList<Integer> cluseredTrails = new ArrayList<>();
 		try{
 //			MongoUtil.instance.dropCollection("liu", "coarseTrail");
 			//获取轨迹数据
@@ -53,12 +53,12 @@ public class findYOU {
 			}
 			cluseredTrails = calculations.structCluster(finTrails, finTrails.get(0), 0.9, 0.88, 50);
 			
-			ArrayList<Trail> objTrail = calculations.divideTrace(finTrails.get(0), 420*60*1000);
+			ArrayList<Trail> objTrail = calculations.divideTrace(trails.get(0), 420*60*1000);
 			ArrayList<Trail> objFineTrail = calculations.fineCompress(objTrail, 0.03, (long)1000000);
 			ArrayList<Object> result_topTrails_indexes = calculations.findTopk(objFineTrail, 1);
 			objFineTrail = (ArrayList<Trail>)result_topTrails_indexes.get(0);
 			
-			ArrayList<Trail> cmpTrail = calculations.divideTrace(cluseredTrails.get(59), 420*60*1000);
+			ArrayList<Trail> cmpTrail = calculations.divideTrace(trails.get(cluseredTrails.get(59)), 420*60*1000);
 			ArrayList<Trail> cmpFineTrail = calculations.fineCompress(cmpTrail, 0.03, (long)1000000);
 			ArrayList<Integer> objTopIndexs = (ArrayList<Integer>)result_topTrails_indexes.get(1); //找到目标轨迹提取的片段下标
 			cmpFineTrail = calculations.getTopk(objFineTrail, objTopIndexs);

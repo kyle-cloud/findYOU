@@ -3,9 +3,12 @@ package trail;
 import java.util.ArrayList;
 import java.util.Date;
 
+import com.sun.xml.internal.bind.v2.model.core.ID;
+
 public class Trail {
 	int sum_points = 0;
 	ArrayList<Point> points = new ArrayList<>();
+	private String ID = null;
 	private String IMSI = null;
 	private Date Tstart;
 	private Date Tend;
@@ -23,6 +26,10 @@ public class Trail {
 	
 	public ArrayList<Point> getPoints() {
 		return points;
+	}
+	
+	public String getID() {
+		return ID;
 	}
 	
 	public String getIMSI() {
@@ -55,6 +62,10 @@ public class Trail {
 	
 	public void setPoints(ArrayList<Point> points) {
 		this.points = points;
+	}
+	
+	public void setID(String iD) {
+		ID = iD;
 	}
 	
 	public void setIMSI(String iMSI) {
