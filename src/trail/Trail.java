@@ -10,6 +10,7 @@ public class Trail {
 	private Date Tstart;
 	private Date Tend;
 	private double hm = 0;
+	private int hm_index = -1;
 	int cluster_id = 0;
 	
 	public Trail() {
@@ -40,6 +41,10 @@ public class Trail {
 		return hm;
 	}
 	
+	public int getHm_index() {
+		return hm_index;
+	}
+	
 	public int getCluster_id() {
 		return cluster_id;
 	}
@@ -66,6 +71,10 @@ public class Trail {
 	
 	public void setHm(double hm) {
 		this.hm = hm;
+	}
+	
+	public void setHm_index(int hm_index) {
+		this.hm_index = hm_index;
 	}
 	
 	public void setCluster_id(int cluster_id) {

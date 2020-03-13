@@ -116,6 +116,7 @@ public class calculations {
 			tmpTrail.setIMSI(trail.get(0).getIMSI());
 			tmpTrail.setTstart(tmpTra.get(0).getDate());
 			tmpTrail.setTend(tmpTra.get(tmpTra.size()-1).getDate());
+			tmpTrail.setHm_index(finTra.size());
 			finTra.add(tmpTrail);
 			tmpTra.clear();
 		}
@@ -182,16 +183,18 @@ public class calculations {
 	/**
 	 * @author kyle_cloud
 	 *
-	 *移动轨迹段提取（信息熵）
+	 *目标移动轨迹段提取（信息熵）
 	 *输入：一条轨迹
 	 */
-	public static ArrayList<Trail> findTopk(ArrayList<Trail> trail, ArrayList<Integer> Sum, double belta) {
+	public static ArrayList<Object> findTopk(ArrayList<Trail> trail, double belta) {
+		ArrayList<Object> result = new ArrayList<>();
 		ArrayList<Trail> topTra = new ArrayList<>();
+		ArrayList<Integer> topIndex = new ArrayList<>();
 		double hm = 0;
 		int H_sum = 0;
 		int H_num = 0;
 		for(int i = 0; i < trail.size(); i ++) {
-			hm = calcHm(trail.get(i), Sum.get(i));
+			hm = calcHm(trail.get(i), trail.get(i).getPoints().size());
 			trail.get(i).setHm(hm);
 			if(hm > 0) {
 				H_sum ++;
@@ -218,6 +221,25 @@ public class calculations {
             }
         });
 		
+        for(int i = 0; i < topTra.size(); i ++) {
+        	topIndex.add(topTra.get(i).getHm_index());
+        }
+        result.add(topTra);
+        result.add(topIndex);
+		return result;
+	}
+	
+	/**
+	 * @author kyle_cloud
+	 *
+	 *比较移动轨迹段提取
+	 *输入：一条轨迹
+	 */
+	public static ArrayList<Trail> getTopk(ArrayList<Trail> trails, ArrayList<Integer> indexes) {
+		ArrayList<Trail> topTra = new ArrayList<>();
+		for(int i = 0; i < indexes.size(); i ++) {
+			topTra.add(trails.get(indexes.get(i)));
+		}
 		return topTra;
 	}
 	
