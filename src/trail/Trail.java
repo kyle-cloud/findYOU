@@ -5,7 +5,7 @@ import java.util.Date;
 
 import com.sun.xml.internal.bind.v2.model.core.ID;
 
-public class Trail {
+public class Trail implements Cloneable{
 	int sum_points = 0;
 	ArrayList<Point> points = new ArrayList<>();
 	private String ID = null;
@@ -91,4 +91,11 @@ public class Trail {
 	public void setCluster_id(int cluster_id) {
 		this.cluster_id = cluster_id;
 	}
+	
+	//把这个方法重写一下就行，什么都不写
+    @Override
+	public Object clone() throws CloneNotSupportedException {
+     
+        return super.clone();
+    }
 }

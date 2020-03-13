@@ -5,6 +5,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import com.sun.org.apache.xpath.internal.operations.And;
+
 import trail.Point;
 import trail.Trail;
 
@@ -238,6 +240,7 @@ public class calculations {
 	public static ArrayList<Trail> getTopk(ArrayList<Trail> trails, ArrayList<Integer> indexes) {
 		ArrayList<Trail> topTra = new ArrayList<>();
 		for(int i = 0; i < indexes.size(); i ++) {
+			if(indexes.get(i) >= trails.size()) break;
 			topTra.add(trails.get(indexes.get(i)));
 		}
 		return topTra;
@@ -312,17 +315,18 @@ public class calculations {
 	 *
 	 *时间插值相似度计算
 	 *输入：两条轨迹
+	 * @throws CloneNotSupportedException 
 	 */
-	public static double innerSimilarity(ArrayList<Trail> topTra, ArrayList<Trail> finTra) {
+	public static double innerSimilarity(ArrayList<Trail> topTra, ArrayList<Trail> finTra) throws CloneNotSupportedException {
 		double H = 0;
 		for(int i = 0; i < topTra.size() && i < finTra.size(); i ++) {
 				//if(topTra.get(i).getTstart() != finTra.get(j).getTstart()) continue;
 				Trail trail1 = new Trail();
-				Trail trail1_copy = new Trail();
+				//Trail trail1_copy = new Trail();
 				Trail trail2 = new Trail();
-				trail1 = topTra.get(i);
-				trail1_copy = topTra.get(i);
-				trail2 = finTra.get(i);
+				trail1 = (Trail)topTra.get(i).clone();
+				//trail1_copy = topTra.get(i); // 还是地址，没用这句话，应该clone。但是不影响结果
+				trail2 = (Trail)finTra.get(i).clone();
 				Point pre_trail1 = null;	Point pre_trail2 = null;
 				Point nxt_trail1 = null; Point nxt_trail2 = null;
 				if(i > 0) pre_trail1 = topTra.get(i-1).getPoints().get(topTra.get(i-1).getPoints().size() - 1);
@@ -330,7 +334,7 @@ public class calculations {
 				if(i < topTra.size()-1) nxt_trail1 = topTra.get(i+1).getPoints().get(0);
 				if(i < finTra.size()-1) nxt_trail2 = finTra.get(i+1).getPoints().get(0);
 				insertPoints(trail1.getPoints(), trail2.getPoints(), pre_trail1, nxt_trail1);
-				insertPoints(trail2.getPoints(), trail1_copy.getPoints(), pre_trail2, nxt_trail2);
+				insertPoints(trail2.getPoints(), trail1.getPoints(), pre_trail2, nxt_trail2);
 				//看一下插入的结果
 				H += calcHk(trail1.getPoints(), trail2.getPoints());
 		}
@@ -354,6 +358,7 @@ public class calculations {
 				continue;
 			}
 			for(; j < points2.size(); j ++) {
+				//System.out.println(j);
 				if(points2.get(j).getDate().getTime() <= pre_1.getDate().getTime()) { 
 					j ++;
 				} else if(points2.get(j).getDate().getTime() > points1.get(i).getDate().getTime()) {
@@ -375,6 +380,7 @@ public class calculations {
 			for(; j < points2.size(); j ++) {
 				if(points2.get(j).getDate().getTime() > pre_1.getDate().getTime() && points2.get(j).getDate().getTime() < nxt_1.getDate().getTime()) {
 					Point point_tmp = new Point();
+					point_tmp.setDate(points2.get(j).getDate());
 					point_tmp.setLat((nxt_1.getLat() + pre_1.getLat()) / 2);
 					point_tmp.setLng((nxt_1.getLng() + pre_1.getLng()) / 2);
 					points1.add(i, point_tmp); i ++;
@@ -516,7 +522,7 @@ public class calculations {
 				}
 				same_num ++;
 			}
-			double pi = same_num / sum;
+			double pi = (double)same_num / sum;
 			Hm -= pi * Math.log(pi) / Math.log(2);
 			i += (same_num - 1);
 		}
