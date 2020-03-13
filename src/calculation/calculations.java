@@ -510,7 +510,7 @@ public class calculations {
         });
 		for(int i = 0; i < points.size(); i ++) {
 			int same_num = 1;
-			for(int j = i; j < points.size(); j ++) {
+			for(int j = i + 1; j < points.size(); j ++) {
 				if(points.get(i).getLng() != points.get(j).getLng() || points.get(i).getLat() != points.get(j).getLat()) {
 					break;
 				}
