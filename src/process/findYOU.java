@@ -59,7 +59,7 @@ public class findYOU {
 			ArrayList<Object> result_topTrails_indexes = calculations.findTopk(objFineTrail, 1);
 			//objFineTrail = (ArrayList<Trail>)result_topTrails_indexes.get(0);
 			
-			ArrayList<Trail> cmpTrail = calculations.divideTrace(trails.get(0), 420*60*1000);
+			ArrayList<Trail> cmpTrail = calculations.divideTrace(temp, 420*60*1000);
 			ArrayList<Trail> cmpFineTrail = calculations.fineCompress(cmpTrail, 0.03, (long)1000000);
 			
 			for(int i = 0; i < objTrail.get(0).getPoints().size(); i ++) {

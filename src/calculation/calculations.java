@@ -189,18 +189,20 @@ public class calculations {
 	 * ‰»Î£∫“ªÃıπÏº£
 	 */
 	public static ArrayList<Object> findTopk(ArrayList<Trail> trail, double belta) {
+		@SuppressWarnings("unchecked")
+		ArrayList<Trail> trail_clone = (ArrayList<Trail>)trail.clone();
 		ArrayList<Object> result = new ArrayList<>();
 		ArrayList<Trail> topTra = new ArrayList<>();
 		ArrayList<Integer> topIndex = new ArrayList<>();
 		double hm = 0;
 		int H_sum = 0;
 		int H_num = 0;
-		for(int i = 0; i < trail.size(); i ++) {
-			hm = calcHm(trail.get(i), trail.get(i).getPoints().size());
-			trail.get(i).setHm(hm);
+		for(int i = 0; i < trail_clone.size(); i ++) {
+			hm = calcHm(trail_clone.get(i), trail_clone.get(i).getPoints().size());
+			trail_clone.get(i).setHm(hm);
 			if(hm > 0) {
 				H_sum ++;
-				topTra.add(trail.get(i));
+				topTra.add(trail_clone.get(i));
 			}
 		}
 		H_num = (int) (H_sum * belta);
