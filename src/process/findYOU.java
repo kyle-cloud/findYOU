@@ -57,7 +57,7 @@ public class findYOU {
 			ArrayList<Trail> objTrail = calculations.divideTrace(trails.get(0), 420*60*1000);
 			ArrayList<Trail> objFineTrail = calculations.fineCompress(objTrail, 0.03, (long)1000000);
 			ArrayList<Object> result_topTrails_indexes = calculations.findTopk(objFineTrail, 1);
-			objFineTrail = (ArrayList<Trail>)result_topTrails_indexes.get(0);
+			//objFineTrail = (ArrayList<Trail>)result_topTrails_indexes.get(0);
 			
 			ArrayList<Trail> cmpTrail = calculations.divideTrace(trails.get(0), 420*60*1000);
 			ArrayList<Trail> cmpFineTrail = calculations.fineCompress(cmpTrail, 0.03, (long)1000000);

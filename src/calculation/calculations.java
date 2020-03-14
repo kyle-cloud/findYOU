@@ -217,7 +217,7 @@ public class calculations {
         topTra.sort(new Comparator<Trail>() {
             @Override
             public int compare(Trail t1, Trail t2) {
-            	if(t1.getTstart().compareTo(t2.getTstart()) == 1)
+            	if(t1.getHm_index() > t2.getHm_index())
     				return 1;
     			return -1;
             }
