@@ -118,7 +118,7 @@ public class calculations {
 			tmpTrail.setIMSI(trail.get(0).getIMSI());
 			tmpTrail.setTstart(tmpTra.get(0).getDate());
 			tmpTrail.setTend(tmpTra.get(tmpTra.size()-1).getDate());
-			tmpTrail.setHm_index(finTra.size());
+			tmpTrail.setHm_index(i);
 			finTra.add(tmpTrail);
 			tmpTra.clear();
 		}
