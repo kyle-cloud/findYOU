@@ -190,7 +190,12 @@ public class calculations {
 	 * ‰»Î£∫“ªÃıπÏº£
 	 * @throws CloneNotSupportedException 
 	 */
-	public static ArrayList<Object> findTopk(ArrayList<Trail> trail, double belta) throws CloneNotSupportedException {
+	public static ArrayList<Object> findTopk(ArrayList<Trail> trail_in, double belta) throws CloneNotSupportedException {
+		ArrayList<Trail> trail = new ArrayList<>();
+		for(int i = 0; i < trail_in.size(); i ++) {
+			Trail temp = trail_in.get(i).clone();
+			trail.add(temp);
+		}
 		ArrayList<Object> result = new ArrayList<>();
 		ArrayList<Trail> topTra = new ArrayList<>();
 		ArrayList<Integer> topIndex = new ArrayList<>();
@@ -202,8 +207,7 @@ public class calculations {
 			trail.get(i).setHm(hm);
 			if(hm > 0) {
 				H_sum ++;
-				Trail temp = trail.get(i).clone();
-				topTra.add(temp);
+				topTra.add(trail.get(i));
 			}
 		}
 		H_num = (int) (H_sum * belta);
