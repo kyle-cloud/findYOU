@@ -53,18 +53,19 @@ public class findYOU {
 //				coll.insertOne(document);
 			}
 			cluseredTrails = calculations.structCluster(finTrails, finTrails.get(0), 0.9, 0.88, 50);
-			Trail temp = (Trail)trails.get(0).clone();
+			
 			ArrayList<Trail> objTrail = calculations.divideTrace(trails.get(0), 420*60*1000);
 			ArrayList<Trail> objFineTrail = calculations.fineCompress(objTrail, 0.03, (long)1000000);
 			ArrayList<Object> result_topTrails_indexes = calculations.findTopk(objFineTrail, 1);
 			//objFineTrail = (ArrayList<Trail>)result_topTrails_indexes.get(0);
 			
-			ArrayList<Trail> cmpTrail = calculations.divideTrace(temp, 420*60*1000);
+			ArrayList<Trail> cmpTrail = calculations.divideTrace(trails.get(0), 420*60*1000);
 			ArrayList<Trail> cmpFineTrail = calculations.fineCompress(cmpTrail, 0.03, (long)1000000);
 			
 			for(int i = 0; i < objTrail.get(0).getPoints().size(); i ++) {
 				System.out.println(objTrail.get(0).getPoints().get(i).getLng() + " " + cmpTrail.get(0).getPoints().get(i).getLng());
 			}
+			System.out.println("");
 			for(int i = 0; i < objFineTrail.get(0).getPoints().size(); i ++) {
 				System.out.println(objFineTrail.get(0).getPoints().get(i).getLng() + " " + cmpFineTrail.get(0).getPoints().get(i).getLng());
 			}

@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import com.sun.mail.util.TraceInputStream;
 import com.sun.org.apache.xpath.internal.operations.And;
 
 import trail.Point;
@@ -187,22 +188,22 @@ public class calculations {
 	 *
 	 *目标移动轨迹段提取（信息熵）
 	 *输入：一条轨迹
+	 * @throws CloneNotSupportedException 
 	 */
-	public static ArrayList<Object> findTopk(ArrayList<Trail> trail, double belta) {
-		@SuppressWarnings("unchecked")
-		ArrayList<Trail> trail_clone = (ArrayList<Trail>)trail.clone();
+	public static ArrayList<Object> findTopk(ArrayList<Trail> trail, double belta) throws CloneNotSupportedException {
 		ArrayList<Object> result = new ArrayList<>();
 		ArrayList<Trail> topTra = new ArrayList<>();
 		ArrayList<Integer> topIndex = new ArrayList<>();
 		double hm = 0;
 		int H_sum = 0;
 		int H_num = 0;
-		for(int i = 0; i < trail_clone.size(); i ++) {
-			hm = calcHm(trail_clone.get(i), trail_clone.get(i).getPoints().size());
-			trail_clone.get(i).setHm(hm);
+		for(int i = 0; i < trail.size(); i ++) {
+			hm = calcHm(trail.get(i), trail.get(i).getPoints().size());
+			trail.get(i).setHm(hm);
 			if(hm > 0) {
 				H_sum ++;
-				topTra.add(trail_clone.get(i));
+				Trail temp = trail.get(i).clone();
+				topTra.add(temp);
 			}
 		}
 		H_num = (int) (H_sum * belta);
@@ -326,6 +327,10 @@ public class calculations {
 				Trail trail1 = new Trail();
 				//Trail trail1_copy = new Trail();
 				Trail trail2 = new Trail();
+				
+				
+				//!!!!!!!这里依然是浅拷贝，也就是说只是换了个地址，但是还是指向相同的内容！！！所以改一个，两个都会动
+				
 				trail1 = (Trail)topTra.get(i).clone();
 				//trail1_copy = topTra.get(i); // 还是地址，没用这句话，应该clone。但是不影响结果
 				trail2 = (Trail)finTra.get(i).clone();

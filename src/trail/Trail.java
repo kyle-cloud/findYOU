@@ -1,11 +1,19 @@
 package trail;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
 import com.sun.xml.internal.bind.v2.model.core.ID;
 
-public class Trail implements Cloneable{
+public class Trail implements Cloneable, Serializable {
+	private static final long serialVersionUID = 1L;
+	
 	int sum_points = 0;
 	ArrayList<Point> points = new ArrayList<>();
 	private String ID = null;
@@ -92,10 +100,30 @@ public class Trail implements Cloneable{
 		this.cluster_id = cluster_id;
 	}
 	
-	//把这个方法重写一下就行，什么都不写
-    @Override
-	public Object clone() throws CloneNotSupportedException {
-     
-        return super.clone();
-    }
+	@Override
+	public Trail clone() {
+		// TODO Auto-generated method stub
+		Trail trail = null;
+ 
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try {
+			ObjectOutputStream oos = new ObjectOutputStream(baos);
+			oos.writeObject(this);
+			oos.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+ 
+		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+		try {
+			ObjectInputStream ois = new ObjectInputStream(bais);
+			trail = (Trail) ois.readObject();
+			ois.close();
+		} catch (IOException | ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return trail;
+	}
 }
