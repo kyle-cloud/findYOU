@@ -214,7 +214,7 @@ public class calculations {
 		topTra.sort(new Comparator<Trail>() {
             @Override
             public int compare(Trail t1, Trail t2) {
-            	if(t1.getHm() > t2.getHm())
+            	if(t1.getHm() < t2.getHm())
     				return 1;
     			return -1;
             }
@@ -331,13 +331,10 @@ public class calculations {
 				Trail trail1 = new Trail();
 				//Trail trail1_copy = new Trail();
 				Trail trail2 = new Trail();
-				
-				
-				//!!!!!!!这里依然是浅拷贝，也就是说只是换了个地址，但是还是指向相同的内容！！！所以改一个，两个都会动
-				
-				trail1 = (Trail)topTra.get(i).clone();
+
+				trail1 = topTra.get(i).clone();
 				//trail1_copy = topTra.get(i); // 还是地址，没用这句话，应该clone。但是不影响结果
-				trail2 = (Trail)finTra.get(i).clone();
+				trail2 = finTra.get(i).clone();
 				Point pre_trail1 = null;	Point pre_trail2 = null;
 				Point nxt_trail1 = null; Point nxt_trail2 = null;
 				if(i > 0) pre_trail1 = topTra.get(i-1).getPoints().get(topTra.get(i-1).getPoints().size() - 1);
