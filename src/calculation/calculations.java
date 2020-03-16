@@ -202,6 +202,8 @@ public class calculations {
 		double hm = 0;
 		int H_sum = 0;
 		int H_num = 0;
+		
+		//在这里段内的点发生了顺序改变
 		for(int i = 0; i < trail.size(); i ++) {
 			hm = calcHm(trail.get(i), trail.get(i).getPoints().size());
 			trail.get(i).setHm(hm);
@@ -210,6 +212,8 @@ public class calculations {
 				topTra.add(trail.get(i));
 			}
 		}
+		
+		
 		H_num = (int) (H_sum * belta);
 		topTra.sort(new Comparator<Trail>() {
             @Override
