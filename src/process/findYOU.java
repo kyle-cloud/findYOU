@@ -59,7 +59,7 @@ public class findYOU {
 			ArrayList<Object> result_topTrails_indexes = calculations.findTopk(objFineTrail, 1);
 			objFineTrail = (ArrayList<Trail>)result_topTrails_indexes.get(0);
 
-			ArrayList<Trail> cmpTrail = calculations.divideTrace(trails.get(cluseredTrails.get(1)), 420*60*1000);
+			ArrayList<Trail> cmpTrail = calculations.divideTrace(trails.get(cluseredTrails.get(20)), 420*60*1000);
 			ArrayList<Trail> cmpFineTrail = calculations.fineCompress(cmpTrail, 3000, (long)30*60*1000);
 			
 			ArrayList<Integer> objTopIndexs = (ArrayList<Integer>)result_topTrails_indexes.get(1); //找到目标轨迹提取的片段下标
