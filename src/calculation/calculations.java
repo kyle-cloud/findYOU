@@ -190,20 +190,19 @@ public class calculations {
 	 *输入：一条轨迹
 	 * @throws CloneNotSupportedException 
 	 */
-	public static ArrayList<Object> findTopk(ArrayList<Trail> trail_in, double belta) throws CloneNotSupportedException {
-		ArrayList<Trail> trail = new ArrayList<>();
-		for(int i = 0; i < trail_in.size(); i ++) {
-			Trail temp = trail_in.get(i).clone();
-			trail.add(temp);
-		}
+	public static ArrayList<Object> findTopk(ArrayList<Trail> trail, double belta) throws CloneNotSupportedException {
+//		ArrayList<Trail> trail = new ArrayList<>();
+//		for(int i = 0; i < trail_in.size(); i ++) {
+//			Trail temp = trail_in.get(i).clone();
+//			trail.add(temp);
+//		}
 		ArrayList<Object> result = new ArrayList<>();
 		ArrayList<Trail> topTra = new ArrayList<>();
 		ArrayList<Integer> topIndex = new ArrayList<>();
 		double hm = 0;
 		int H_sum = 0;
-		int H_num = 0;
-		
-		//在这里段内的点发生了顺序改变
+		int H_num = 0;	
+		//在这里段内的点发生了顺序改变(因为calcHm有点排序)
 		for(int i = 0; i < trail.size(); i ++) {
 			hm = calcHm(trail.get(i), trail.get(i).getPoints().size());
 			trail.get(i).setHm(hm);
@@ -212,8 +211,6 @@ public class calculations {
 				topTra.add(trail.get(i));
 			}
 		}
-		
-		
 		H_num = (int) (H_sum * belta);
 		topTra.sort(new Comparator<Trail>() {
             @Override
@@ -512,16 +509,17 @@ public class calculations {
 	 *
 	 *计算某一轨迹信息熵
 	 */
-	public static double calcHm(Trail trail, int sum) {
+	public static double calcHm(Trail trail_in, int sum) {
+		Trail trail = trail_in.clone();
 		double Hm = 0;
 		ArrayList<Point> points = new ArrayList<>();
 		points = trail.getPoints();
 		points.sort(new Comparator<Point>() {
             @Override
             public int compare(Point p1, Point p2) {
-            	if(p1.getLng() > p2.getLng())
+            	if(p1.getLng() < p2.getLng())
     				return 1;
-    			else if(p1.getLat() > p2.getLat())
+    			else if(p1.getLat() < p2.getLat())
     				return 1;
     			else return -1;
             }
