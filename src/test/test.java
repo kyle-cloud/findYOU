@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
+import com.mongodb.annotations.Beta;
 import com.sun.javafx.geom.PickRay;
 import com.sun.org.apache.bcel.internal.generic.StackConsumer;
 import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
@@ -203,11 +204,10 @@ public class test {
 
 		ArrayList<Trail> trails = downloadData.getTrails("trail");
 		for(int i = 0; i < 10; i ++) {
-			double belta = 1.0;
+			double belta = 1.1;
 			for(int k = 0; k < 10; k ++) {
-				System.out.println(k);
-				belta -= k * 0.1;
-				int obj = (int)(Math.random() * trails.size()) + 1;
+				belta -= 0.1;
+				int obj = (int)(Math.random() * trails.size());
 				ArrayList<Trail> objTrail = calculations.divideTrace(trails.get(obj), 420*60*1000);
 				ArrayList<Object> result_topTrails_indexes = calculations.findTopk(objTrail, belta);
 				ArrayList<Integer> objTopIndexs = (ArrayList<Integer>)result_topTrails_indexes.get(1); //找到目标轨迹提取的片段下标
@@ -221,9 +221,9 @@ public class test {
 					average += calculations.calcH(objTrail, cmpTrail);
 				}
 				average /= (double)trails.size();
-				bWriter.write(belta + ":" +  average);
+				bWriter.write((double) Math.round(belta*10)/10 + ":" +  average + "  ");
 			}
-			bWriter.write("");
+			bWriter.write("\n");
 		}
 		bWriter.close();
 	}
