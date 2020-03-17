@@ -218,10 +218,10 @@ public class calculations {
             @Override
             public int compare(Trail t1, Trail t2) {
             	if(t1.getHm() < t2.getHm())
-    				return -1;
+    				return 1;
             	else if(t1.getHm() == t2.getHm())
             		return 0;
-    			return 1;
+    			return -1;
             }
         });
 		List<Trail> sublist = topTra.subList(H_num, topTra.size());
