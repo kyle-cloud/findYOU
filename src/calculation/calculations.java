@@ -33,6 +33,7 @@ public class calculations {
 				current ++;
 				Trail sub_trail = new Trail();
 				sub_trail.setIMSI(trail.getIMSI());
+				sub_trail.setHm_index(current - 2);
 				sub_trail.setPoints((ArrayList<Point>)sub_points.clone());
 				sub_trail.setSum_points(sub_points.size());
 				sub_trail.setTstart(sub_points.get(0).getDate());
@@ -45,6 +46,7 @@ public class calculations {
 		//加进来最后一段
 		Trail sub_trail = new Trail();
 		sub_trail.setIMSI(trail.getIMSI());
+		sub_trail.setHm_index(current - 1);
 		sub_trail.setPoints(sub_points);
 		sub_trail.setSum_points(sub_points.size());
 		sub_trail.setTstart(sub_points.get(0).getDate());
@@ -216,8 +218,10 @@ public class calculations {
             @Override
             public int compare(Trail t1, Trail t2) {
             	if(t1.getHm() < t2.getHm())
-    				return 1;
-    			return -1;
+    				return -1;
+            	else if(t1.getHm() == t2.getHm())
+            		return 0;
+    			return 1;
             }
         });
 		List<Trail> sublist = topTra.subList(H_num, topTra.size());
@@ -227,6 +231,8 @@ public class calculations {
             public int compare(Trail t1, Trail t2) {
             	if(t1.getHm_index() > t2.getHm_index())
     				return 1;
+            	else if(t1.getHm_index() == t2.getHm_index())
+            		return 0;
     			return -1;
             }
         });
@@ -402,11 +408,11 @@ public class calculations {
 	/**
 	 * @author kyle_cloud
 	 *
-	 *计算子轨迹段Hausdorff
+	 *计算轨迹段Hausdorff
 	 */
 	public static double calcH(ArrayList<Trail> trail1, ArrayList<Trail> trail2) {
 		double res = 0;
-		for(int i = 0; i < trail1.size(); i ++) {
+		for(int i = 0; i < trail1.size() && i < trail2.size(); i ++) {
 			res += calcHk(trail1.get(i).getPoints(), trail2.get(i).getPoints());
 		}
 		return res/trail1.size();
@@ -517,11 +523,15 @@ public class calculations {
 		points.sort(new Comparator<Point>() {
             @Override
             public int compare(Point p1, Point p2) {
-            	if(p1.getLng() < p2.getLng())
+            	if(p1.getLng() > p2.getLng())
+    				return 1;
+            	else if(p1.getLng() < p2.getLng())
+            		return -1;
+    			else if(p1.getLat() > p2.getLat())
     				return 1;
     			else if(p1.getLat() < p2.getLat())
-    				return 1;
-    			else return -1;
+    				return -1;
+    			else return 0;
             }
         });
 		for(int i = 0; i < points.size(); i ++) {

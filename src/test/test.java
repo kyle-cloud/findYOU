@@ -3,10 +3,14 @@ package test;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 import com.sun.javafx.geom.PickRay;
+import com.sun.org.apache.bcel.internal.generic.StackConsumer;
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 import calculation.calculations;
 import javafx.css.PseudoClass;
@@ -190,9 +194,44 @@ public class test {
 		bWriter.close();
 	}
 	
+	@SuppressWarnings("unchecked")
+	public static void testBelta() throws Exception {
+		File f = new File("topk_belta.txt");
+		if(!f.exists()) f.createNewFile();
+		FileWriter fWriter = new FileWriter(f, true);
+		BufferedWriter bWriter = new BufferedWriter(fWriter);
+
+		ArrayList<Trail> trails = downloadData.getTrails("trail");
+		for(int i = 0; i < 10; i ++) {
+			double belta = 1.0;
+			for(int k = 0; k < 10; k ++) {
+				System.out.println(k);
+				belta -= k * 0.1;
+				int obj = (int)(Math.random() * trails.size()) + 1;
+				ArrayList<Trail> objTrail = calculations.divideTrace(trails.get(obj), 420*60*1000);
+				ArrayList<Object> result_topTrails_indexes = calculations.findTopk(objTrail, belta);
+				ArrayList<Integer> objTopIndexs = (ArrayList<Integer>)result_topTrails_indexes.get(1); //找到目标轨迹提取的片段下标
+				objTrail = (ArrayList<Trail>)result_topTrails_indexes.get(0);
+				
+				double average = 0.0;
+				for(int j = 0; j < trails.size(); j ++) {
+					//System.out.println(j);
+					ArrayList<Trail> cmpTrail = calculations.divideTrace(trails.get(j), 420*60*1000);
+					cmpTrail = calculations.getTopk(cmpTrail, objTopIndexs);
+					average += calculations.calcH(objTrail, cmpTrail);
+				}
+				average /= (double)trails.size();
+				bWriter.write(belta + ":" +  average);
+			}
+			bWriter.write("");
+		}
+		bWriter.close();
+	}
+	
 	public static void main(String[] args) throws Exception {
 		//testTimeSegment();
 		//testCompressOnNumber();
-		testCompressOnHausdorff(); // 最后是要计算与（原始轨迹-原始轨迹-距离）的结果进行比较（差值）
+		//testCompressOnHausdorff(); // 最后是要计算与（原始轨迹-原始轨迹-距离）的结果进行比较（差值）
+		testBelta();
 	}
 }
