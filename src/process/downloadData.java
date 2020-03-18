@@ -28,7 +28,9 @@ public class downloadData {
 		try {
 			MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", collname);
 			MongoCursor<Document> cursor = coll.find().iterator();
-			while(cursor.hasNext()) {
+			int total = 0;
+			while(total < 200 && cursor.hasNext()) {
+				total ++;
 				Document document = cursor.next();
 				
 				ID = (String)document.get("id");

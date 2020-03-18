@@ -243,20 +243,20 @@ public class test {
 			coarse_finTrail.setTend(coarseTrail.get(coarseTrail.size()-1).getDate());
 			finTrails.add(coarse_finTrail);
 		}
-		calculations.structCluster(finTrails, finTrails.get(0), 0.8, 0.01, 50);
+		calculations.structCluster(finTrails, finTrails.get(0), 0.8, 0.88, 50);
 		finTrails.sort(new Comparator<Trail>() {
             @Override
             public int compare(Trail t1, Trail t2) {
             	if(t1.getCluster_id() < t2.getCluster_id())
-            		return 1;
+            		return -1;
             	else if(t1.getCluster_id() == t2.getCluster_id())
             		return 0;
             	else
-            		return -1;
+            		return 1;
             }
         });
 		for(int i = 0; i < finTrails.size(); i ++) {
-			System.out.println(finTrails.get(i).getCluster_id());
+			System.out.println(i + " : " +finTrails.get(i).getCluster_id());
 		}
 	}
 	

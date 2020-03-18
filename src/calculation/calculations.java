@@ -291,6 +291,7 @@ public class calculations {
 		}
 		int k = 0;
 		for(int i = 0; i < cores.size(); i ++) {
+			if(cores.get(i).getCluster_id() != 0) continue;
 			k ++;
 			cores.get(i).setCluster_id(k);
 			connectDensity(cores.get(i), cores, Ntheta, i, k);
