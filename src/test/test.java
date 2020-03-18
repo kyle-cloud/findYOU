@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -228,10 +229,42 @@ public class test {
 		bWriter.close();
 	}
 	
+	public static void testCluster() throws Exception {
+		ArrayList<Trail> trails = downloadData.getTrails("trail");
+		ArrayList<Trail> finTrails = new ArrayList<>();
+		for(int i = 0; i < trails.size(); i ++) {
+			ArrayList<Trail> dividedTrail = calculations.divideTrace(trails.get(i), 420*60*1000);
+			ArrayList<Point> coarseTrail = calculations.coarseCompress(dividedTrail);
+			Trail coarse_finTrail = new Trail();
+			coarse_finTrail.setIMSI(trails.get(i).getIMSI());
+			coarse_finTrail.setPoints(coarseTrail);
+			coarse_finTrail.setSum_points(coarseTrail.size());
+			coarse_finTrail.setTstart(coarseTrail.get(0).getDate());
+			coarse_finTrail.setTend(coarseTrail.get(coarseTrail.size()-1).getDate());
+			finTrails.add(coarse_finTrail);
+		}
+		calculations.structCluster(finTrails, finTrails.get(0), 0.8, 0.01, 50);
+		finTrails.sort(new Comparator<Trail>() {
+            @Override
+            public int compare(Trail t1, Trail t2) {
+            	if(t1.getCluster_id() < t2.getCluster_id())
+            		return 1;
+            	else if(t1.getCluster_id() == t2.getCluster_id())
+            		return 0;
+            	else
+            		return -1;
+            }
+        });
+		for(int i = 0; i < finTrails.size(); i ++) {
+			System.out.println(finTrails.get(i).getCluster_id());
+		}
+	}
+	
 	public static void main(String[] args) throws Exception {
 		//testTimeSegment();
 		//testCompressOnNumber();
 		//testCompressOnHausdorff(); // 最后是要计算与（原始轨迹-原始轨迹-距离）的结果进行比较（差值）
-		testBelta();
+		//testBelta();
+		testCluster();
 	}
 }

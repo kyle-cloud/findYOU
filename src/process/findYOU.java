@@ -52,7 +52,7 @@ public class findYOU {
 //				MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", "fineTrail");
 //				coll.insertOne(document);
 			}
-			cluseredTrails = calculations.structCluster(finTrails, finTrails.get(0), 0.9, 0.88, 50);
+			cluseredTrails = calculations.structCluster(finTrails, finTrails.get(0), 0.8, 0.88, 50);
 			
 			ArrayList<Trail> objTrail = calculations.divideTrace(trails.get(0), 420*60*1000);
 			ArrayList<Trail> objFineTrail = calculations.fineCompress(objTrail, 3000, (long)30*60*1000);
