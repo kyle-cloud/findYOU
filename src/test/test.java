@@ -244,7 +244,16 @@ public class test {
 			finTrails.add(coarse_finTrail);
 			//System.out.println(i);
 		}
-		System.out.println(calculations.structCluster(finTrails, finTrails.get(0), 0.8, 0.75, 40).size());
+//		测试一下相似轨迹的平均sim值，以便定聚类参数
+//		double sum = 0.0;
+//		for(int j = 0; j < 20; j ++) {
+//			for(int i = 0; i < 20; i ++) {
+//				//System.out.println(calculations.calcSim(finTrails.get(0), finTrails.get(i), 0.8));
+//				sum += calculations.calcSim(finTrails.get(j), finTrails.get(i), 0.8);
+//			}
+//		}
+//		System.out.println(sum / 400);
+		System.out.println(calculations.structCluster(finTrails, finTrails.get(0), 0.8, 0.73, 3000).size());
 		finTrails.sort(new Comparator<Trail>() {
             @Override
             public int compare(Trail t1, Trail t2) {

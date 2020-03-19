@@ -280,10 +280,12 @@ public class calculations {
 			for(int j = 0; j < trails.size(); j ++) {
 				if(j == i) continue;
 				double sim = calcSim(trails.get(i), trails.get(j), alpha);
+				//System.out.println(sim);
 				if(sim >= theta && j != i) {
 					N_tmp.add(trails.get(j));
 				}
 			}
+			//System.out.println(N_tmp.size());
 			if(N_tmp.size() >= Minpts) {
 				cores.add(trails.get(i));
 				Ntheta.add((ArrayList<Trail>) N_tmp.clone());
@@ -557,7 +559,7 @@ public class calculations {
 	 *¡ΩπÏº£œ‡À∆∂»
 	 */
 	public static double calcSim(Trail trail1, Trail trail2, double alpha) {
-		return 1 - alpha * calcLocD(trail1, trail2) + (1 - alpha) * calcAngleD(trail1, trail2);
+		return 1 - alpha * calcLocD(trail1, trail2) - (1 - alpha) * calcAngleD(trail1, trail2);
 	}
 	
 	/**
@@ -574,6 +576,7 @@ public class calculations {
 			max = Math.max(max, tmp);
 			res += tmp;
 		}
+		if(max == min) return 0;
 		res /= trail1.getPoints().size();
 		res = (res - min) / (max - min);
 		return res;
@@ -593,6 +596,7 @@ public class calculations {
 			max = Math.max(max, tmp);
 			res += tmp;
 		}
+		if(max == min) return 0;
 		res /= trail1.getPoints().size();
 		res = (res - min) / (max - min);
 		return res;
