@@ -242,8 +242,9 @@ public class test {
 			coarse_finTrail.setTstart(coarseTrail.get(0).getDate());
 			coarse_finTrail.setTend(coarseTrail.get(coarseTrail.size()-1).getDate());
 			finTrails.add(coarse_finTrail);
+			//System.out.println(i);
 		}
-		calculations.structCluster(finTrails, finTrails.get(0), 0.8, 0.88, 50);
+		System.out.println(calculations.structCluster(finTrails, finTrails.get(0), 0.8, 0.75, 40).size());
 		finTrails.sort(new Comparator<Trail>() {
             @Override
             public int compare(Trail t1, Trail t2) {
@@ -255,9 +256,19 @@ public class test {
             		return 1;
             }
         });
-		for(int i = 0; i < finTrails.size(); i ++) {
-			System.out.println(i + " : " +finTrails.get(i).getCluster_id());
+		int count = 1;
+		int min = 20000;
+		int max = -1;
+		for(int i = 1; i < finTrails.size(); i ++) {
+			if(finTrails.get(i - 1).getCluster_id() == finTrails.get(i).getCluster_id()) count ++;
+			else {
+				min = Math.min(min, count);
+				max = Math.max(max, count);
+				count = 1;
+			}
 		}
+		System.out.println(min + "-" + max);
+		System.out.println(finTrails.get(finTrails.size() - 1).getCluster_id());
 	}
 	
 	public static void main(String[] args) throws Exception {

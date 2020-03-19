@@ -267,7 +267,7 @@ public class calculations {
 	 *输入：多条轨迹
 	 */
 	@SuppressWarnings("unchecked")
-	public static ArrayList<Integer> structCluster(ArrayList<Trail> trails, Trail objTrail, double alpha, double theta, int Minpts) {
+	public static ArrayList<Trail> structCluster(ArrayList<Trail> trails, Trail objTrail, double alpha, double theta, int Minpts) {
 		//ArrayList<Object> result = new ArrayList<>();
 		//trails.add(objTrail);//我的目标轨迹例子拿的就是里边的一条轨迹，再加上一次，之后remove只会去掉一个
 		ArrayList<Trail> cores = new ArrayList<>();
@@ -307,7 +307,8 @@ public class calculations {
 				noises.add(trails.get(i));
 			}
 		}
-		return cluster;
+		//return cluster;
+		return noises;
 	}
 	
 	/**
