@@ -9,14 +9,20 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Random;
 
+import javax.mail.Flags.Flag;
+
+import org.eclipse.jdt.internal.compiler.ast.DoubleLiteral;
+
 import com.mongodb.annotations.Beta;
 import com.sun.javafx.geom.PickRay;
+import com.sun.jndi.url.iiopname.iiopnameURLContextFactory;
 import com.sun.org.apache.bcel.internal.generic.StackConsumer;
 import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 import calculation.calculations;
 import javafx.css.PseudoClass;
 import process.downloadData;
+import sun.tools.jar.resources.jar;
 import trail.Point;
 import trail.Trail;
 
@@ -245,15 +251,31 @@ public class test {
 			//System.out.println(i);
 		}
 //		测试一下相似轨迹的平均sim值，以便定聚类参数
-//		double sum = 0.0;
-//		for(int j = 0; j < 20; j ++) {
-//			for(int i = 0; i < 20; i ++) {
-//				//System.out.println(calculations.calcSim(finTrails.get(0), finTrails.get(i), 0.8));
-//				sum += calculations.calcSim(finTrails.get(j), finTrails.get(i), 0.8);
+//		
+//		double Sum = 0.0;
+//		int loop = 0;
+//		for(int k = 0; k < 9; k ++) {
+//			loop = 20 * k;
+//			double sum = 0.0;
+//			for(int j = loop; j < loop + 20; j ++) {
+//				for(int i = loop; i < loop + 20; i ++) {
+//					if(i == j) continue;
+//					//System.out.println(calculations.calcSim(finTrails.get(0), finTrails.get(i), 0.8));
+//					sum += calculations.calcSim(finTrails.get(j), finTrails.get(i), 0.8);
+//				}
+//			}
+//			System.out.println(loop + " : " + sum / (380));
+//			Sum += sum;
+//		}
+//		System.out.println(Sum / (380 * 9));
+		
+////		测试一下不同轨迹的相似度
+//		for(int i = 0; i < 200; i ++) {
+//			for(int j = 200; j < 400; j ++) {
+//				System.out.println(calculations.calcSim(finTrails.get(i), finTrails.get(j), 0.8));
 //			}
 //		}
-//		System.out.println(sum / 400);
-		System.out.println(calculations.structCluster(finTrails, finTrails.get(0), 0.8, 0.73, 3000).size());
+		System.out.println(calculations.structCluster(finTrails, finTrails.get(0), 0.8, 0.70, 50).size());
 		finTrails.sort(new Comparator<Trail>() {
             @Override
             public int compare(Trail t1, Trail t2) {
@@ -268,7 +290,14 @@ public class test {
 		int count = 1;
 		int min = 20000;
 		int max = -1;
-		for(int i = 1; i < finTrails.size(); i ++) {
+		int flag = 0;
+		for(int i = 0; i < finTrails.size(); i ++) {
+			System.out.println(finTrails.get(i).getCluster_id());
+			if(finTrails.get(i).getCluster_id() == 0) continue;
+			if(flag == 0) {
+				i ++;
+				flag = 1;
+			}
 			if(finTrails.get(i - 1).getCluster_id() == finTrails.get(i).getCluster_id()) count ++;
 			else {
 				min = Math.min(min, count);
