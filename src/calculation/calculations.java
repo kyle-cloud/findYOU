@@ -282,7 +282,7 @@ public class calculations {
 				double sim = calcSim(trails.get(i), trails.get(j), alpha);
 				//System.out.println(sim);
 				if(sim >= theta && j != i) {
-					N_tmp.add(trails.get(j));
+					N_tmp.add(trails.get(j).clone());
 				}
 			}
 			//System.out.println(N_tmp.size());
