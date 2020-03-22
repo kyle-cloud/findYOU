@@ -305,6 +305,8 @@ public class test {
 				count = 1;
 			}
 		}
+		min = Math.min(min, count);
+		max = Math.max(max, count);
 		System.out.println(min + "-" + max);
 		System.out.println(finTrails.get(finTrails.size() - 1).getCluster_id());
 	}

@@ -271,8 +271,8 @@ public class calculations {
 		//ArrayList<Object> result = new ArrayList<>();
 		//trails.add(objTrail);//我的目标轨迹例子拿的就是里边的一条轨迹，再加上一次，之后remove只会去掉一个
 		ArrayList<Trail> cores = new ArrayList<>();
-		ArrayList<ArrayList<Trail>> Ntheta = new ArrayList<>();
-		ArrayList<Trail> N_tmp = new ArrayList<>();
+		ArrayList<ArrayList<Integer>> Ntheta = new ArrayList<>();
+		ArrayList<Integer> N_tmp = new ArrayList<>();
 		ArrayList<Integer> cluster = new ArrayList<>();
 		ArrayList<Integer> noises = new ArrayList<>();
 		for(int i = 0; i < trails.size(); i ++) {
@@ -282,13 +282,13 @@ public class calculations {
 				double sim = calcSim(trails.get(i), trails.get(j), alpha);
 				//System.out.println(sim);
 				if(sim >= theta && j != i) {
-					N_tmp.add(trails.get(j).clone());
+					N_tmp.add(j);  //这样也不行，这样贴标签的时候就贴的不是原来的轨迹了
 				}
 			}
 			//System.out.println(N_tmp.size());
 			if(N_tmp.size() >= Minpts) {
 				cores.add(trails.get(i));
-				Ntheta.add((ArrayList<Trail>) N_tmp.clone());
+				Ntheta.add((ArrayList<Integer>) N_tmp.clone());
 			}
 		}
 		int k = 0;
@@ -296,7 +296,7 @@ public class calculations {
 			if(cores.get(i).getCluster_id() != 0) continue;
 			k ++;
 			cores.get(i).setCluster_id(k);
-			connectDensity(cores.get(i), cores, Ntheta, i, k);
+			connectDensity(cores.get(i), trails, cores, Ntheta, i, k);
 		}
 		//找出相似轨迹集
 		int objCluster = objTrail.getCluster_id();
@@ -318,12 +318,12 @@ public class calculations {
 	 *
 	 *连通集标记
 	 */
-	public static void connectDensity(Trail core, ArrayList<Trail> cores, ArrayList<ArrayList<Trail>> N_trails, int index, int id) {
+	public static void connectDensity(Trail core, ArrayList<Trail> trails, ArrayList<Trail> cores, ArrayList<ArrayList<Integer>> N_trails, int index, int id) {
 		for(int i = 0; i < N_trails.get(index).size(); i ++) {
-			N_trails.get(index).get(i).setCluster_id(id);
-			int index_tmp = cores.indexOf(N_trails.get(index).get(i));
-			if(index_tmp != -1 && N_trails.get(index).get(i).getCluster_id() != id) {
-				connectDensity(N_trails.get(index).get(i), cores, N_trails, index_tmp, id);
+			trails.get(N_trails.get(index).get(i)).setCluster_id(id);
+			int index_tmp = cores.indexOf(trails.get(N_trails.get(index).get(i)));
+			if(index_tmp != -1 && trails.get(N_trails.get(index).get(i)).getCluster_id() != id) {
+				connectDensity(trails.get(N_trails.get(index).get(i)), trails, cores, N_trails, index_tmp, id);
 			}
 		}
 	}
