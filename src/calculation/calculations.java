@@ -285,7 +285,7 @@ public class calculations {
 					N_tmp.add(j);  //这样也不行，这样贴标签的时候就贴的不是原来的轨迹了
 				}
 			}
-			//System.out.println(N_tmp.size());
+			System.out.println(N_tmp.size());
 			if(N_tmp.size() >= Minpts) {
 				cores.add(trails.get(i));
 				Ntheta.add((ArrayList<Integer>) N_tmp.clone());
@@ -293,19 +293,20 @@ public class calculations {
 		}
 		int k = 0;
 		for(int i = 0; i < cores.size(); i ++) {
-			if(cores.get(i).getCluster_id() != 0) continue;
 			k ++;
 			cores.get(i).setCluster_id(k);
 			connectDensity(cores.get(i), trails, cores, Ntheta, i, k);
 		}
 		//找出相似轨迹集
-		int objCluster = objTrail.getCluster_id();
-		trails.remove(objTrail);
+		ArrayList<Integer> objCluster = objTrail.getCluster_id();
+		//trails.remove(objTrail);
 		for(int i = 0; i < trails.size(); i ++) {
-			if(trails.get(i).getCluster_id() == objCluster) {
-				cluster.add(i);
+			for(int j = 0; j < objCluster.size(); j ++) {
+				if(trails.get(i).getCluster_id().contains(objCluster.get(j))){
+					cluster.add(i);
+				}
 			}
-			if(trails.get(i).getCluster_id() == 0) {
+			if(trails.get(i).getCluster_id().size() == 0) {
 				noises.add(i);
 			}
 		}
@@ -320,9 +321,10 @@ public class calculations {
 	 */
 	public static void connectDensity(Trail core, ArrayList<Trail> trails, ArrayList<Trail> cores, ArrayList<ArrayList<Integer>> N_trails, int index, int id) {
 		for(int i = 0; i < N_trails.get(index).size(); i ++) {
+			if(trails.get(N_trails.get(index).get(i)).getCluster_id().contains(id)) continue;
 			trails.get(N_trails.get(index).get(i)).setCluster_id(id);
 			int index_tmp = cores.indexOf(trails.get(N_trails.get(index).get(i)));
-			if(index_tmp != -1 && trails.get(N_trails.get(index).get(i)).getCluster_id() != id) {
+			if(index_tmp != -1) {
 				connectDensity(trails.get(N_trails.get(index).get(i)), trails, cores, N_trails, index_tmp, id);
 			}
 		}

@@ -5,8 +5,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import javax.mail.Flags.Flag;
@@ -276,38 +279,20 @@ public class test {
 //			}
 //		}
 		System.out.println(calculations.structCluster(finTrails, finTrails.get(0), 0.8, 0.70, 50).size());
-		finTrails.sort(new Comparator<Trail>() {
-            @Override
-            public int compare(Trail t1, Trail t2) {
-            	if(t1.getCluster_id() < t2.getCluster_id())
-            		return -1;
-            	else if(t1.getCluster_id() == t2.getCluster_id())
-            		return 0;
-            	else
-            		return 1;
-            }
-        });
-		int count = 1;
-		int min = 20000;
-		int max = -1;
-		int flag = 0;
+		
+		ArrayList<Integer> objCluster_id = finTrails.get(0).getCluster_id();
+		Map<Integer, Integer> mapp = new HashMap<>();
 		for(int i = 0; i < finTrails.size(); i ++) {
-			System.out.println(finTrails.get(i).getCluster_id());
-			if(finTrails.get(i).getCluster_id() == 0) continue;
-			if(flag == 0) {
-				i ++;
-				flag = 1;
-			}
-			if(finTrails.get(i - 1).getCluster_id() == finTrails.get(i).getCluster_id()) count ++;
-			else {
-				min = Math.min(min, count);
-				max = Math.max(max, count);
-				count = 1;
+			for(int j = 0; j < finTrails.get(i).getCluster_id().size(); j++) {
+				int temp = finTrails.get(i).getCluster_id().get(j);
+				mapp.put(temp, mapp.get(temp) == null ? 1 : mapp.get(temp) + 1);
 			}
 		}
-		min = Math.min(min, count);
-		max = Math.max(max, count);
-		System.out.println(min + "-" + max);
+		int length = mapp.size();
+		Collection<Integer> c = mapp.values();
+		Object[] obj = c.toArray();
+		Arrays.sort(obj);
+		System.out.println(obj[0] + "-" + obj[length - 1]);
 		System.out.println(finTrails.get(finTrails.size() - 1).getCluster_id());
 	}
 	
