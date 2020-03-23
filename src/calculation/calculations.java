@@ -267,7 +267,7 @@ public class calculations {
 	 *输入：多条轨迹
 	 */
 	@SuppressWarnings("unchecked")
-	public static ArrayList<Integer> structCluster(ArrayList<Trail> trails, Trail objTrail, double alpha, double theta, int Minpts) {
+	public static int structCluster(ArrayList<Trail> trails, Trail objTrail, double alpha, double theta, int Minpts) {
 		//ArrayList<Object> result = new ArrayList<>();
 		//trails.add(objTrail);//我的目标轨迹例子拿的就是里边的一条轨迹，再加上一次，之后remove只会去掉一个
 		ArrayList<Trail> cores = new ArrayList<>();
@@ -282,7 +282,7 @@ public class calculations {
 				double sim = calcSim(trails.get(i), trails.get(j), alpha);
 				//System.out.println(sim);
 				if(sim >= theta && j != i) {
-					N_tmp.add(j);  //这样也不行，这样贴标签的时候就贴的不是原来的轨迹了
+					N_tmp.add(j);
 				}
 			}
 			System.out.println(N_tmp.size());
@@ -311,7 +311,8 @@ public class calculations {
 			}
 		}
 		//return cluster;
-		return noises;
+		//return noises;
+		return k;
 	}
 	
 	/**

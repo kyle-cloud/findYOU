@@ -242,7 +242,7 @@ public class test {
 		ArrayList<Trail> trails = downloadData.getTrails("trail");
 		ArrayList<Trail> finTrails = new ArrayList<>();
 		for(int i = 0; i < trails.size(); i ++) {
-			ArrayList<Trail> dividedTrail = calculations.divideTrace(trails.get(i), 420*60*1000);
+			ArrayList<Trail> dividedTrail = calculations.divideTrace(trails.get(i), 240*60*1000);
 			ArrayList<Point> coarseTrail = calculations.coarseCompress(dividedTrail);
 			Trail coarse_finTrail = new Trail();
 			coarse_finTrail.setIMSI(trails.get(i).getIMSI());
@@ -278,7 +278,7 @@ public class test {
 //				System.out.println(calculations.calcSim(finTrails.get(i), finTrails.get(j), 0.8));
 //			}
 //		}
-		System.out.println(calculations.structCluster(finTrails, finTrails.get(0), 0.8, 0.70, 50).size());
+		System.out.println(calculations.structCluster(finTrails, finTrails.get(0), 0.8, 0.78, 50));
 		
 		ArrayList<Integer> objCluster_id = finTrails.get(0).getCluster_id();
 		Map<Integer, Integer> mapp = new HashMap<>();
@@ -293,7 +293,7 @@ public class test {
 		Object[] obj = c.toArray();
 		Arrays.sort(obj);
 		System.out.println(obj[0] + "-" + obj[length - 1]);
-		System.out.println(finTrails.get(finTrails.size() - 1).getCluster_id());
+		System.out.println();
 	}
 	
 	public static void main(String[] args) throws Exception {
