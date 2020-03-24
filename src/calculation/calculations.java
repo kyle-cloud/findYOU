@@ -285,11 +285,11 @@ public class calculations {
 					N_tmp.add(j);
 				}
 			}
-//			System.out.println(N_tmp.size());
+//			System.out.println(i + " : " + N_tmp.size());
 //			if(N_tmp.size() > trails.size() - 20) {
 //				System.out.println(i + " " + N_tmp.size());
 //			}
-			if(N_tmp.size() >= Minpts) {
+			if(N_tmp.size() >= Minpts && N_tmp.size() <= trails.size() / 2) {
 				cores.add(trails.get(i));
 				Ntheta.add((ArrayList<Integer>) N_tmp.clone());
 			}
@@ -303,7 +303,7 @@ public class calculations {
 		}
 		//’“≥ˆœ‡À∆πÏº£ºØ
 		int objCluster = objTrail.getCluster_id();
- 		trails.remove(objTrail);
+ 		//trails.remove(objTrail);
 		for(int i = 0; i < trails.size(); i ++) {
  			if(trails.get(i).getCluster_id() == objCluster) {
  				cluster.add(i);

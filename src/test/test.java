@@ -254,7 +254,13 @@ public class test {
 			//System.out.println(i);
 		}
 
-		System.out.println(calculations.structCluster(finTrails, finTrails.get(0), 0.8, 0.80, 1000).size());
+		System.out.println(calculations.structCluster(finTrails, finTrails.get(0), 0.8, 0.80, 100).size());
+		//看一下每条轨迹分到的集合
+		for(int i = 0; i < finTrails.size(); i ++) {
+			System.out.println(i + " : " + finTrails.get(i).getCluster_id());
+		}
+		
+		//计算聚类后最小和最大的轨迹集合
 		finTrails.sort(new Comparator<Trail>() {
 			 @Override
 			 public int compare(Trail t1, Trail t2) {
@@ -271,7 +277,7 @@ public class test {
  		int max = -1;		
  		int flag = 0;
  		for(int i = 0; i < finTrails.size(); i ++) {
- 			System.out.println(finTrails.get(i).getCluster_id());
+ 			//System.out.println(finTrails.get(i).getCluster_id());
  			if(finTrails.get(i).getCluster_id() == 0) continue;
  			if(flag == 0) {
  				i ++;
