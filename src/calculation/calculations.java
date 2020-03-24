@@ -285,7 +285,10 @@ public class calculations {
 					N_tmp.add(j);
 				}
 			}
-			System.out.println(N_tmp.size());
+			//System.out.println(N_tmp.size());
+			if(N_tmp.size() > trails.size() - 20) {
+				System.out.println(N_tmp.size());
+			}
 			if(N_tmp.size() >= Minpts) {
 				cores.add(trails.get(i));
 				Ntheta.add((ArrayList<Integer>) N_tmp.clone());

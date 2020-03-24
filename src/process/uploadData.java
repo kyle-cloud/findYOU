@@ -29,32 +29,10 @@ public class uploadData {
 			bReader.mark((int)file.length() + 1);
 				
 			//特别注意把太小的文件直接当一条轨迹
-			//System.out.println(file.length());
-			if(file.length() == 0) return;
-			if(file.length() <= 9000) {
-				for(String line = new String(bReader.readLine().getBytes(), "utf-8"); line != null; line = bReader.readLine()) {
-					for(int j = 0; j < 19; j ++) {
-						if(bReader.readLine() != null);
-						else break;
-					}
-					String[] strs = line.split(",");
-					IMSI = strs[0];
-					dates.add(strs[1]);
-					longitudes.add(Double.parseDouble(strs[2]));
-					latitudes.add(Double.parseDouble(strs[3]));
-				}
-				Document document = new Document();
-				document.put("IMSI", IMSI);
-				document.put("TraceTimes", dates);
-				document.put("Longitudes", longitudes);
-				document.put("Latitudes", latitudes);
-				MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", "trail");
-				coll.insertOne(document);
-				bReader.close();
-				return;
-			}
-			
-			for(int i = 0; i < 20; i ++) {
+			if(file.length() < 4000) return;
+			int divided_nums = (int) (file.length() / 4000);
+			//System.out.println(file.length() + " : " + divided_nums);
+			for(int i = 0; i < divided_nums; i ++) {
 				for(int j = 0; j < i; j++) {
 					bReader.readLine();
 				}
@@ -62,7 +40,7 @@ public class uploadData {
 				longitudes.clear();
 				latitudes.clear();
 				for(String line = new String(bReader.readLine().getBytes(), "utf-8"); line != null; line = bReader.readLine()) {
-					for(int j = 0; j < 19; j ++) {
+					for(int j = 0; j < divided_nums - 1; j ++) {
 						if(bReader.readLine() != null);
 						else break;
 					}
