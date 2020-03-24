@@ -267,7 +267,7 @@ public class calculations {
 	 *输入：多条轨迹
 	 */
 	@SuppressWarnings("unchecked")
-	public static int structCluster(ArrayList<Trail> trails, Trail objTrail, double alpha, double theta, int Minpts) {
+	public static ArrayList<Integer> structCluster(ArrayList<Trail> trails, Trail objTrail, double alpha, double theta, int Minpts) {
 		//ArrayList<Object> result = new ArrayList<>();
 		//trails.add(objTrail);//我的目标轨迹例子拿的就是里边的一条轨迹，再加上一次，之后remove只会去掉一个
 		ArrayList<Trail> cores = new ArrayList<>();
@@ -280,15 +280,15 @@ public class calculations {
 			for(int j = 0; j < trails.size(); j ++) {
 				if(j == i) continue;
 				double sim = calcSim(trails.get(i), trails.get(j), alpha);
-				//System.out.println(sim);
+				//if(i == 44 && j >= 44 && j < 52) System.out.println(sim); //简单测试了一下相似轨迹的相似数值范围
 				if(sim >= theta && j != i) {
 					N_tmp.add(j);
 				}
 			}
-			//System.out.println(N_tmp.size());
-			if(N_tmp.size() > trails.size() - 20) {
-				System.out.println(N_tmp.size());
-			}
+//			System.out.println(N_tmp.size());
+//			if(N_tmp.size() > trails.size() - 20) {
+//				System.out.println(i + " " + N_tmp.size());
+//			}
 			if(N_tmp.size() >= Minpts) {
 				cores.add(trails.get(i));
 				Ntheta.add((ArrayList<Integer>) N_tmp.clone());
@@ -296,26 +296,25 @@ public class calculations {
 		}
 		int k = 0;
 		for(int i = 0; i < cores.size(); i ++) {
+			if(cores.get(i).getCluster_id() != 0) continue;
 			k ++;
 			cores.get(i).setCluster_id(k);
 			connectDensity(cores.get(i), trails, cores, Ntheta, i, k);
 		}
 		//找出相似轨迹集
-		ArrayList<Integer> objCluster = objTrail.getCluster_id();
-		//trails.remove(objTrail);
+		int objCluster = objTrail.getCluster_id();
+ 		trails.remove(objTrail);
 		for(int i = 0; i < trails.size(); i ++) {
-			for(int j = 0; j < objCluster.size(); j ++) {
-				if(trails.get(i).getCluster_id().contains(objCluster.get(j))){
-					cluster.add(i);
-				}
-			}
-			if(trails.get(i).getCluster_id().size() == 0) {
+ 			if(trails.get(i).getCluster_id() == objCluster) {
+ 				cluster.add(i);
+ 			}
+			if(trails.get(i).getCluster_id() == 0) {
 				noises.add(i);
 			}
 		}
 		//return cluster;
-		//return noises;
-		return k;
+		return noises;
+		//return k;
 	}
 	
 	/**
@@ -325,10 +324,9 @@ public class calculations {
 	 */
 	public static void connectDensity(Trail core, ArrayList<Trail> trails, ArrayList<Trail> cores, ArrayList<ArrayList<Integer>> N_trails, int index, int id) {
 		for(int i = 0; i < N_trails.get(index).size(); i ++) {
-			if(trails.get(N_trails.get(index).get(i)).getCluster_id().contains(id)) continue;
 			trails.get(N_trails.get(index).get(i)).setCluster_id(id);
 			int index_tmp = cores.indexOf(trails.get(N_trails.get(index).get(i)));
-			if(index_tmp != -1) {
+			if(index_tmp != -1 && trails.get(N_trails.get(index).get(i)).getCluster_id() != id) {
 				connectDensity(trails.get(N_trails.get(index).get(i)), trails, cores, N_trails, index_tmp, id);
 			}
 		}

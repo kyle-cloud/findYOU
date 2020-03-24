@@ -22,7 +22,7 @@ public class Trail implements Cloneable, Serializable {
 	private Date Tend;
 	private double hm = 0;
 	private int hm_index = -1;
-	ArrayList<Integer> cluster_id = new ArrayList<>();
+	int cluster_id = 0;
 	
 	public Trail() {
 		// TODO Auto-generated constructor stub
@@ -60,7 +60,7 @@ public class Trail implements Cloneable, Serializable {
 		return hm_index;
 	}
 	
-	public ArrayList<Integer> getCluster_id() {
+	public int getCluster_id() {
 		return cluster_id;
 	}
 	
@@ -97,7 +97,7 @@ public class Trail implements Cloneable, Serializable {
 	}
 	
 	public void setCluster_id(int cluster_id) {
-		this.cluster_id.add(cluster_id);
+		this.cluster_id = cluster_id;
 	}
 	
 	@Override

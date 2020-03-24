@@ -253,47 +253,42 @@ public class test {
 			finTrails.add(coarse_finTrail);
 			//System.out.println(i);
 		}
-//		测试一下相似轨迹的平均sim值，以便定聚类参数
-//		
-//		double Sum = 0.0;
-//		int loop = 0;
-//		for(int k = 0; k < 9; k ++) {
-//			loop = 20 * k;
-//			double sum = 0.0;
-//			for(int j = loop; j < loop + 20; j ++) {
-//				for(int i = loop; i < loop + 20; i ++) {
-//					if(i == j) continue;
-//					//System.out.println(calculations.calcSim(finTrails.get(0), finTrails.get(i), 0.8));
-//					sum += calculations.calcSim(finTrails.get(j), finTrails.get(i), 0.8);
-//				}
-//			}
-//			System.out.println(loop + " : " + sum / (380));
-//			Sum += sum;
-//		}
-//		System.out.println(Sum / (380 * 9));
-		
-////		测试一下不同轨迹的相似度
-//		for(int i = 0; i < 200; i ++) {
-//			for(int j = 200; j < 400; j ++) {
-//				System.out.println(calculations.calcSim(finTrails.get(i), finTrails.get(j), 0.8));
-//			}
-//		}
-		System.out.println(calculations.structCluster(finTrails, finTrails.get(0), 0.8, 0.78, 50));
-		
-		ArrayList<Integer> objCluster_id = finTrails.get(0).getCluster_id();
-		Map<Integer, Integer> mapp = new HashMap<>();
-		for(int i = 0; i < finTrails.size(); i ++) {
-			for(int j = 0; j < finTrails.get(i).getCluster_id().size(); j++) {
-				int temp = finTrails.get(i).getCluster_id().get(j);
-				mapp.put(temp, mapp.get(temp) == null ? 1 : mapp.get(temp) + 1);
-			}
-		}
-		int length = mapp.size();
-		Collection<Integer> c = mapp.values();
-		Object[] obj = c.toArray();
-		Arrays.sort(obj);
-		System.out.println(obj[0] + "-" + obj[length - 1]);
-		System.out.println();
+
+		System.out.println(calculations.structCluster(finTrails, finTrails.get(0), 0.8, 0.80, 1000).size());
+		finTrails.sort(new Comparator<Trail>() {
+			 @Override
+			 public int compare(Trail t1, Trail t2) {
+				 if(t1.getCluster_id() < t2.getCluster_id())
+					 return -1;
+				 else if(t1.getCluster_id() == t2.getCluster_id())
+					 return 0;
+				 else
+					 return 1;
+			 }
+		});
+		int count = 1;		
+ 		int min = 20000;		
+ 		int max = -1;		
+ 		int flag = 0;
+ 		for(int i = 0; i < finTrails.size(); i ++) {
+ 			System.out.println(finTrails.get(i).getCluster_id());
+ 			if(finTrails.get(i).getCluster_id() == 0) continue;
+ 			if(flag == 0) {
+ 				i ++;
+ 				flag = 1;
+ 			}
+ 			if(finTrails.get(i - 1).getCluster_id() == finTrails.get(i).getCluster_id()) count ++;		
+ 			else {		
+ 				min = Math.min(min, count);		
+ 				max = Math.max(max, count);		
+ 				count = 1;
+ 			}
+ 		}
+ 		min = Math.min(min, count);
+ 		max = Math.max(max, count);
+ 		System.out.println(min + "-" + max);
+ 		
+ 		System.out.println(finTrails.get(finTrails.size() - 1).getCluster_id());
 	}
 	
 	public static void main(String[] args) throws Exception {
