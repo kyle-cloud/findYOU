@@ -8,10 +8,14 @@ import java.util.List;
 import com.sun.mail.util.TraceInputStream;
 import com.sun.org.apache.xpath.internal.operations.And;
 
+import process.downloadData;
 import trail.Point;
 import trail.Trail;
 
 public class calculations {
+	
+	
+	
 	/**
 	 * @author kyle_cloud
 	 *
@@ -312,8 +316,8 @@ public class calculations {
 				noises.add(i);
 			}
 		}
-		//return cluster;
-		return noises;
+		return cluster;
+		//return noises;
 		//return k;
 	}
 	

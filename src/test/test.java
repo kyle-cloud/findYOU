@@ -297,11 +297,58 @@ public class test {
  		System.out.println(finTrails.get(finTrails.size() - 1).getCluster_id());
 	}
 	
+	/**
+	 * @author kyle_cloud
+	 *
+	 *找到最相似的十条轨迹
+	 * @throws Exception 
+	 */
+	@SuppressWarnings("unchecked")
+	public static void testFindTopTrails() throws Exception {
+		ArrayList<Trail> trails = downloadData.getTrails("trail");
+		ArrayList<Trail> finTrails = new ArrayList<>();
+		ArrayList<Double> hausdorff_final = new ArrayList<>();
+		for(int i = 0; i < trails.size(); i ++) {
+			ArrayList<Trail> dividedTrail = calculations.divideTrace(trails.get(i), 240*60*1000);
+			ArrayList<Point> coarseTrail = calculations.coarseCompress(dividedTrail);
+			Trail coarse_finTrail = new Trail();
+			coarse_finTrail.setIMSI(trails.get(i).getIMSI());
+			coarse_finTrail.setPoints(coarseTrail);
+			coarse_finTrail.setSum_points(coarseTrail.size());
+			coarse_finTrail.setTstart(coarseTrail.get(0).getDate());
+			coarse_finTrail.setTend(coarseTrail.get(coarseTrail.size()-1).getDate());
+			finTrails.add(coarse_finTrail);
+		}
+		ArrayList<Integer> cluseredTrails = calculations.structCluster(finTrails, finTrails.get(0), 0.8, 0.80, 50);
+		
+		ArrayList<Trail> objTrail = calculations.divideTrace(trails.get(0), 420*60*1000);
+		ArrayList<Trail> objFineTrail = calculations.fineCompress(objTrail, 3000, (long)30*60*1000);
+		ArrayList<Object> result_topTrails_indexes = calculations.findTopk(objFineTrail, 1);
+		objFineTrail = (ArrayList<Trail>)result_topTrails_indexes.get(0);
+		
+		double min = Integer.MAX_VALUE;
+		double max = 0.0;
+		for(int i = 0; i < finTrails.size(); i ++) {
+			ArrayList<Trail> cmpTrail = calculations.divideTrace(trails.get(cluseredTrails.get(i)), 420*60*1000);
+			ArrayList<Trail> cmpFineTrail = calculations.fineCompress(cmpTrail, 3000, (long)30*60*1000);
+			ArrayList<Integer> objTopIndexs = (ArrayList<Integer>)result_topTrails_indexes.get(1);
+			cmpFineTrail = calculations.getTopk(cmpFineTrail, objTopIndexs);
+			double temp = calculations.innerSimilarity(objFineTrail, cmpFineTrail);
+			hausdorff_final.add(temp);
+			min = Math.min(min, temp);
+			max = Math.max(max, temp);
+		}
+		for(int i = 0; i < finTrails.size(); i ++) {
+			System.out.println(1 - (hausdorff_final.get(i) - min) / (max - min));
+		}
+	}
+	
 	public static void main(String[] args) throws Exception {
 		//testTimeSegment();
 		//testCompressOnNumber();
 		//testCompressOnHausdorff(); // 最后是要计算与（原始轨迹-原始轨迹-距离）的结果进行比较（差值）
 		//testBelta();
-		testCluster();
+		//testCluster();
+		testFindTopTrails();
 	}
 }
