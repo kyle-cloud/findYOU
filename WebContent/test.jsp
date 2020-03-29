@@ -142,19 +142,16 @@
 				return
 			}
 			$.ajax({
-		        type: "POST", //请求的方式，默认get请求
-		        url: "admin/testParam", //请求地址，后台提供的
-		        data: {IMSI: Imsi},//data是传给后台的字段，后台需要哪些就传入哪些
+		        //type: "POST", //请求的方式，默认get请求
+		        url: "admin/myController/root/testParam", //请求地址，后台提供的
+		        data: {'IMSI': Imsi},//data是传给后台的字段，后台需要哪些就传入哪些
 		        dataType: "json", //json格式，如果后台返回的数据为json格式的数据，那么前台会收到Object
-		        success: function(result){
+		        success: function(data, status){
 		        	$('#find_the_trail').val(""); //清空上次input框里的数据
-		            if(result==true){
-		                alert("boolean:"+result);
-		            }else{
-		                alert("字符串"+result)
-		            }
+		            console.log(data);
+		            console.log(status);
 		        }
-		    })
+		    });
 		}
 		
 		
