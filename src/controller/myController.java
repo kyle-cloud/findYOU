@@ -1,4 +1,4 @@
-package admin;
+package controller;
 
 
 import java.io.IOException;
@@ -10,9 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping("/root")
 public class myController {
-	@RequestMapping("/testParam")
+	@RequestMapping("/testParam.do")
 	@ResponseBody
 	public void testParam(String IMSI, HttpServletResponse response) throws IOException{
 		System.out.println(11);
