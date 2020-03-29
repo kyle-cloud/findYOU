@@ -1,17 +1,16 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>地图</title>
 	<link href="style/authority/main_css.css" rel="stylesheet" type="text/css" />
-	<link href="style/authority/zTreeStyle.css" rel="stylesheet" type="text/css">
+	<link href="style/authority/common_style.css" rel="stylesheet" type="text/css" />
 	<script type="text/javascript" src="scripts/jquery/jquery-1.7.1.js"></script>
-	<script type="text/javascript" src="scripts/zTree/jquery.ztree.core-3.2.js"></script>
-	<script type="text/javascript" src="scripts/authority/commonAll.js"></script>
 	<script type = "text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=FPhbvg5kig8Nv4teppVD50p6dtaCLbPr"></script>
 	
-	<script type="text/javascript"> 
-		
+	<script type="text/javascript">
 		/* 上方菜单 */
 		function switchTab(tabpage,tabid){
 		var oItem = document.getElementById(tabpage).getElementsByTagName("li"); 
@@ -72,11 +71,17 @@
 			</div>
 		 </div>
 		 <div id="left_menu_cnt">
-		 	<div id="nav_module">
+		 	<!-- <div id="nav_module">
 		 		<img src="images/common/module_1.png" width="210" height="58"/>
-		 	</div>
+		 	</div> -->
 		 	<div id="nav_resource">
-		 		<div><button type='button'>默认样式</button></div>
+	 			<hr>
+	 			<br>
+ 				<div>
+ 					IMSI&nbsp;&nbsp;
+    				<input type="text" class="ui_input_txt02" id="find_the_trail" placeholder="请输入IMSI">		
+    				<input type="button" value="查询" class="ui_input_btn01" onclick="findTheTrail();">
+  				</div>
 		 	</div>
 		 </div>
 	</div>
@@ -109,9 +114,9 @@
 	        var left_menu_cnt = $('#left_menu_cnt');
 			if( flag==true ){	// flag==true
 				left_menu_cnt.show(500, 'linear');
-				side.css({width:'280px'});
+				side.css({width:'450px'});
 				$('#top_nav').css({width:'77%', left:'304px'});
-	        	$('#main').css({left:'280px'});
+	        	$('#main').css({left:'450px'});
 			}else{
 		        if ( left_menu_cnt.is(":visible") ) {
 					left_menu_cnt.hide(10, 'linear');
@@ -121,18 +126,42 @@
 		        	$("#show_hide_btn").find('img').attr('src', 'images/common/nav_show.png');
 		        } else {
 					left_menu_cnt.show(500, 'linear');
-					side.css({width:'280px'});
+					side.css({width:'450px'});
 					$('#top_nav').css({width:'77%', left:'304px', 'padding-left':'0px'});
-		        	$('#main').css({left:'280px'});
+		        	$('#main').css({left:'450px'});
 		        	$("#show_hide_btn").find('img').attr('src', 'images/common/nav_hide.png');
 		        }
 			}
 		}
+		
+		function findTheTrail() {
+			var Imsi = document.getElementById("find_the_trail").value;
+			if(Imsi == "") {
+				alert("空值");
+				$('#find_the_trail').val(""); //清空上次input框里的数据
+				return
+			}
+			$.ajax({
+		        type: "POST", //请求的方式，默认get请求
+		        url: "admin/testParam", //请求地址，后台提供的
+		        data: {IMSI: Imsi},//data是传给后台的字段，后台需要哪些就传入哪些
+		        dataType: "json", //json格式，如果后台返回的数据为json格式的数据，那么前台会收到Object
+		        success: function(result){
+		        	$('#find_the_trail').val(""); //清空上次input框里的数据
+		            if(result==true){
+		                alert("boolean:"+result);
+		            }else{
+		                alert("字符串"+result)
+		            }
+		        }
+		    })
+		}
+		
+		
 	</script>
 	
     <!-- side menu start -->
-    <div id="main">
-    </div>
+    <div id="main" style="border:1px solid #a9a9a9"></div>
 
 </body>
 
