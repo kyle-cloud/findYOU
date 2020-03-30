@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ page language="java" import="dao.MongoUtil"%>
+<% MongoUtil.instance.getDB("liu"); %>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -8,7 +10,7 @@
 	<link href="style/authority/main_css.css" rel="stylesheet" type="text/css" />
 	<link href="style/authority/common_style.css" rel="stylesheet" type="text/css" />
 	<script src="scripts/jquery/jquery-1.7.1.js" type="text/javascript"></script>
-	<script src="http://api.map.baidu.com/api?v=2.0&ak=FPhbvg5kig8Nv4teppVD50p6dtaCLbPr"  type = "text/javascript"></script>
+	<script src="http://api.map.baidu.com/getscript?v=2.0&ak=FPhbvg5kig8Nv4teppVD50p6dtaCLbPr"  type = "text/javascript"></script>
 	
 	<script type="text/javascript">
 		/* 上方菜单 */
@@ -78,10 +80,12 @@
 	 			<hr>
 	 			<br>
  				<div>
- 					IMSI&nbsp;&nbsp;
+ 					&nbsp;IMSI&nbsp;
     				<input type="text" class="ui_input_txt02" id="find_the_trail" placeholder="请输入IMSI">		
     				<input type="button" value="查询" class="ui_input_btn01" onclick="findTheTrail();">
+    				<input type="button" value="清除" class="ui_input_btn01" onclick="clearTheTrail();">
   				</div>
+  				<div id = "numberOfTrails"></div>
 		 	</div>
 		 </div>
 	</div>
@@ -150,11 +154,15 @@
 		        	$('#find_the_trail').val(""); //清空上次input框里的数据
 		            console.log(data);
 		            console.log(status);
+		            $('#numberOfTrails').html("&nbsp;共查询到&nbsp;<b>" + data.length + "</b>&nbsp;条IMSI为&nbsp;<b>" + Imsi + "</b>&nbsp;的轨迹");	
 		            drawLine(data);
 		        }
 		    });
 		}
 		
+		function clearTheTrail() {
+			map.clearOverlays();
+		}
 		
 	</script>
 	
@@ -169,7 +177,7 @@
 	map.enableScrollWheelZoom(true);
 	
 	function drawLine(data) {
-		var color_list = ["red", "blue", "yellow", "green", "black", "white"];
+		var color_list = 0;
 		for(var i = 0; i < data.length; i ++) {
 			var pois = [];
 			for(var j = 0; j < data[i].points.length; j ++) {
@@ -180,10 +188,17 @@
 				enableClicking: true,
 				strokeWeight: 2,
 				strokeOpacity: 0.8,
-				strokeColor: color_list[i],
+				strokeColor: randomColor(),
 			});
 			map.addOverlay(polyline);
 		}
+	}
+	
+	function randomColor() {
+		let r = Math.floor(Math.random()*256)
+		let g = Math.floor(Math.random()*256)
+		let b = Math.floor(Math.random()*256)
+		return "rgb("+r+','+g+','+b+")"
 	}
 </script>
 </html>
