@@ -7,8 +7,8 @@
 	<title>地图</title>
 	<link href="style/authority/main_css.css" rel="stylesheet" type="text/css" />
 	<link href="style/authority/common_style.css" rel="stylesheet" type="text/css" />
-	<script type="text/javascript" src="scripts/jquery/jquery-1.7.1.js"></script>
-	<script type = "text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=FPhbvg5kig8Nv4teppVD50p6dtaCLbPr"></script>
+	<script src="scripts/jquery/jquery-1.7.1.js" type="text/javascript"></script>
+	<script src="http://api.map.baidu.com/api?v=2.0&ak=FPhbvg5kig8Nv4teppVD50p6dtaCLbPr"  type = "text/javascript"></script>
 	
 	<script type="text/javascript">
 		/* 上方菜单 */
@@ -143,13 +143,14 @@
 			}
 			$.ajax({
 		        //type: "POST", //请求的方式，默认get请求
-		        url: "testParam.do", //请求地址，后台提供的
+		        url: "findTheTrail.do", //请求地址，后台提供的
 		        data: {'IMSI': Imsi},//data是传给后台的字段，后台需要哪些就传入哪些
 		        dataType: "json", //json格式，如果后台返回的数据为json格式的数据，那么前台会收到Object
 		        success: function(data, status){
 		        	$('#find_the_trail').val(""); //清空上次input框里的数据
 		            console.log(data);
 		            console.log(status);
+		            drawLine(data);
 		        }
 		    });
 		}
@@ -166,23 +167,23 @@
 	var map = new BMap.Map("main");
 	map.centerAndZoom(new BMap.Point(116.404, 39.915), 12);
 	map.enableScrollWheelZoom(true);
-	drawLine();
 	
-	function drawLine() {
-		var pois = [
-			new BMap.Point(116.350658, 39.938285),
-			new BMap.Point(116.386446, 39.939281),
-			new BMap.Point(116.389034, 39.913828),
-			new BMap.Point(116.442501, 39.914603)
-		];
-		var polyline = new BMap.Polyline(pois, {
-			enableEditing: false,
-			enableClicking: true,
-			strokeWeight: 2,
-			strokeOpacity: 0.8,
-			strokeColor: "red"
-		});
-		map.addOverlay(polyline);
+	function drawLine(data) {
+		var color_list = ["red", "blue", "yellow", "green", "black", "white"];
+		for(var i = 0; i < data.length; i ++) {
+			var pois = [];
+			for(var j = 0; j < data[i].points.length; j ++) {
+				pois.push(new BMap.Point(data[i].points[j].lng, data[i].points[j].lat))
+			}
+			var polyline = new BMap.Polyline(pois, {
+				enableEditing: false,
+				enableClicking: true,
+				strokeWeight: 2,
+				strokeOpacity: 0.8,
+				strokeColor: color_list[i],
+			});
+			map.addOverlay(polyline);
+		}
 	}
 </script>
 </html>
