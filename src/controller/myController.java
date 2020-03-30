@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class myController {
-	@RequestMapping("/testParam.do")
+	@RequestMapping("/testParam")
 	@ResponseBody
 	public void testParam(String IMSI, HttpServletResponse response) throws IOException{
 		System.out.println(11);

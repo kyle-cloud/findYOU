@@ -1,89 +1,190 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ page language="java" import="java.util.*"%>
-<%@ page language="java" import="java.io.*"%>
-<%@ page language="java" import="trail.*"%>
-<%@ page language="java" import="test.test"%>
-<% ArrayList<Object> result = new test().testCompressOnMap(); 
-   ArrayList<Trail> trails = (ArrayList<Trail>)result.get(0);
-   ArrayList<Trail> coarseTrails = (ArrayList<Trail>)result.get(1);
-   ArrayList<ArrayList<Trail>> fineTrails = (ArrayList<ArrayList<Trail>>)result.get(2);%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-	<style type="text/css">
-		body, html, #allmap {width:100%; height:100%; overflow:hidden; margin:0; font-family:"微软雅黑";}
-	</style>
-	<title>Insert title here</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>地图</title>
+	<link href="style/authority/main_css.css" rel="stylesheet" type="text/css" />
+	<link href="style/authority/common_style.css" rel="stylesheet" type="text/css" />
+	<script type="text/javascript" src="scripts/jquery/jquery-1.7.1.js"></script>
 	<script type = "text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=FPhbvg5kig8Nv4teppVD50p6dtaCLbPr"></script>
+	
+	<script type="text/javascript">
+		/* 上方菜单 */
+		function switchTab(tabpage,tabid){
+		var oItem = document.getElementById(tabpage).getElementsByTagName("li"); 
+		    for(var i=0; i<oItem.length; i++){
+		        var x = oItem[i];    
+		        x.className = "";
+			}
+			if('left_tab1' == tabid){
+				$(document).ajaxStart(onStart).ajaxSuccess(onStop);
+				// 异步加载"业务模块"下的菜单
+				//var str = "<div><button type='button'>默认样式</button></div>";
+				//document.getElementById("nav_resource").innerHTML = str;
+			}else  if('left_tab2' == tabid){
+				$(document).ajaxStart(onStart).ajaxSuccess(onStop);
+				// 异步加载"系统管理"下的菜单
+				
+			}else  if('left_tab3' == tabid){
+				$(document).ajaxStart(onStart).ajaxSuccess(onStop);
+				// 异步加载"其他"下的菜单
+				
+			} 
+		}
+		
+		//ajax start function
+		function onStart(){
+			$("#ajaxDialog").show();
+		}
+		
+		//ajax stop function
+		function onStop(){
+	// 		$("#ajaxDialog").dialog("close");
+			$("#ajaxDialog").hide();
+		}
+	</script>
 </head>
+
 <body>
-	<div id="allmap"></div>
+    <!-- side menu start -->
+	<div id="side">
+		<div id="left_menu">
+		 	<ul id="TabPage2" style="height:200px; margin-top:50px;">
+				<li id="left_tab1" class="selected" onClick="javascript:switchTab('TabPage2','left_tab1');" title="业务模块">
+					<img alt="业务模块" title="业务模块" src="images/common/1_hover.jpg" width="33" height="31">
+				</li>
+				<li id="left_tab2" onClick="javascript:switchTab('TabPage2','left_tab2');" title="系统管理">
+					<img alt="系统管理" title="系统管理" src="images/common/2.jpg" width="33" height="31">
+				</li>		
+				<li id="left_tab3" onClick="javascript:switchTab('TabPage2','left_tab3');" title="其他">
+					<img alt="其他" title="其他" src="images/common/3.jpg" width="33" height="31">
+				</li>
+			</ul>
+			
+			
+			<div id="nav_show" style="position:absolute; bottom:0px; padding:10px;">
+				<a href="javascript:;" id="show_hide_btn">
+					<img alt="显示/隐藏" title="显示/隐藏" src="images/common/nav_hide.png" width="35" height="35">
+				</a>
+			</div>
+		 </div>
+		 <div id="left_menu_cnt">
+		 	<!-- <div id="nav_module">
+		 		<img src="images/common/module_1.png" width="210" height="58"/>
+		 	</div> -->
+		 	<div id="nav_resource">
+	 			<hr>
+	 			<br>
+ 				<div>
+ 					IMSI&nbsp;&nbsp;
+    				<input type="text" class="ui_input_txt02" id="find_the_trail" placeholder="请输入IMSI">		
+    				<input type="button" value="查询" class="ui_input_btn01" onclick="findTheTrail();">
+  				</div>
+		 	</div>
+		 </div>
+	</div>
+	<script type="text/javascript">
+		$(function(){
+			$('#TabPage2 li').click(function(){
+				var index = $(this).index();
+				$(this).find('img').attr('src', 'images/common/'+ (index+1) +'_hover.jpg');
+				$(this).css({background:'#fff'});
+				$('#nav_module').find('img').attr('src', 'images/common/module_'+ (index+1) +'.png');
+				$('#TabPage2 li').each(function(i, ele){
+					if( i!=index ){
+						$(ele).find('img').attr('src', 'images/common/'+ (i+1) +'.jpg');
+						$(ele).css({background:'#044599'});
+					}
+				});
+				// 显示侧边栏
+				switchSysBar(true);
+			});
+			
+			// 显示隐藏侧边栏
+			$("#show_hide_btn").click(function() {
+		        switchSysBar();
+		    });
+		});
+		
+		/**隐藏或者显示侧边栏**/
+		function switchSysBar(flag){
+			var side = $('#side');
+	        var left_menu_cnt = $('#left_menu_cnt');
+			if( flag==true ){	// flag==true
+				left_menu_cnt.show(500, 'linear');
+				side.css({width:'450px'});
+				$('#top_nav').css({width:'77%', left:'304px'});
+	        	$('#main').css({left:'450px'});
+			}else{
+		        if ( left_menu_cnt.is(":visible") ) {
+					left_menu_cnt.hide(10, 'linear');
+					side.css({width:'60px'});
+		        	$('#top_nav').css({width:'100%', left:'60px', 'padding-left':'28px'});
+		        	$('#main').css({left:'60px'});
+		        	$("#show_hide_btn").find('img').attr('src', 'images/common/nav_show.png');
+		        } else {
+					left_menu_cnt.show(500, 'linear');
+					side.css({width:'450px'});
+					$('#top_nav').css({width:'77%', left:'304px', 'padding-left':'0px'});
+		        	$('#main').css({left:'450px'});
+		        	$("#show_hide_btn").find('img').attr('src', 'images/common/nav_hide.png');
+		        }
+			}
+		}
+		
+		function findTheTrail() {
+			var Imsi = document.getElementById("find_the_trail").value;
+			if(Imsi == "") {
+				alert("空值");
+				$('#find_the_trail').val(""); //清空上次input框里的数据
+				return
+			}
+			$.ajax({
+		        //type: "POST", //请求的方式，默认get请求
+		        url: "testParam.do", //请求地址，后台提供的
+		        data: {'IMSI': Imsi},//data是传给后台的字段，后台需要哪些就传入哪些
+		        dataType: "json", //json格式，如果后台返回的数据为json格式的数据，那么前台会收到Object
+		        success: function(data, status){
+		        	$('#find_the_trail').val(""); //清空上次input框里的数据
+		            console.log(data);
+		            console.log(status);
+		        }
+		    });
+		}
+		
+		
+	</script>
+	
+    <!-- side menu start -->
+    <div id="main" style="border:1px solid #a9a9a9"></div>
+
 </body>
 
 <script>
-		var map = new BMap.Map("allmap");
-		map.centerAndZoom(new BMap.Point(116.404, 39.915), 12);
-		map.enableScrollWheelZoom(true);
-		<%System.out.println(trails.size());
-		for(int i = 0; i < 1; i ++) {
-			List<Point> points = trails.get(i).getPoints();%>
-			var pois = [
-				<%for(int j = 0; j < points.size(); j ++) {%>
-					new BMap.Point(<%=points.get(j).getLng()%>, <%=points.get(j).getLat()%>),
-				<%}%>
-			];
-			var polyline = new BMap.Polyline(pois, {
-				enableEditing: false,
-				enableClicking: true,
-				strokeWeight: 2,
-				strokeOpacity: 0.8,
-				strokeColor: "red"
-			});
-			map.addOverlay(polyline);
-		<%}%>
-		
-		<%System.out.println(coarseTrails.size());
-		for(int i = 0; i < 1; i ++) {
-			List<Point> points = coarseTrails.get(i).getPoints();%>
-			var pois = [
-				<%for(int j = 0; j < points.size(); j ++) {%>
-					new BMap.Point(<%=points.get(j).getLng()%>, <%=points.get(j).getLat()%>),
-				<%}%>
-			];
-			var polyline = new BMap.Polyline(pois, {
-				enableEditing: false,
-				enableClicking: true,
-				strokeWeight: 2,
-				strokeOpacity: 0.8,
-				strokeColor: "blue"
-			});
-			map.addOverlay(polyline);
-		<%}%>
-		
-		<%System.out.println(fineTrails.size());
-		for(int i = 0; i < 1; i ++) {
-			List<Trail> trail = fineTrails.get(i);%>
-			var pois = [
-				<%
-				for(int j = 0; j < trail.size(); j ++) {
-					List<Point> points = trail.get(j).getPoints();
-					for(int k = 0; k < points.size(); k ++) {%>
-						new BMap.Point(<%=points.get(k).getLng()%>, <%=points.get(k).getLat()%>),
-				<%	}
-				}%>
-			];
-			var polyline = new BMap.Polyline(pois, {
-				enableEditing: false,
-				enableClicking: true,
-				strokeWeight: 2,
-				strokeOpacity: 0.8,
-				strokeColor: "green"
-			});
-			map.addOverlay(polyline);
-		<%}%>
+	var map = new BMap.Map("main");
+	map.centerAndZoom(new BMap.Point(116.404, 39.915), 12);
+	map.enableScrollWheelZoom(true);
+	drawLine();
+	
+	function drawLine() {
+		var pois = [
+			new BMap.Point(116.350658, 39.938285),
+			new BMap.Point(116.386446, 39.939281),
+			new BMap.Point(116.389034, 39.913828),
+			new BMap.Point(116.442501, 39.914603)
+		];
+		var polyline = new BMap.Polyline(pois, {
+			enableEditing: false,
+			enableClicking: true,
+			strokeWeight: 2,
+			strokeOpacity: 0.8,
+			strokeColor: "red"
+		});
+		map.addOverlay(polyline);
+	}
 </script>
-
 </html>
+   
+ 
