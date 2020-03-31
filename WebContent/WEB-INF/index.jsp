@@ -23,8 +23,8 @@
 			if('left_tab1' == tabid){
 				$(document).ajaxStart(onStart).ajaxSuccess(onStop);
 				// 异步加载"业务模块"下的菜单
-				//var str = "<div><button type='button'>默认样式</button></div>";
-				//document.getElementById("nav_resource").innerHTML = str;
+				var str = "<hr><br><div>&nbsp;IMSI&nbsp;&nbsp;<input type='text' class='ui_input_txt02' id='find_the_trail' placeholder='请输入IMSI'>&nbsp;<input type='button' value='查询' class='ui_input_btn01' onclick='findTheTrail();'>&nbsp;<input type='button' value='清除' class='ui_input_btn01' onclick='clearTheTrail();'></div><div id = 'numberOfTrails'></div>";
+				$("#nav_resource").html(str);
 			}else  if('left_tab2' == tabid){
 				$(document).ajaxStart(onStart).ajaxSuccess(onStop);
 				// 异步加载"系统管理"下的菜单
@@ -160,10 +160,6 @@
 		    });
 		}
 		
-		function clearTheTrail() {
-			map.clearOverlays();
-		}
-		
 	</script>
 	
     <!-- side menu start -->
@@ -199,6 +195,11 @@
 		let g = Math.floor(Math.random()*256)
 		let b = Math.floor(Math.random()*256)
 		return "rgb("+r+','+g+','+b+")"
+	}
+	
+	function clearTheTrail() {
+		map.clearOverlays();
+		 $('#numberOfTrails').html("");
 	}
 </script>
 </html>
