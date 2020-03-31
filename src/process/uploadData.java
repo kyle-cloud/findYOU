@@ -28,6 +28,7 @@ public class uploadData {
 			bReader = new BufferedReader(new FileReader(file));
 			bReader.mark((int)file.length() + 1);
 				
+			int flag = 1;
 			//特别注意把太小的文件直接当一条轨迹
 			if(file.length() < 4000) return;
 			int divided_nums = (int) (file.length() / 4000);
@@ -55,7 +56,16 @@ public class uploadData {
 				document.put("TraceTimes", dates);
 				document.put("Longitudes", longitudes);
 				document.put("Latitudes", latitudes);
-				MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", "trail");
+				MongoCollection<Document> coll;
+				if(flag == 1) {
+					coll = MongoUtil.instance.getCollection("liu", "testTrail");
+					document.put("Test", 1);
+					flag = 0;
+				}
+				else {
+					coll = MongoUtil.instance.getCollection("liu", "trail");
+					document.put("Test", 0);
+				}
 				coll.insertOne(document);
 				bReader.reset();
 			}

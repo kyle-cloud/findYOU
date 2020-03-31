@@ -22,6 +22,7 @@ public class downloadData {
 		ArrayList<Point> points = new ArrayList<>();
 		String ID = null;
 		String IMSI = null;
+		int Test = 0;
 		ArrayList<String> dates = new ArrayList<>();
 		ArrayList<Double> longitudes = new ArrayList<>();
 		ArrayList<Double> latitudes = new ArrayList<>();
@@ -34,7 +35,8 @@ public class downloadData {
 				Document document = cursor.next();
 				
 				ID = (String)document.get("id");
-				IMSI = (String)document.get("IMSI"); 
+				IMSI = (String)document.get("IMSI");
+				Test = (int)document.get("Test");
 				dates = (ArrayList<String>) document.get("TraceTimes");
 				longitudes = (ArrayList<Double>) document.get("Longitudes");
 				latitudes = (ArrayList<Double>) document.get("Latitudes");
@@ -54,6 +56,7 @@ public class downloadData {
 				trail.setPoints((ArrayList<Point>)points.clone());
 				trail.setID(ID);
 				trail.setIMSI(IMSI);
+				trail.setTest(Test);
 				trail.setTstart(points.get(0).getDate());
 				trail.setTend(points.get(dates.size()-1).getDate());
 				trails.add(trail);

@@ -28,7 +28,8 @@
 			}else  if('left_tab2' == tabid){
 				$(document).ajaxStart(onStart).ajaxSuccess(onStop);
 				// 异步加载"系统管理"下的菜单
-				
+				var str = "<hr><br><div>&nbsp;IMSI&nbsp;&nbsp<input type='text' class='ui_input_txt02' id='find_the_similarity' placeholder='请输入IMSI'>&nbsp<input type='button' value='评分' class='ui_input_btn01' onclick='findTheSimilarity();'>&nbsp<input type='button' value='清除' class='ui_input_btn01' onclick='clearTheSimilarity();'></div><div id = 'tableOfTrails'></div>"
+				$("#nav_resource").html(str);
 			}else  if('left_tab3' == tabid){
 				$(document).ajaxStart(onStart).ajaxSuccess(onStop);
 				// 异步加载"其他"下的菜单
@@ -160,6 +161,26 @@
 		    });
 		}
 		
+		function findTheSimilarity() {
+			var Imsi = document.getElementById("find_the_similarity").value;
+			if(Imsi == "") {
+				alert("空值");
+				$('#find_the_similarity').val(""); //清空上次input框里的数据
+				return
+			}
+			$.ajax({
+		        //type: "POST", //请求的方式，默认get请求
+		        url: "findTheTrail.do", //请求地址，后台提供的
+		        data: {'IMSI': Imsi},//data是传给后台的字段，后台需要哪些就传入哪些
+		        dataType: "json", //json格式，如果后台返回的数据为json格式的数据，那么前台会收到Object
+		        success: function(data, status){
+		        	$('#find_the_similarity').val(""); //清空上次input框里的数据
+		            console.log(data);
+		            console.log(status);	
+		            drawLineAndTable(data);
+		        }
+		    });
+		}
 	</script>
 	
     <!-- side menu start -->
@@ -173,9 +194,12 @@
 	map.enableScrollWheelZoom(true);
 	
 	function drawLine(data) {
-		var color_list = 0;
 		for(var i = 0; i < data.length; i ++) {
 			var pois = [];
+			var color = randomColor();
+			if(data[i].test == 1) {
+				color = "#FF0000";
+			}
 			for(var j = 0; j < data[i].points.length; j ++) {
 				pois.push(new BMap.Point(data[i].points[j].lng, data[i].points[j].lat))
 			}
@@ -184,11 +208,41 @@
 				enableClicking: true,
 				strokeWeight: 2,
 				strokeOpacity: 0.8,
-				strokeColor: randomColor(),
+				strokeColor: color,
 			});
 			map.addOverlay(polyline);
 		}
 	}
+	
+	function drawLineAndTable(data) {
+		var tableInfos = document.getElementById('tableOfTrails');
+		var code = '<br><div class="ui_tb"><TABLE class="table" cellspacing="0" cellpadding="0" width="80%" align="center" border="0">';
+		code += '<TR><TH>No.</TH><TH>IMSI</TH><TH>Score</TH><TH>Color</TH></TR>';
+		for(var i = 0; i < data.length; i ++) {
+			var pois = [];
+			for(var j = 0; j < data[i].points.length; j ++) {
+				pois.push(new BMap.Point(data[i].points[j].lng, data[i].points[j].lat))
+			}
+			var color = randomColor();
+			var polyline = new BMap.Polyline(pois, {
+				enableEditing: false,
+				enableClicking: true,
+				strokeWeight: 2,
+				strokeOpacity: 0.8,
+				strokeColor: color,
+			});
+			if(data[i].test == 1) {
+				color = "#FF0000";
+				code += '<TR><TD>' + i + '</TD><TD>' + data[i].IMSI + '</TD><TD>' + 100 + '</TD><TD>' + color + '</TD></TR>';
+			}
+			else {
+				code += '<TR><TD>' + i + '</TD><TD>' + data[i].IMSI + '</TD><TD>' + 100 + '</TD><TD>' + color + '</TD></TR>';
+			}
+			map.addOverlay(polyline);
+		}
+		tableInfos.innerHTML = code + '</TABLE></div>';
+	}
+	
 	
 	function randomColor() {
 		let r = Math.floor(Math.random()*256)
@@ -200,6 +254,11 @@
 	function clearTheTrail() {
 		map.clearOverlays();
 		 $('#numberOfTrails').html("");
+	}
+	
+	function clearTheSimilarity() {
+		map.clearOverlays();
+		 $('#tableOfTrails').html("");
 	}
 </script>
 </html>
