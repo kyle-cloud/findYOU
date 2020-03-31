@@ -271,13 +271,13 @@ public class calculations {
 	 *输入：多条轨迹
 	 */
 	@SuppressWarnings("unchecked")
-	public static ArrayList<Integer> structCluster(ArrayList<Trail> trails, Trail objTrail, double alpha, double theta, int Minpts) {
+	public static ArrayList<Integer> structCluster(ArrayList<Trail> trails, double alpha, double theta, int Minpts) {
 		//ArrayList<Object> result = new ArrayList<>();
 		//trails.add(objTrail);//我的目标轨迹例子拿的就是里边的一条轨迹，再加上一次，之后remove只会去掉一个
 		ArrayList<Trail> cores = new ArrayList<>();
 		ArrayList<ArrayList<Integer>> Ntheta = new ArrayList<>();
 		ArrayList<Integer> N_tmp = new ArrayList<>();
-		ArrayList<Integer> cluster = new ArrayList<>();
+		//ArrayList<Integer> cluster = new ArrayList<>();
 		ArrayList<Integer> noises = new ArrayList<>();
 		for(int i = 0; i < trails.size(); i ++) {
 			N_tmp.clear();
@@ -305,20 +305,12 @@ public class calculations {
 			cores.get(i).setCluster_id(k);
 			connectDensity(cores.get(i), trails, cores, Ntheta, i, k);
 		}
-		//找出相似轨迹集
-		int objCluster = objTrail.getCluster_id();
- 		//trails.remove(objTrail);
 		for(int i = 0; i < trails.size(); i ++) {
- 			if(trails.get(i).getCluster_id() == objCluster) {
- 				cluster.add(i);
- 			}
 			if(trails.get(i).getCluster_id() == 0) {
 				noises.add(i);
 			}
 		}
-		return cluster;
-		//return noises;
-		//return k;
+		return noises;
 	}
 	
 	/**

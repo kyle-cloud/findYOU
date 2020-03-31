@@ -254,7 +254,7 @@ public class test {
 			//System.out.println(i);
 		}
 
-		System.out.println(calculations.structCluster(finTrails, finTrails.get(0), 0.8, 0.80, 100).size());
+		System.out.println(calculations.structCluster(finTrails, 0.8, 0.80, 100).size()); //, finTrails.get(0)
 		//看一下每条轨迹分到的集合
 		for(int i = 0; i < finTrails.size(); i ++) {
 			System.out.println(i + " : " + finTrails.get(i).getCluster_id());
@@ -319,7 +319,7 @@ public class test {
 			coarse_finTrail.setTend(coarseTrail.get(coarseTrail.size()-1).getDate());
 			finTrails.add(coarse_finTrail);
 		}
-		ArrayList<Integer> cluseredTrails = calculations.structCluster(finTrails, finTrails.get(0), 0.8, 0.80, 50);
+		ArrayList<Integer> cluseredTrails = calculations.structCluster(finTrails, 0.8, 0.80, 50);//, finTrails.get(0)////
 		
 		ArrayList<Trail> objTrail = calculations.divideTrace(trails.get(0), 420*60*1000);
 		ArrayList<Trail> objFineTrail = calculations.fineCompress(objTrail, 3000, (long)30*60*1000);

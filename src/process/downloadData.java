@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -20,7 +21,7 @@ public class downloadData {
 	public static ArrayList<Trail> getTrails(String collname) {
 		ArrayList<Trail> trails = new ArrayList<>();
 		ArrayList<Point> points = new ArrayList<>();
-		String ID = null;
+		ObjectId ID = null;
 		String IMSI = null;
 		int Test = 0;
 		ArrayList<String> dates = new ArrayList<>();
@@ -34,7 +35,7 @@ public class downloadData {
 				total ++;
 				Document document = cursor.next();
 				
-				ID = (String)document.get("id");
+				ID = document.getObjectId("_id");
 				IMSI = (String)document.get("IMSI");
 				Test = (int)document.get("Test");
 				dates = (ArrayList<String>) document.get("TraceTimes");

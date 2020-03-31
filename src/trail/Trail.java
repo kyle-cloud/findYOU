@@ -9,6 +9,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.bson.types.ObjectId;
+
 import com.sun.xml.internal.bind.v2.model.core.ID;
 
 public class Trail implements Cloneable, Serializable {
@@ -16,7 +18,7 @@ public class Trail implements Cloneable, Serializable {
 	
 	int sum_points = 0;
 	ArrayList<Point> points = new ArrayList<>();
-	private String ID = null;
+	private ObjectId ID = null;
 	private String IMSI = null;
 	private Date Tstart;
 	private Date Tend;
@@ -37,7 +39,7 @@ public class Trail implements Cloneable, Serializable {
 		return points;
 	}
 	
-	public String getID() {
+	public ObjectId getID() {
 		return ID;
 	}
 	
@@ -77,7 +79,7 @@ public class Trail implements Cloneable, Serializable {
 		this.points = points;
 	}
 	
-	public void setID(String iD) {
+	public void setID(ObjectId iD) {
 		ID = iD;
 	}
 	

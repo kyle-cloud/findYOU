@@ -53,6 +53,7 @@ public class uploadData {
 				}
 				Document document = new Document();
 				document.put("IMSI", IMSI);
+				document.put("Cluster_id", 0);
 				document.put("TraceTimes", dates);
 				document.put("Longitudes", longitudes);
 				document.put("Latitudes", latitudes);
@@ -81,10 +82,12 @@ public class uploadData {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		for(int i = 1; i < 10357; i ++) {
-			System.out.println(i);
-			readFile("D:\\Trail_Data\\taxi_log_2008_by_id\\" + String.valueOf(i) +".txt");
-		}
+//		MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", "testTrail");
+//		coll.update({}, {$set: {'Cluster_id': 0}}, {multi: true});
+//		for(int i = 1; i < 10357; i ++) {
+//			System.out.println(i);
+//			readFile("D:\\Trail_Data\\taxi_log_2008_by_id\\" + String.valueOf(i) +".txt");
+//		}
 //		readFile("D:\\Trail_Data\\taxi_log_2008_by_id\\10.txt");
 //		readFile("D:\\Trail_Data\\taxi_log_2008_by_id\\16.txt");
 //		readFile("D:\\Trail_Data\\taxi_log_2008_by_id\\28.txt");

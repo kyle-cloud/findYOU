@@ -21,8 +21,6 @@ public class findYOU {
 		ArrayList<Trail> finTrails = new ArrayList<>();
 		ArrayList<Integer> cluseredTrails = new ArrayList<>();
 		try{
-//			MongoUtil.instance.dropCollection("liu", "coarseTrail");
-			//获取轨迹数据
 			ArrayList<Trail> trails = downloadData.getTrails("trail");
 			System.out.println("共有" + trails.size() + "条轨迹");
 			//分时段，并粗粒度降维
@@ -52,7 +50,7 @@ public class findYOU {
 //				MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", "fineTrail");
 //				coll.insertOne(document);
 			}
-			cluseredTrails = calculations.structCluster(finTrails, finTrails.get(0), 0.8, 0.88, 50);
+			cluseredTrails = calculations.structCluster(finTrails, 0.8, 0.88, 50);//finTrails.get(0)
 			
 			ArrayList<Trail> objTrail = calculations.divideTrace(trails.get(0), 420*60*1000);
 			ArrayList<Trail> objFineTrail = calculations.fineCompress(objTrail, 3000, (long)30*60*1000);

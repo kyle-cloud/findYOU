@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import javax.servlet.http.HttpServletResponse;
 
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -32,14 +33,12 @@ public class myController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping("/findTheTrail")
 	@ResponseBody
-	public void testParam(String IMSI, HttpServletResponse response) throws IOException{
-	    System.out.println("IMSI: " + IMSI);
+	public void findTheTrail(String IMSI, HttpServletResponse response) throws IOException{
 	    ArrayList<Trail> trails = new ArrayList<>();
-		
 	    try {
 	    	//添加测试集
-	    	ArrayList<Trail> testTrails = findTrails(IMSI, "testTrail");
-	    	ArrayList<Trail> trainTrails = findTrails(IMSI, "trail");
+	    	ArrayList<Trail> testTrails = findTrailsByIMSI(IMSI, "testTrail");
+	    	ArrayList<Trail> trainTrails = findTrailsByIMSI(IMSI, "trail");
 	    	trails.addAll(testTrails);
 	    	trails.addAll(trainTrails);
             /*将list集合装换成json对象*/
@@ -56,9 +55,15 @@ public class myController {
         }
 	}
 	
+	@RequestMapping("/findTheSimilarity")
+	@ResponseBody
+	public void findTheSimilarity(String IMSI, HttpServletResponse response) {
+		
+	}
+	
 	@SuppressWarnings("unchecked")
-	public ArrayList<Trail> findTrails(String IMSI, String collection) throws ParseException {
-		String ID = null;
+	public ArrayList<Trail> findTrailsByIMSI(String IMSI, String collection) throws ParseException {
+		ObjectId ID = null;
 		int Test = 0;
 		ArrayList<Point> points = new ArrayList<>();
 		ArrayList<String> dates = new ArrayList<>();
@@ -69,7 +74,7 @@ public class myController {
 		MongoCursor<Document> cursor = coll.find(Filters.eq("IMSI", IMSI)).iterator();
     	while(cursor.hasNext()) {
     		Document document = cursor.next();
-			ID = (String)document.get("id");
+			ID = document.getObjectId("_id");
 			Test = (int)document.get("Test");
 			dates = (ArrayList<String>) document.get("TraceTimes");
 			longitudes = (ArrayList<Double>) document.get("Longitudes");
