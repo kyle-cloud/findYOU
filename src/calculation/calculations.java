@@ -289,9 +289,10 @@ public class calculations {
 					N_tmp.add(j);
 				}
 			}
-//			System.out.println(i + " : " + N_tmp.size());
+			System.out.println(i + " : " + N_tmp.size());
 //			if(N_tmp.size() > trails.size() - 20) {
 //				System.out.println(i + " " + N_tmp.size());
+//				System.out.println(trails.get(i).getIMSI());
 //			}
 			if(N_tmp.size() >= Minpts && N_tmp.size() <= trails.size() / 2) {
 				cores.add(trails.get(i));
@@ -320,9 +321,11 @@ public class calculations {
 	 */
 	public static void connectDensity(Trail core, ArrayList<Trail> trails, ArrayList<Trail> cores, ArrayList<ArrayList<Integer>> N_trails, int index, int id) {
 		for(int i = 0; i < N_trails.get(index).size(); i ++) {
+			if(trails.get(N_trails.get(index).get(i)).getCluster_id() == id)
+				continue;
 			trails.get(N_trails.get(index).get(i)).setCluster_id(id);
 			int index_tmp = cores.indexOf(trails.get(N_trails.get(index).get(i)));
-			if(index_tmp != -1 && trails.get(N_trails.get(index).get(i)).getCluster_id() != id) {
+			if(index_tmp != -1) {
 				connectDensity(trails.get(N_trails.get(index).get(i)), trails, cores, N_trails, index_tmp, id);
 			}
 		}

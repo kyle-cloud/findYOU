@@ -39,7 +39,7 @@ public class cluster {
 				coarse_finTrail.setTend(coarseTrail.get(coarseTrail.size()-1).getDate());
 				finTrails.add(coarse_finTrail);
 			}
-			cluseredTrails = calculations.structCluster(finTrails, 0.8, 0.88, 50);
+			cluseredTrails = calculations.structCluster(finTrails, 0.8, 0.88, 3000);
 			MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", "testTrail");
 			for(int i = 0; i < testTrails.size(); i ++) {
 				coll.updateOne(Filters.eq("_id", finTrails.get(i).getID()), new Document("$set", new Document("Cluster_id", finTrails.get(i).getCluster_id())));
@@ -48,6 +48,7 @@ public class cluster {
 			for(int i = testTrails.size(); i < finTrails.size(); i ++) {
 				coll.updateOne(Filters.eq("_id", finTrails.get(i).getID()), new Document("$set", new Document("Cluster_id", finTrails.get(i).getCluster_id())));
 			}
+			System.out.println("¾ÛÀàÍê³É");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -239,7 +239,11 @@ public class test {
 	}
 	
 	public static void testCluster() throws Exception {
-		ArrayList<Trail> trails = downloadData.getTrails("trail");
+		ArrayList<Trail> testTrails = downloadData.getTrails("testTrail");
+		ArrayList<Trail> trainTrails = downloadData.getTrails("trail");
+		ArrayList<Trail> trails = new ArrayList<>();
+		trails.addAll(testTrails);
+		trails.addAll(trainTrails);
 		ArrayList<Trail> finTrails = new ArrayList<>();
 		for(int i = 0; i < trails.size(); i ++) {
 			ArrayList<Trail> dividedTrail = calculations.divideTrace(trails.get(i), 240*60*1000);
@@ -348,7 +352,7 @@ public class test {
 		//testCompressOnNumber();
 		//testCompressOnHausdorff(); // 最后是要计算与（原始轨迹-原始轨迹-距离）的结果进行比较（差值）
 		//testBelta();
-		//testCluster();
-		testFindTopTrails();
+		testCluster();
+		//testFindTopTrails();
 	}
 }
