@@ -176,8 +176,14 @@
 		        success: function(data, status){
 		        	$('#find_the_similarity').val(""); //清空上次input框里的数据
 		            console.log(data);
-		            console.log(status);	
-		            drawLineAndTable(data);
+		            console.log(status);
+		            if(data[0] == '0') {
+		            	alert("测试轨迹不存在");
+		            } else if (data[0] == '1') {
+		            	alert("此轨迹为噪声轨迹");
+		            } else {
+		            	drawLineAndTable(data);
+		            }
 		        }
 		    });
 		}

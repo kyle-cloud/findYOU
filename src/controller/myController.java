@@ -7,10 +7,12 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,10 +21,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
+import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
 
+import calculation.calculations;
 import dao.MongoUtil;
+import net.sf.json.JSON;
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import process.cluster;
 import process.downloadData;
+import sun.invoke.empty.Empty;
 import trail.Point;
 import trail.Trail;
 
@@ -30,15 +38,15 @@ import trail.Trail;
 public class myController {
 	static DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
-	@SuppressWarnings("unchecked")
 	@RequestMapping("/findTheTrail")
 	@ResponseBody
 	public void findTheTrail(String IMSI, HttpServletResponse response) throws IOException{
 	    ArrayList<Trail> trails = new ArrayList<>();
 	    try {
+	    	Bson bson = Filters.eq("IMSI", IMSI);
 	    	//添加测试集
-	    	ArrayList<Trail> testTrails = findTrailsByIMSI(IMSI, "testTrail");
-	    	ArrayList<Trail> trainTrails = findTrailsByIMSI(IMSI, "trail");
+	    	ArrayList<Trail> testTrails = findTrailsByFilter(bson, "testTrail");
+	    	ArrayList<Trail> trainTrails = findTrailsByFilter(bson, "trail");
 	    	trails.addAll(testTrails);
 	    	trails.addAll(trainTrails);
             /*将list集合装换成json对象*/
@@ -55,27 +63,100 @@ public class myController {
         }
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping("/findTheSimilarity")
 	@ResponseBody
-	public void findTheSimilarity(String IMSI, HttpServletResponse response) {
-		
+	public void findTheSimilarity(String IMSI, HttpServletResponse response) throws IOException {
+		response.setCharacterEncoding("utf-8");
+		PrintWriter respWritter = response.getWriter();
+		ArrayList<Trail> trails = new ArrayList<>();
+		ArrayList<Trail> finTrails = new ArrayList<>();
+		ArrayList<Integer> empty = new ArrayList<>();
+	    try {
+	    	//添加测试集
+	    	Bson bson = Filters.eq("IMSI", IMSI);
+	    	ArrayList<Trail> testTrails = findTrailsByFilter(bson, "testTrail");
+	    	if(testTrails.size() == 0) {
+	    		empty.add(0);
+	    		JSONArray data = JSONArray.fromObject(empty);
+	            respWritter.append(data.toString());
+	            return;
+	    	}
+	    	bson = Filters.eq("Cluster_id", testTrails.get(0).getCluster_id());
+	    	ArrayList<Trail> trainTrails = findTrailsByFilter(bson, "trail");
+	    	if(trainTrails.size() == 0) {
+	    		empty.add(1);
+	    		JSONArray data = JSONArray.fromObject(empty);
+	            respWritter.append(data.toString());
+	            return;
+	    	}
+	    	
+	    	trails.addAll(testTrails);
+	    	trails.addAll(trainTrails);
+	    
+	    	//trails = calculations.structCluster(trails, 0.8, 0.88, 3000);
+	    	
+	    	ArrayList<Trail> objTrail = calculations.divideTrace(trails.get(0), 420*60*1000);
+			ArrayList<Trail> objFineTrail = calculations.fineCompress(objTrail, 3000, (long)30*60*1000);
+			ArrayList<Object> result_topTrails_indexes = calculations.findTopk(objFineTrail, 1);
+			objFineTrail = (ArrayList<Trail>)result_topTrails_indexes.get(0);
+			
+			double min = Integer.MAX_VALUE;
+			double max = 0.0;
+			for(int i = testTrails.size(); i < trails.size(); i ++) {
+				ArrayList<Trail> cmpTrail = calculations.divideTrace(trails.get(i), 420*60*1000);
+				ArrayList<Trail> cmpFineTrail = calculations.fineCompress(cmpTrail, 3000, (long)30*60*1000);
+				ArrayList<Integer> objTopIndexs = (ArrayList<Integer>)result_topTrails_indexes.get(1);
+				cmpFineTrail = calculations.getTopk(cmpFineTrail, objTopIndexs);
+				double temp = calculations.innerSimilarity(objFineTrail, cmpFineTrail);
+				trails.get(i).setScore(temp);
+				min = Math.min(min, temp);
+				max = Math.max(max, temp);
+			}
+			for(int i = testTrails.size(); i < trails.size(); i ++) {
+				trails.get(i).setScore((1 - (trails.get(i).getScore() - min) / (max - min)));
+			}
+			trails.sort(new Comparator<Trail>() {
+				 @Override
+				 public int compare(Trail t1, Trail t2) {
+					 if(t1.getScore() < t2.getScore())
+						 return 1;
+					 else if(t1.getScore() == t2.getScore())
+						 return 0;
+					 else
+						 return -1;
+				 }
+			});
+			int count = 0;
+			for(int i = testTrails.size(); count < 10 && i < trails.size(); i ++) {
+				count ++;
+				finTrails.add(trails.get(i));
+			}
+            /*将list集合装换成json对象*/
+            JSONArray data = JSONArray.fromObject(finTrails);
+            respWritter.append(data.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 	}
 	
 	@SuppressWarnings("unchecked")
-	public ArrayList<Trail> findTrailsByIMSI(String IMSI, String collection) throws ParseException {
+	public ArrayList<Trail> findTrailsByFilter(Bson bson, String collection) throws ParseException {
 		ObjectId ID = null;
 		int Test = 0;
+		String IMSI = null;
 		ArrayList<Point> points = new ArrayList<>();
 		ArrayList<String> dates = new ArrayList<>();
 		ArrayList<Double> longitudes = new ArrayList<>();
 		ArrayList<Double> latitudes = new ArrayList<>();
 		ArrayList<Trail> trails = new ArrayList<>();
 		MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", collection);
-		MongoCursor<Document> cursor = coll.find(Filters.eq("IMSI", IMSI)).iterator();
+		MongoCursor<Document> cursor = coll.find(bson).iterator();
     	while(cursor.hasNext()) {
     		Document document = cursor.next();
 			ID = document.getObjectId("_id");
 			Test = (int)document.get("Test");
+			IMSI = (String)document.get("IMSI");
 			dates = (ArrayList<String>) document.get("TraceTimes");
 			longitudes = (ArrayList<Double>) document.get("Longitudes");
 			latitudes = (ArrayList<Double>) document.get("Latitudes");

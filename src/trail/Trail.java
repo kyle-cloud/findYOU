@@ -26,6 +26,7 @@ public class Trail implements Cloneable, Serializable {
 	private int hm_index = -1;
 	int cluster_id = 0;
 	int test = 0;
+	double score = 0.0;
 	
 	public Trail() {
 		// TODO Auto-generated constructor stub
@@ -71,6 +72,10 @@ public class Trail implements Cloneable, Serializable {
 		return cluster_id;
 	}
 	
+	public double getScore() {
+		return score;
+	}
+	
 	public void setSum_points(int sum_points) {
 		this.sum_points = sum_points;
 	}
@@ -109,6 +114,10 @@ public class Trail implements Cloneable, Serializable {
 	
 	public void setTest(int test) {
 		this.test = test;
+	}
+	
+	public void setScore(double score) {
+		this.score = score;
 	}
 	
 	@Override
