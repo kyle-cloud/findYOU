@@ -93,8 +93,6 @@ public class myController {
 	    	
 	    	trails.addAll(testTrails);
 	    	trails.addAll(trainTrails);
-	    
-	    	//trails = calculations.structCluster(trails, 0.8, 0.88, 3000);
 	    	
 	    	ArrayList<Trail> objTrail = calculations.divideTrace(trails.get(0), 420*60*1000);
 			ArrayList<Trail> objFineTrail = calculations.fineCompress(objTrail, 3000, (long)30*60*1000);

@@ -36,6 +36,7 @@ public class calculations {
 			if(points.get(i).getDate().compareTo(segTimes.get(current)) >= 0) {
 				current ++;
 				Trail sub_trail = new Trail();
+				sub_trail.setID(trail.getID());
 				sub_trail.setIMSI(trail.getIMSI());
 				sub_trail.setHm_index(current - 2);
 				sub_trail.setPoints((ArrayList<Point>)sub_points.clone());
@@ -49,6 +50,7 @@ public class calculations {
 		}
 		//加进来最后一段
 		Trail sub_trail = new Trail();
+		sub_trail.setID(trail.getID());
 		sub_trail.setIMSI(trail.getIMSI());
 		sub_trail.setHm_index(current - 1);
 		sub_trail.setPoints(sub_points);
@@ -123,6 +125,7 @@ public class calculations {
 			tmpTrail.setPoints((ArrayList<Point>)tmpTra.clone());
 			tmpTrail.setSum_points(tmpTra.size());
 			tmpTrail.setIMSI(trail.get(0).getIMSI());
+			tmpTrail.setID(trail.get(0).getID());
 			tmpTrail.setTstart(tmpTra.get(0).getDate());
 			tmpTrail.setTend(tmpTra.get(tmpTra.size()-1).getDate());
 			tmpTrail.setHm_index(i);
