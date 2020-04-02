@@ -73,6 +73,23 @@ public class downloadData {
 		return trails;
 	}
 	
+	public static ArrayList<Object> getTrails_coarse(String collname) {
+		ArrayList<Object> result = new ArrayList<>();
+		ArrayList<Trail> trails = new ArrayList<>();
+		ArrayList<ObjectId> ID_parents = new ArrayList<>();
+		
+		MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", collname);
+		MongoCursor<Document> cursor = coll.find().iterator();
+		while(cursor.hasNext()) {
+			Document document = cursor.next();
+			ID_parents.add(document.getObjectId("Trail_id"));
+			trails.add((Trail)document.get("Trail"));
+		}
+		result.add(trails);
+		result.add(ID_parents);
+		return result;
+	}
+	
 	public static void main(String[] args) {
 		ArrayList<Trail> trails = new ArrayList<>();
 		trails = getTrails("trail");
