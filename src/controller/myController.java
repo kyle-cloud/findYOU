@@ -73,6 +73,7 @@ public class myController {
 		ArrayList<Trail> finTrails = new ArrayList<>();
 		ArrayList<Integer> empty = new ArrayList<>();
 	    try {
+	    	System.out.println("111111");
 	    	//添加测试集
 	    	Bson bson = Filters.eq("IMSI", IMSI);
 	    	ArrayList<Trail> testTrails = findTrailsByFilter(bson, "testTrail");
@@ -82,6 +83,7 @@ public class myController {
 	            respWritter.append(data.toString());
 	            return;
 	    	}
+	    	System.out.println("2222222");
 	    	bson = Filters.eq("Cluster_id", testTrails.get(0).getCluster_id());
 	    	ArrayList<Trail> trainTrails = findTrailsByFilter(bson, "trail");
 	    	if(trainTrails.size() == 0) {
@@ -90,7 +92,7 @@ public class myController {
 	            respWritter.append(data.toString());
 	            return;
 	    	}
-	    	
+	    	System.out.println("333333333");
 	    	trails.addAll(testTrails);
 	    	trails.addAll(trainTrails);
 	    	
@@ -114,6 +116,7 @@ public class myController {
 			for(int i = testTrails.size(); i < trails.size(); i ++) {
 				trails.get(i).setScore((1 - (trails.get(i).getScore() - min) / (max - min)));
 			}
+			System.out.println("4444444444");
 			trails.sort(new Comparator<Trail>() {
 				 @Override
 				 public int compare(Trail t1, Trail t2) {
