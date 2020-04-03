@@ -15,8 +15,6 @@ import trail.Point;
 import trail.Trail;
 
 public class downloadData {
-	static DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	
 	@SuppressWarnings("unchecked")
 	public static ArrayList<Trail> getTrails(String collname) {
 		ArrayList<Trail> trails = new ArrayList<>();
@@ -24,7 +22,7 @@ public class downloadData {
 		ObjectId ID = null;
 		String IMSI = null;
 		int Test = 0;
-		ArrayList<String> dates = new ArrayList<>();
+		ArrayList<Long> dates = new ArrayList<>();
 		ArrayList<Double> longitudes = new ArrayList<>();
 		ArrayList<Double> latitudes = new ArrayList<>();
 		try {
@@ -37,16 +35,16 @@ public class downloadData {
 				
 				ID = document.getObjectId("_id");
 				IMSI = (String)document.get("IMSI");
-				Test = (int)document.get("Test");
-				dates = (ArrayList<String>) document.get("TraceTimes");
-				longitudes = (ArrayList<Double>) document.get("Longitudes");
-				latitudes = (ArrayList<Double>) document.get("Latitudes");
+				Test = (int)document.get("test");
+				dates = (ArrayList<Long>) document.get("tracetimes");
+				longitudes = (ArrayList<Double>) document.get("longitudes");
+				latitudes = (ArrayList<Double>) document.get("latitudes");
 //				System.out.println(longitudes.get(0));
 //				System.out.println(dates.get(0));
 //				System.out.println(latitudes.get(0));
 				for(int i = 0; i < dates.size(); i ++) {
 					Point point = new Point();
-					point.setDate(format.parse(dates.get(i)));
+					point.setDate(dates.get(i));
 					point.setLng(longitudes.get(i));
 					point.setLat(latitudes.get(i));
 					//point.setCor(); 哦哦，这是原始轨迹，得等粗粒度降维的时候在计算转角，敲上瘾了-_-!
@@ -82,8 +80,8 @@ public class downloadData {
 		MongoCursor<Document> cursor = coll.find().iterator();
 		while(cursor.hasNext()) {
 			Document document = cursor.next();
-			ID_parents.add(document.getObjectId("Trail_id"));
-			trails.add((Trail)document.get("Trail"));
+			ID_parents.add(document.getObjectId("trail_id"));
+			trails.add((Trail)document.get("trail"));
 		}
 		result.add(trails);
 		result.add(ID_parents);
@@ -95,7 +93,7 @@ public class downloadData {
 		trails = getTrails("trail");
 		for(int i = 0; i < 5; i ++) {
 			System.out.println(trails.get(i).getTstart());
-			System.out.println(trails.get(i).getTstart().getTime());
+			System.out.println(trails.get(i).getTstart());
 		}
 	}
 }

@@ -11,8 +11,6 @@ import java.util.Date;
 
 import org.bson.types.ObjectId;
 
-import com.sun.xml.internal.bind.v2.model.core.ID;
-
 public class Trail implements Cloneable, Serializable {
 	private static final long serialVersionUID = 1L;
 	
@@ -20,8 +18,8 @@ public class Trail implements Cloneable, Serializable {
 	ArrayList<Point> points = new ArrayList<>();
 	private ObjectId ID = null;
 	private String IMSI = null;
-	private Date tstart;
-	private Date tend;
+	private long tstart;
+	private long tend;
 	private double hm = 0;
 	private int hm_index = -1;
 	int cluster_id = 0;
@@ -48,11 +46,11 @@ public class Trail implements Cloneable, Serializable {
 		return IMSI;
 	}
 	
-	public Date getTstart() {
+	public long getTstart() {
 		return tstart;
 	}
 	
-	public Date getTend() {
+	public long getTend() {
 		return tend;
 	}
 	
@@ -85,19 +83,19 @@ public class Trail implements Cloneable, Serializable {
 	}
 	
 	public void setID(ObjectId iD) {
-		ID = iD;
+		this.ID = iD;
 	}
 	
 	public void setIMSI(String iMSI) {
-		IMSI = iMSI;
+		this.IMSI = iMSI;
 	}
 	
-	public void setTstart(Date tstart) {
-		tstart = tstart;
+	public void setTstart(long start) {
+		this.tstart = start;
 	}
 	
-	public void setTend(Date tend) {
-		tend = tend;
+	public void setTend(long end) {
+		this.tend = end;
 	}
 	
 	public void setHm(double hm) {

@@ -8,7 +8,7 @@ public class Point implements Serializable{
 	private double lng;
 	private double lat;
 	private double cor;
-	private Date time;
+	private long time;
 	
 	public Point() {
 		
@@ -26,7 +26,7 @@ public class Point implements Serializable{
 		return cor;
 	}
 	
-	public Date getDate() {
+	public long getDate() {
 		return this.time;
 	}
 	
@@ -42,7 +42,7 @@ public class Point implements Serializable{
 		this.cor = (double) Math.round(cor * 100000) / 100000;
 	}
 	
-	public void setDate(Date time) {
+	public void setDate(long time) {
 		this.time = time;
 	}
 }

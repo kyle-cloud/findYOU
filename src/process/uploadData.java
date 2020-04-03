@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import org.bson.Document;
@@ -18,10 +20,10 @@ public class uploadData {
 		File file = new File(path);
 		BufferedReader bReader = null;
 		String IMSI = null;
-		ArrayList<String> dates = new ArrayList<>();
+		ArrayList<Long> dates = new ArrayList<>();
 		ArrayList<Double> longitudes = new ArrayList<>();
 		ArrayList<Double> latitudes = new ArrayList<>();
-		
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
 		
 		
 		try {
@@ -47,25 +49,25 @@ public class uploadData {
 					}
 					String[] strs = line.split(",");
 					IMSI = strs[0];
-					dates.add(strs[1]);
+					dates.add(df.parse(strs[1]).getTime());
 					longitudes.add(Double.parseDouble(strs[2]));
 					latitudes.add(Double.parseDouble(strs[3]));
 				}
 				Document document = new Document();
 				document.put("IMSI", IMSI);
-				document.put("Cluster_id", 0);
-				document.put("TraceTimes", dates);
-				document.put("Longitudes", longitudes);
-				document.put("Latitudes", latitudes);
+				document.put("cluster_id", 0);
+				document.put("tracetimes", dates);
+				document.put("longitudes", longitudes);
+				document.put("latitudes", latitudes);
 				MongoCollection<Document> coll;
 				if(flag == 1) {
 					coll = MongoUtil.instance.getCollection("liu", "testTrail");
-					document.put("Test", 1);
+					document.put("test", 1);
 					flag = 0;
 				}
 				else {
 					coll = MongoUtil.instance.getCollection("liu", "trail");
-					document.put("Test", 0);
+					document.put("test", 0);
 				}
 				coll.insertOne(document);
 				bReader.reset();
@@ -84,10 +86,10 @@ public class uploadData {
 	public static void main(String[] args) throws Exception {
 //		MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", "testTrail");
 //		coll.update({}, {$set: {'Cluster_id': 0}}, {multi: true});
-//		for(int i = 1; i < 10357; i ++) {
-//			System.out.println(i);
-//			readFile("D:\\Trail_Data\\taxi_log_2008_by_id\\" + String.valueOf(i) +".txt");
-//		}
+		for(int i = 1; i < 10357; i ++) {
+			System.out.println(i);
+			readFile("D:\\Trail_Data\\taxi_log_2008_by_id\\" + String.valueOf(i) +".txt");
+		}
 //		readFile("D:\\Trail_Data\\taxi_log_2008_by_id\\10.txt");
 //		readFile("D:\\Trail_Data\\taxi_log_2008_by_id\\16.txt");
 //		readFile("D:\\Trail_Data\\taxi_log_2008_by_id\\28.txt");

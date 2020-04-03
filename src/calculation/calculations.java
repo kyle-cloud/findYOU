@@ -24,7 +24,7 @@ public class calculations {
 	@SuppressWarnings("unchecked")
 	public static ArrayList<Trail> divideTrace(Trail trail, long theta) {
 		ArrayList<Trail> subTrails = new ArrayList<>();
-		ArrayList<Date> segTimes = divideTime(theta, trail.getTstart(), trail.getTend());
+		ArrayList<Long> segTimes = divideTime(theta, trail.getTstart(), trail.getTend());
 //		System.out.println(trail.getPoints().get(0).getDate());
 //		System.out.println(trail.getPoints().get(1).getDate());
 //		System.out.println(trail.getPoints().get(0).getDate().getTime());
@@ -33,7 +33,7 @@ public class calculations {
 		ArrayList<Point> sub_points = new ArrayList<>();
 		int current = 1;
 		for(int i = 0; i < points.size(); i ++) {
-			if(points.get(i).getDate().compareTo(segTimes.get(current)) >= 0) {
+			if(points.get(i).getDate() >= segTimes.get(current)) {
 				current ++;
 				Trail sub_trail = new Trail();
 				sub_trail.setID(trail.getID());
@@ -78,7 +78,7 @@ public class calculations {
 				sumLng += subTra.getPoints().get(j).getLng();
 				sumLat += subTra.getPoints().get(j).getLat();
 			}
-			Date meanDate = new Date();
+			long meanDate;
 			meanDate = meanDate(subTra.getTstart(), subTra.getTend());
 			Point point_tmp = new Point();
 			point_tmp.setLng(sumLng / sum_points);
@@ -384,11 +384,11 @@ public class calculations {
 			}
 			for(; j < points2.size(); j ++) {
 				//System.out.println(j);
-				if(points2.get(j).getDate().getTime() <= pre_1.getDate().getTime()) { 
+				if(points2.get(j).getDate() <= pre_1.getDate()) { 
 					j ++;
-				} else if(points2.get(j).getDate().getTime() > points1.get(i).getDate().getTime()) {
+				} else if(points2.get(j).getDate() > points1.get(i).getDate()) {
 					break;
-				} else if(points2.get(j).getDate().getTime() == points1.get(i).getDate().getTime()) {
+				} else if(points2.get(j).getDate() == points1.get(i).getDate()) {
 					j ++;
 					break;
 				} else {
@@ -403,7 +403,7 @@ public class calculations {
 		}
 		if(nxt_1 != null && j < points2.size()) {
 			for(; j < points2.size(); j ++) {
-				if(points2.get(j).getDate().getTime() > pre_1.getDate().getTime() && points2.get(j).getDate().getTime() < nxt_1.getDate().getTime()) {
+				if(points2.get(j).getDate() > pre_1.getDate() && points2.get(j).getDate() < nxt_1.getDate()) {
 					Point point_tmp = new Point();
 					point_tmp.setDate(points2.get(j).getDate());
 					point_tmp.setLat((nxt_1.getLat() + pre_1.getLat()) / 2);
@@ -468,14 +468,14 @@ public class calculations {
 	 *
 	 *分离时间段
 	 */
-	public static ArrayList<Date> divideTime(long theta, Date dStart, Date dEnd) {
-		ArrayList<Date> segs = new ArrayList<>();
+	public static ArrayList<Long> divideTime(long theta, long dStart, long dEnd) {
+		ArrayList<Long> segs = new ArrayList<>();
 		segs.add(dStart);
-		while(dStart.compareTo(dEnd) <= 0) {
-			dStart = new Date(dStart.getTime() + theta);
+		while(dStart < dEnd) {
+			dStart = dStart + theta;
 			segs.add(dStart);
 		}
-		segs.add(new Date(dStart.getTime() + theta));
+		segs.add(dStart + theta);
 		return segs;
 	}
 	
@@ -485,7 +485,7 @@ public class calculations {
 	 *两点时间差,绝对值
 	 */
 	public static long calcDistOfDate(Point p1, Point p2) {
-		return Math.abs(p1.getDate().getTime() - p2.getDate().getTime());
+		return Math.abs(p1.getDate() - p2.getDate());
 	}
 	
 	/**
@@ -493,9 +493,9 @@ public class calculations {
 	 *
 	 *平均时间
 	 */
-	public static Date meanDate(Date d1, Date d2) {
-		Date meanDate = new Date();
-		meanDate.setTime((d1.getTime() + d2.getTime()) / 2);
+	public static long meanDate(long d1, long d2) {
+		long meanDate;
+		meanDate = (d1 + d2) / 2;
 		return meanDate;
 	}
 	
