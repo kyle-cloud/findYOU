@@ -20,8 +20,8 @@ public class Trail implements Cloneable, Serializable {
 	ArrayList<Point> points = new ArrayList<>();
 	private ObjectId ID = null;
 	private String IMSI = null;
-	private Date Tstart;
-	private Date Tend;
+	private Date tstart;
+	private Date tend;
 	private double hm = 0;
 	private int hm_index = -1;
 	int cluster_id = 0;
@@ -49,11 +49,11 @@ public class Trail implements Cloneable, Serializable {
 	}
 	
 	public Date getTstart() {
-		return Tstart;
+		return tstart;
 	}
 	
 	public Date getTend() {
-		return Tend;
+		return tend;
 	}
 	
 	public double getHm() {
@@ -93,11 +93,11 @@ public class Trail implements Cloneable, Serializable {
 	}
 	
 	public void setTstart(Date tstart) {
-		Tstart = tstart;
+		tstart = tstart;
 	}
 	
 	public void setTend(Date tend) {
-		Tend = tend;
+		tend = tend;
 	}
 	
 	public void setHm(double hm) {
