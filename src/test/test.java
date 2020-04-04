@@ -33,7 +33,6 @@ import process.downloadData;
 import sun.tools.jar.resources.jar;
 import trail.Point;
 import trail.Trail;
-import trail.fineTrail;
 
 public class test {
 	public static void testTimeSegment() {
@@ -45,7 +44,7 @@ public class test {
 		}
 		HashMap<Double, Integer> map = new HashMap<Double, Integer>();
 		for(int i = 0; i < trails.size(); i ++) {
-			ArrayList<Trail> dividedTrail = calculations.divideTrace(trails.get(i), 540*60*1000);
+			ArrayList<Trail> dividedTrail = calculations.divideTrace(trails.get(i), 480*60*1000);
 			int sum = 0;
 			for(int j = 0; j < dividedTrail.size(); j ++) {
 				if(dividedTrail.get(j).getSum_points() >= 5) {
@@ -71,7 +70,7 @@ public class test {
 		ArrayList<Trail> coarseTrails = new ArrayList<>();
 		ArrayList<ArrayList<Trail>> fineTrails = new ArrayList<>();
 		for(int i = 0; i < trails.size(); i ++) {
-			ArrayList<Trail> dividedTrail = calculations.divideTrace(trails.get(i), 240*60*1000);
+			ArrayList<Trail> dividedTrail = calculations.divideTrace(trails.get(i), 480*60*1000);
 			ArrayList<Point> coarseTrail = calculations.coarseCompress(dividedTrail);
 			Trail coarse_Trail = new Trail();
 			coarse_Trail.setIMSI(trails.get(i).getIMSI());
@@ -81,7 +80,7 @@ public class test {
 			coarse_Trail.setTend(coarseTrail.get(coarseTrail.size()-1).getDate());
 			coarseTrails.add(coarse_Trail);
 			
-			ArrayList<Trail> fineTrail = calculations.fineCompress(dividedTrail, 3000, (long)30*60*1000);
+			ArrayList<Trail> fineTrail = calculations.fineCompress(dividedTrail, 5000, (long)120*60*1000);
 			fineTrails.add(fineTrail);
 		}
 		result.add(trails);
@@ -91,23 +90,28 @@ public class test {
 	}
 	
 	public static void testCompressOnNumber() throws Exception {
-		ArrayList<Trail> trails = downloadData.getTrails("trail");
+		ArrayList<Trail> trails_tmp = downloadData.getTrails("trail");
+		ArrayList<Trail> trails = new ArrayList<>();
+		for(int i = 0; i < 100; i ++) {
+			int rd = (int) (Math.random() * 180000);
+			trails.add(trails_tmp.get(rd));
+		}
 		ArrayList<ArrayList<Point>> evenTrails = new ArrayList<>();
 		ArrayList<ArrayList<Point>> coarseTrails = new ArrayList<>();
 		ArrayList<ArrayList<Trail>> fineTrails = new ArrayList<>();
 		for(int i = 0; i < trails.size(); i ++) {
 			ArrayList<Point> temp_points = new ArrayList<>();
-			for(int j = 0; j < trails.get(i).getPoints().size(); j += 10) {
+			for(int j = 0; j < trails.get(i).getPoints().size(); j += 3) {
 				temp_points.add(trails.get(i).getPoints().get(j));
 			}
 			evenTrails.add(temp_points);
 			
-			ArrayList<Trail> dividedTrail = calculations.divideTrace(trails.get(i), 240*60*1000);
+			ArrayList<Trail> dividedTrail = calculations.divideTrace(trails.get(i), 480*60*1000);
 			
 			ArrayList<Point> coarseTrail = calculations.coarseCompress(dividedTrail);
 			coarseTrails.add(coarseTrail);
 			
-			ArrayList<Trail> fineTrail = calculations.fineCompress(dividedTrail, 3000, (long)30*60*1000);
+			ArrayList<Trail> fineTrail = calculations.fineCompress(dividedTrail, 5000, (long)120*60*1000);
 			fineTrails.add(fineTrail);
 		}
 		File f = new File("number_trails.txt");
@@ -153,30 +157,35 @@ public class test {
 	
 	@SuppressWarnings("unchecked")
 	public static void testCompressOnHausdorff() throws Exception {
-		ArrayList<Trail> trails = downloadData.getTrails("trail");
+		ArrayList<Trail> trails_tmp = downloadData.getTrails("trail");
+		ArrayList<Trail> trails = new ArrayList<>();
+		for(int i = 0; i < 101; i ++) {
+			int rd = (int) (Math.random() * 180000);
+			trails.add(trails_tmp.get(rd));
+		}
 		ArrayList<ArrayList<Point>> evenTrails = new ArrayList<>();
 		ArrayList<ArrayList<Point>> coarseTrails = new ArrayList<>();
 		ArrayList<ArrayList<Trail>> fineTrails = new ArrayList<>();
 		for(int i = 0; i < trails.size(); i ++) {
 			ArrayList<Point> temp_points = new ArrayList<>();
-			for(int j = 0; j < trails.get(i).getPoints().size(); j += 10) {
+			for(int j = 0; j < trails.get(i).getPoints().size(); j += 3) {
 				temp_points.add(trails.get(i).getPoints().get(j));
 			}
 			evenTrails.add(temp_points);
 			
-			ArrayList<Trail> dividedTrail = calculations.divideTrace(trails.get(i), 240*60*1000);
+			ArrayList<Trail> dividedTrail = calculations.divideTrace(trails.get(i), 480*60*1000);
 			
 			ArrayList<Point> coarseTrail = calculations.coarseCompress(dividedTrail);
 			coarseTrails.add(coarseTrail);
 			
-			ArrayList<Trail> fineTrail = calculations.fineCompress(dividedTrail, 3000, (long)30*60*1000);
+			ArrayList<Trail> fineTrail = calculations.fineCompress(dividedTrail, 5000, (long)120*60*1000);
 			fineTrails.add(fineTrail);
 		}
 		File f = new File("hausdorff_trails.txt");
 		if(!f.exists()) f.createNewFile();
 		FileWriter fWriter = new FileWriter(f, true);
 		BufferedWriter bWriter = new BufferedWriter(fWriter);
-		for(int i = 0; i < trails.size(); i ++) {
+		for(int i = 1; i < trails.size(); i ++) {
 			bWriter.write("" + i + ":" + calculations.calcHk(trails.get(0).getPoints(), trails.get(i).getPoints()) + "\n");
 		}
 		bWriter.close();
@@ -185,7 +194,7 @@ public class test {
 		if(!f1.exists()) f1.createNewFile();
 		fWriter = new FileWriter(f1, true);
 		bWriter = new BufferedWriter(fWriter);
-		for(int i = 0; i < coarseTrails.size(); i ++) {
+		for(int i = 1; i < coarseTrails.size(); i ++) {
 			bWriter.write("" + i + ":" + calculations.calcHk(coarseTrails.get(0), coarseTrails.get(i)) + "\n");
 		}
 		bWriter.close();
@@ -201,7 +210,10 @@ public class test {
 			for(int j = 0; j < trail.size(); j ++) {
 				points.addAll(trail.get(j).getPoints());
 			}
-			if(i == 0) fixed_points = (ArrayList<Point>) points.clone();
+			if(i == 0) {
+				fixed_points = (ArrayList<Point>) points.clone();
+				continue;
+			}
 			bWriter.write("" + i + ":" + calculations.calcHk(fixed_points, points) + "\n");
 		}
 		bWriter.close();
@@ -210,7 +222,7 @@ public class test {
 		if(!f3.exists()) f3.createNewFile();
 		fWriter = new FileWriter(f3, true);
 		bWriter = new BufferedWriter(fWriter);
-		for(int i = 0; i < evenTrails.size(); i ++) {
+		for(int i = 1; i < evenTrails.size(); i ++) {
 			bWriter.write("" + i + ":" + calculations.calcHk(evenTrails.get(0), evenTrails.get(i)) + "\n");
 		}
 		bWriter.close();
@@ -223,7 +235,12 @@ public class test {
 		FileWriter fWriter = new FileWriter(f, true);
 		BufferedWriter bWriter = new BufferedWriter(fWriter);
 
-		ArrayList<Trail> trails = downloadData.getTrails("trail");
+		ArrayList<Trail> trails_tmp = downloadData.getTrails("trail");
+		ArrayList<Trail> trails = new ArrayList<>();
+		for(int i = 0; i < 100; i ++) {
+			int rd = (int) (Math.random() * 180000);
+			trails.add(trails_tmp.get(rd));
+		}
 		for(int i = 0; i < 10; i ++) {
 			double belta = 1.1;
 			for(int k = 0; k < 10; k ++) {
@@ -362,13 +379,13 @@ public class test {
 		//提取对象形式存储的细粒度轨迹
 		long startTime = System.currentTimeMillis();
 		Gson gson = new Gson();
-		ArrayList<fineTrail> fineTrails = new ArrayList<>();
+		ArrayList<Trail> fineTrails = new ArrayList<>();
 		MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", "trail_fine");
 		MongoCursor<Document> cursor = coll.find().iterator();
     	while(cursor.hasNext()) {
     		Document document = cursor.next();
 			String jString = gson.toJson(document).toString();
-			fineTrails.add(gson.fromJson(jString, fineTrail.class));
+			fineTrails.add(gson.fromJson(jString, Trail.class));
     	}
     	long endTime = System.currentTimeMillis();
     	System.out.println("细粒度运行时间：" + (endTime - startTime) + "ms"); //113.567
@@ -381,10 +398,10 @@ public class test {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		testTimeSegment();
+		//testTimeSegment();
 		//testCompressOnNumber();
 		//testCompressOnHausdorff(); // 最后是要计算与（原始轨迹-原始轨迹-距离）的结果进行比较（差值）
-		//testBelta();
+		testBelta();
 		//testCluster();
 		//testFindTopTrails();
 		//testMongoDB();

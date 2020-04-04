@@ -203,7 +203,7 @@
 		for(var i = 0; i < data.length; i ++) {
 			var pois = [];
 			var color = randomColor();
-			if(data[i].test == 1) {
+			if(i == 0 && data[i].test == 1) {
 				color = "#FF0000";
 			}
 			for(var j = 0; j < data[i].points.length; j ++) {

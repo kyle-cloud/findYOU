@@ -10,7 +10,6 @@ import com.mongodb.DBObject;
 import com.mongodb.client.MongoCollection;
 
 import calculation.calculations;
-import dao.JsonDateValueProcessor;
 import dao.MongoUtil;
 import net.sf.json.JSONArray;
 import net.sf.json.JsonConfig;
@@ -23,12 +22,10 @@ public class compress {
 		ArrayList<Trail> dividedTrail = new ArrayList<>();
 		ArrayList<Point> coarseTrail = new ArrayList<>();
 		ArrayList<Trail> fineTrail = new ArrayList<>();
-		
-		JsonConfig jsonConfig = new JsonConfig();
-		jsonConfig.registerJsonValueProcessor(Date.class, new JsonDateValueProcessor());
-		MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", "trail_coarse");
-		MongoCollection<Document> coll1 = MongoUtil.instance.getCollection("liu", "trail_fine");
-		ArrayList<Trail> trails = downloadData.getTrails("trail");
+
+		MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", "testTrail_coarse");
+		MongoCollection<Document> coll1 = MongoUtil.instance.getCollection("liu", "testTrail_fine");
+		ArrayList<Trail> trails = downloadData.getTrails("testTrail");
 		ArrayList<Long> dates = new ArrayList<>();
 		ArrayList<Double> longitudes = new ArrayList<>();
 		ArrayList<Double> latitudes = new ArrayList<>();
@@ -50,7 +47,7 @@ public class compress {
 			coll.insertOne(document);
 			
 			dividedTrail = calculations.divideTrace(trails.get(i), 480*60*1000);
-			fineTrail = calculations.fineCompress(dividedTrail, 0.03, (long)1000000);
+			fineTrail = calculations.fineCompress(dividedTrail, 5000, (long)120*60*1000);
 			result = trailToArrays(getAllPointsInFine(fineTrail));
 			dates = (ArrayList<Long>) result.get(0);
 			longitudes = (ArrayList<Double>) result.get(1);
