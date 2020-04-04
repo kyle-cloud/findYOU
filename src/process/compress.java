@@ -18,6 +18,7 @@ import trail.Point;
 import trail.Trail;
 
 public class compress {
+	@SuppressWarnings("unchecked")
 	public static void main(String[] args) throws Exception {
 		ArrayList<Trail> dividedTrail = new ArrayList<>();
 		ArrayList<Point> coarseTrail = new ArrayList<>();
@@ -28,42 +29,42 @@ public class compress {
 		MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", "trail_coarse");
 		MongoCollection<Document> coll1 = MongoUtil.instance.getCollection("liu", "trail_fine");
 		ArrayList<Trail> trails = downloadData.getTrails("trail");
+		ArrayList<Long> dates = new ArrayList<>();
+		ArrayList<Double> longitudes = new ArrayList<>();
+		ArrayList<Double> latitudes = new ArrayList<>();
 		for(int i = 0; i < trails.size(); i ++) {
-			dividedTrail = calculations.divideTrace(trails.get(i), 420*60*1000);
+			dividedTrail = calculations.divideTrace(trails.get(i), 480*60*1000);
 			coarseTrail = calculations.coarseCompress(dividedTrail);
-			Trail coarse_finTrail = new Trail();
-			
-			coarse_finTrail.setID(trails.get(i).getID());
-			coarse_finTrail.setIMSI(trails.get(i).getIMSI());
-			coarse_finTrail.setPoints(coarseTrail);
-			coarse_finTrail.setSum_points(coarseTrail.size());
-			coarse_finTrail.setTstart(coarseTrail.get(0).getDate());
-			coarse_finTrail.setTend(coarseTrail.get(coarseTrail.size()-1).getDate());
-	
+			ArrayList<Object> result = trailToArrays(coarseTrail);
+			dates = (ArrayList<Long>) result.get(0);
+			longitudes = (ArrayList<Double>) result.get(1);
+			latitudes = (ArrayList<Double>) result.get(2);
 			Document document = new Document();
-			net.sf.json.JSONObject jObject = net.sf.json.JSONObject.fromObject(coarse_finTrail);
+			document.put("IMSI", trails.get(i).getIMSI());
 			document.put("trail_id", trails.get(i).getID());
-			document.put("trail", jObject);
+			document.put("cluster_id", trails.get(i).getCluster_id());
+			document.put("tracetimes", dates);
+			document.put("longitudes", longitudes);
+			document.put("latitudes", latitudes);
+			document.put("test", 0);
 			coll.insertOne(document);
 			
-			dividedTrail = calculations.divideTrace(trails.get(i), 420*60*1000);
+			dividedTrail = calculations.divideTrace(trails.get(i), 480*60*1000);
 			fineTrail = calculations.fineCompress(dividedTrail, 0.03, (long)1000000);
-			
-			Trail fine_finTrail = new Trail();
-			ArrayList<Point> points = getAllPointsInFine(fineTrail);
-			fine_finTrail.setID(trails.get(i).getID());
-			fine_finTrail.setIMSI(trails.get(i).getIMSI());
-			fine_finTrail.setPoints(points);
-			fine_finTrail.setSum_points(points.size());
-			fine_finTrail.setTstart(points.get(0).getDate());
-			fine_finTrail.setTend(points.get(points.size()-1).getDate());
-			
+			result = trailToArrays(getAllPointsInFine(fineTrail));
+			dates = (ArrayList<Long>) result.get(0);
+			longitudes = (ArrayList<Double>) result.get(1);
+			latitudes = (ArrayList<Double>) result.get(2);
 			document = new Document();
-			jObject = net.sf.json.JSONObject.fromObject(fine_finTrail);
-			document.put("cluster_id", trails.get(i).getCluster_id());
+			document.put("IMSI", trails.get(i).getIMSI());
 			document.put("trail_id", trails.get(i).getID());
-			document.put("trail", jObject);
+			document.put("cluster_id", trails.get(i).getCluster_id());
+			document.put("tracetimes", dates);
+			document.put("longitudes", longitudes);
+			document.put("latitudes", latitudes);
+			document.put("test", 0);
 			coll1.insertOne(document);
+
 			System.out.println(i);
 		}
 	}
@@ -74,5 +75,21 @@ public class compress {
 			points.addAll(finetrails.get(i).getPoints());
 		}
 		return points;
+	}
+	
+	public static ArrayList<Object> trailToArrays(ArrayList<Point> points) {
+		ArrayList<Object> result = new ArrayList<>();
+		ArrayList<Long> dates = new ArrayList<>();
+		ArrayList<Double> longitudes = new ArrayList<>();
+		ArrayList<Double> latitudes = new ArrayList<>();
+		for(int i = 0; i < points.size(); i ++) {
+			dates.add(points.get(i).getDate());
+			longitudes.add(points.get(i).getLng());
+			latitudes.add(points.get(i).getLat());
+		}
+		result.add(dates);
+		result.add(longitudes);
+		result.add(latitudes);
+		return result;
 	}
 }

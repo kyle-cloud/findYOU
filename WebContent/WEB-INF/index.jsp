@@ -230,6 +230,13 @@
 				pois.push(new BMap.Point(data[i].points[j].lng, data[i].points[j].lat))
 			}
 			var color = randomColor();
+			if(data[i].test == 1) {
+				color = "#FF0000";
+				code += '<TR><TD>' + i + '</TD><TD>' + data[i].IMSI + '</TD><TD>' + data[i].score + '</TD><TD>' + "<div style='width:60px;height:20px;margin:0 auto;background:" + color + "'></div>" + '</TD></TR>';
+			}
+			else {
+				code += '<TR><TD>' + i + '</TD><TD>' + data[i].IMSI + '</TD><TD>' + data[i].score + '</TD><TD>' + "<div style='width:60px;height:20px;margin:0 auto;background:" + color + "'></div>" + '</TD></TR>';
+			}
 			var polyline = new BMap.Polyline(pois, {
 				enableEditing: false,
 				enableClicking: true,
@@ -237,13 +244,6 @@
 				strokeOpacity: 0.8,
 				strokeColor: color,
 			});
-			if(data[i].test == 1) {
-				color = "#FF0000";
-				code += '<TR><TD>' + i + '</TD><TD>' + data[i].IMSI + '</TD><TD>' + 100 + '</TD><TD>' + color + '</TD></TR>';
-			}
-			else {
-				code += '<TR><TD>' + i + '</TD><TD>' + data[i].IMSI + '</TD><TD>' + 100 + '</TD><TD>' + color + '</TD></TR>';
-			}
 			map.addOverlay(polyline);
 		}
 		tableInfos.innerHTML = code + '</TABLE></div>';

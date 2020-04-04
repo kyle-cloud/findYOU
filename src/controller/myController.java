@@ -46,7 +46,6 @@ import process.downloadData;
 import sun.invoke.empty.Empty;
 import trail.Point;
 import trail.Trail;
-import trail.fineTrail;
 
 @Controller
 public class myController {
@@ -63,15 +62,11 @@ public class myController {
 	    	ArrayList<Trail> trainTrails = findTrailsByFilter(bson, "trail");
 	    	trails.addAll(testTrails);
 	    	trails.addAll(trainTrails);
-            /*将list集合装换成json对象*/
+	    	
 	    	Gson gson = new Gson();
             String data = gson.toJson(trails);
-            //接下来发送数据
-            /*设置编码，防止出现乱码问题*/
             response.setCharacterEncoding("utf-8");
-            /*得到输出流*/
             PrintWriter respWritter = response.getWriter();
-            /*将JSON格式的对象toString()后发送*/
             respWritter.append(data.toString());
         } catch (Exception e) {
             e.printStackTrace();
@@ -84,9 +79,7 @@ public class myController {
 	public void findTheSimilarity(String IMSI, HttpServletResponse response) throws IOException {
 		System.out.println("传值成功111");
 		response.setCharacterEncoding("utf-8");
-		Gson gson = new GsonBuilder()
-                .setDateFormat("yyyy-MM-dd HH:mm:ss")
-                .create();
+		Gson gson = new Gson();
 
 		PrintWriter respWritter = response.getWriter();
 		ArrayList<Trail> trails = new ArrayList<>();
@@ -95,72 +88,54 @@ public class myController {
 	    try {
 	    	//添加测试集
 	    	Bson bson = Filters.eq("IMSI", IMSI);
-	    	ArrayList<Trail> testTrails = findFirstTrailsByFilter(bson, "testTrail");
-	    	
-	    	if(testTrails.size() == 0) {
+	    	Trail testTrail = findFirstTrailsByFilter(bson, "testTrail");
+	    	if(testTrail.getID() == null) {
 	    		empty.add(0);
 	    		String data = gson.toJson(empty);
 	            respWritter.append(data.toString());
 	            return;
 	    	}
+	    	System.out.println("导入测试轨迹成功222");
 	    	
-	    	System.out.println("导入一条测试轨迹成功222");
-	    	bson = Filters.eq("Cluster_id", testTrails.get(0).getCluster_id());
-	    	ArrayList<Trail> trainTrails = findTrailsByFilter(bson, "trail");
-	    	if(trainTrails.size() == 0) {
-	    		empty.add(1);
-	    		JSONArray data = JSONArray.fromObject(empty);
-	            respWritter.append(data.toString());
-	            return;
-	    	}
+	    	long startTime = System.currentTimeMillis();
+	    	//导出所有此cluster_id的细粒度轨迹
+	    	bson = Filters.eq("cluster_id", testTrail.getCluster_id());
+	    	trails.addAll(findTrailsByFilter(bson, "trail_fine"));
+	    	long endTime = System.currentTimeMillis();
+	    	System.out.println("导入训练细粒度轨迹成功333:" + (endTime - startTime) + "ms");//13660
 	    	
-	    	trails.addAll(testTrails);
-	    	trails.addAll(trainTrails);
-	    	
-	    	java.lang.reflect.Type listType = new TypeToken<ArrayList<Trail>>() {}.getType();
-	    	System.out.println("导入训练轨迹成功333");
-	    	MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", "testTrail_fine");
-			Document document = coll.find(Filters.eq("Trail_id", testTrails.get(0).getID())).first();
-			Object object = document.get("Trail");
-			ArrayList<Trail> objFineTrail = new ArrayList<>();
-			String jString = gson.toJson(object).toString();
-			objFineTrail =  gson.fromJson(jString, listType);
-//			JSONArray jArray = JSONArray.fromObject(object);
-//			for(int i = 0; i < jArray.size(); i ++) {
-//				JSONObject jsonObject = JSONObject.fromObject(jArray.getJSONObject(i));
-//				objFineTrail.add(gson.fromJson(gson.toJson(jsonObject), Trail.class));
-//			}
-			
+	    	//根据信息熵提取重要轨迹
+	    	ArrayList<Trail> objFineTrail = new ArrayList<>();
+	    	bson = Filters.eq("trail_id", testTrail.getID());
+	    	Trail temp_fineTrail = findFirstTrailsByFilter(bson, "testTrail_fine");
+	    	objFineTrail = calculations.divideTrace(temp_fineTrail, 480*60*1000);
 			ArrayList<Object> result_topTrails_indexes = calculations.findTopk(objFineTrail, 1);
 			objFineTrail = (ArrayList<Trail>)result_topTrails_indexes.get(0);
 			ArrayList<Integer> objTopIndexs = (ArrayList<Integer>)result_topTrails_indexes.get(1);
-			
 			System.out.println("测试细粒度轨迹解析成功444");
-			coll = MongoUtil.instance.getCollection("liu", "trail_fine");
+			
+			//开始判断相似度
+			startTime = System.currentTimeMillis();
 			double min = Integer.MAX_VALUE;
 			double max = 0.0;
-			for(int i = testTrails.size(); i < trails.size(); i ++) {
-				document = coll.find(Filters.eq("Trail_id", trails.get(i).getID())).first();
-				object = document.get("Trail");
-				ArrayList<Trail> cmpFineTrail = new ArrayList<>();
-				jString = gson.toJson(object).toString();
-				cmpFineTrail =  gson.fromJson(jString, listType);
-				
+			for(int i = 0; i < trails.size(); i ++) {
+				ArrayList<Trail> cmpFineTrail = calculations.divideTrace(trails.get(i), 480*60*1000);
 				cmpFineTrail = calculations.getTopk(cmpFineTrail, objTopIndexs);
 				double temp = calculations.innerSimilarity(objFineTrail, cmpFineTrail);
 				trails.get(i).setScore(temp);
 				min = Math.min(min, temp);
 				max = Math.max(max, temp);
-				System.out.println(i);
 			}
-			System.out.println("训练细粒度成功555");
+			endTime = System.currentTimeMillis();
+	    	System.out.println("训练细粒度成功555:" + (endTime - startTime) + "ms");//162528ms
 			
-			for(int i = testTrails.size(); i < trails.size(); i ++) {
+			//评分并排序
+			for(int i = 0; i < trails.size(); i ++) {
 				trails.get(i).setScore((1 - (trails.get(i).getScore() - min) / (max - min)));
 			}
 			trails.sort(new Comparator<Trail>() {
 				 @Override
-				 public int compare(Trail t1, Trail t2) {
+				 public int compare(Trail t1,Trail t2) {
 					 if(t1.getScore() < t2.getScore())
 						 return 1;
 					 else if(t1.getScore() == t2.getScore())
@@ -169,12 +144,19 @@ public class myController {
 						 return -1;
 				 }
 			});
+			System.out.println("排序完成666");
+			
+			
+			//挑选细粒度轨迹对应的原轨迹
 			int count = 0;
-			for(int i = testTrails.size(); count < 10 && i < trails.size(); i ++) {
+			finTrails.add(testTrail);
+			for(int i = 0; count < 9 && i < trails.size(); i ++) {
 				count ++;
-				finTrails.add(trails.get(i));
+				bson = Filters.eq("_id", trails.get(i).getTrail_id());
+				Trail trail = findFirstTrailsByFilter(bson, "trail");
+				trail.setScore(trails.get(i).getScore());
+				finTrails.add(trail);
 			}
-            /*将list集合装换成json对象*/
 			String data = gson.toJson(finTrails);
             respWritter.append(data.toString());
         } catch (Exception e) {
@@ -182,27 +164,30 @@ public class myController {
         }
 	}
 	
+	
 	@SuppressWarnings("unchecked")
-	public ArrayList<Trail> findFirstTrailsByFilter(Bson bson, String collection) throws ParseException {
+	public static Trail findFirstTrailsByFilter(Bson bson, String collection) throws ParseException {
 		ObjectId ID = null;
+		ObjectId trail_ID = null;
 		int Test = 0;
 		String IMSI = null;
 		ArrayList<Point> points = new ArrayList<>();
 		ArrayList<Long> dates = new ArrayList<>();
 		ArrayList<Double> longitudes = new ArrayList<>();
 		ArrayList<Double> latitudes = new ArrayList<>();
-		ArrayList<Trail> trails = new ArrayList<>();
+		Trail trail = new Trail();
     	MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", collection);
 		Document document = coll.find(bson).first();
 		if(document == null) {
-			return trails;
+			return trail;
 		}
 		ID = document.getObjectId("_id");
-		Test = (int)document.get("Test");
+		trail_ID = document.getObjectId("trail_id");
+		Test = (int)document.get("test");
 		IMSI = (String)document.get("IMSI");
-		dates = (ArrayList<Long>) document.get("TraceTimes");
-		longitudes = (ArrayList<Double>) document.get("Longitudes");
-		latitudes = (ArrayList<Double>) document.get("Latitudes");
+		dates = (ArrayList<Long>) document.get("tracetimes");
+		longitudes = (ArrayList<Double>) document.get("longitudes");
+		latitudes = (ArrayList<Double>) document.get("latitudes");
 		for(int i = 0; i < dates.size(); i ++) {
 			Point point = new Point();
 			point.setDate(dates.get(i));
@@ -211,26 +196,21 @@ public class myController {
 			//point.setCor(); 哦哦，这是原始轨迹，得等粗粒度降维的时候在计算转角，敲上瘾了-_-!
 			points.add(point);
 		}
-		Trail trail = new Trail();
 		trail.setSum_points(points.size());
 		trail.setPoints((ArrayList<Point>)points.clone());
 		trail.setID(ID);
+		trail.setTrail_id(trail_ID);
 		trail.setIMSI(IMSI);
 		trail.setTest(Test);
 		trail.setTstart(points.get(0).getDate());
 		trail.setTend(points.get(dates.size()-1).getDate());
-		trails.add(trail);
-		//清空
-		points.clear();
-		dates.clear();
-		longitudes.clear();
-		latitudes.clear();
-    	return trails;
+    	return trail;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public ArrayList<Trail> findTrailsByFilter(Bson bson, String collection) throws ParseException {
+	public static ArrayList<Trail> findTrailsByFilter(Bson bson, String collection) throws ParseException {
 		ObjectId ID = null;
+		ObjectId trail_ID = null;
 		int Test = 0;
 		String IMSI = null;
 		ArrayList<Point> points = new ArrayList<>();
@@ -243,11 +223,12 @@ public class myController {
     	while(cursor.hasNext()) {
     		Document document = cursor.next();
 			ID = document.getObjectId("_id");
-			Test = (int)document.get("Test");
+			trail_ID = document.getObjectId("trail_id");
+			Test = (int)document.get("test");
 			IMSI = (String)document.get("IMSI");
-			dates = (ArrayList<Long>) document.get("TraceTimes");
-			longitudes = (ArrayList<Double>) document.get("Longitudes");
-			latitudes = (ArrayList<Double>) document.get("Latitudes");
+			dates = (ArrayList<Long>) document.get("tracetimes");
+			longitudes = (ArrayList<Double>) document.get("longitudes");
+			latitudes = (ArrayList<Double>) document.get("latitudes");
 			for(int i = 0; i < dates.size(); i ++) {
 				Point point = new Point();
 				point.setDate(dates.get(i));
@@ -260,6 +241,7 @@ public class myController {
 			trail.setSum_points(points.size());
 			trail.setPoints((ArrayList<Point>)points.clone());
 			trail.setID(ID);
+			trail.setTrail_id(trail_ID);
 			trail.setIMSI(IMSI);
 			trail.setTest(Test);
 			trail.setTstart(points.get(0).getDate());
@@ -272,19 +254,5 @@ public class myController {
 			latitudes.clear();
     	}
     	return trails;
-	}
-	
-	public static ArrayList<fineTrail> getFineTrails(Bson bson) {
-		Gson gson = new Gson();
-		ArrayList<fineTrail> fineTrails = new ArrayList<>();
-		MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", "trail_fine");
-		MongoCursor<Document> cursor = coll.find(bson).iterator();
-    	while(cursor.hasNext()) {
-    		Document document = cursor.next();
-    		Object object = document.get("Trail");
-			String jString = gson.toJson(object).toString();
-			fineTrails.add(gson.fromJson(jString, fineTrail.class));
-    	}
-    	return fineTrails;
 	}
 }

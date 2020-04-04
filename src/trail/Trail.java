@@ -17,6 +17,7 @@ public class Trail implements Cloneable, Serializable {
 	int sum_points = 0;
 	ArrayList<Point> points = new ArrayList<>();
 	private ObjectId ID = null;
+	private ObjectId trail_id = null;
 	private String IMSI = null;
 	private long tstart;
 	private long tend;
@@ -115,7 +116,7 @@ public class Trail implements Cloneable, Serializable {
 	}
 	
 	public void setScore(double score) {
-		this.score = score;
+		this.score = (double) Math.round(score * 1000) / 1000;
 	}
 	
 	@Override
@@ -143,5 +144,13 @@ public class Trail implements Cloneable, Serializable {
 			e.printStackTrace();
 		}
 		return trail;
+	}
+
+	public ObjectId getTrail_id() {
+		return trail_id;
+	}
+
+	public void setTrail_id(ObjectId trail_id) {
+		this.trail_id = trail_id;
 	}
 }

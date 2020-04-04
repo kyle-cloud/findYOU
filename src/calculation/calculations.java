@@ -364,7 +364,7 @@ public class calculations {
 				H += calcHk(trail1.getPoints(), trail2.getPoints());
 		}
 		int Pset = topTra.size();
-		H /= Pset;
+		H /= (double)Pset;
 		return H;
 	}
 	

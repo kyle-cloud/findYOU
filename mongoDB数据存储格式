@@ -7,14 +7,12 @@ Trail:
 	"TraceTimes" : ["2015-12-23 01:15:54.5647", "2015-12-23 01:15:54.5647", ，，，]
 }
 
-coarseTrail:
+coarseTrail / fineTrail:
 {
-	"Trail" : Trail
+	"id" : "123khsjdfhcka1231",
+	"trail_id" : "1212312r43kjdvksdh",
+	"IMSI" : "1209380FHFS9802",
+	"Longitudes" : [12.384791, 12.12921, 13.38473, ，，，],
+	"Latitudes" : [30.384791, 30.12921, 31.38473, ，，，],
+	"TraceTimes" : ["2015-12-23 01:15:54.5647", "2015-12-23 01:15:54.5647", ，，，]
 }
-
-fineTrail:
-{
-	"IMSI" : "10"
-	"Trail": [subTrail1, subTrail2, subTrail3, ，，，]
-}
-	

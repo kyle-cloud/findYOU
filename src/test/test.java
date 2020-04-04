@@ -14,27 +14,38 @@ import java.util.Random;
 
 import javax.mail.Flags.Flag;
 
+import org.bson.Document;
 import org.eclipse.jdt.internal.compiler.ast.DoubleLiteral;
 
+import com.google.gson.Gson;
 import com.mongodb.annotations.Beta;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.sun.javafx.geom.PickRay;
 import com.sun.jndi.url.iiopname.iiopnameURLContextFactory;
 import com.sun.org.apache.bcel.internal.generic.StackConsumer;
 import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 import calculation.calculations;
+import dao.MongoUtil;
 import javafx.css.PseudoClass;
 import process.downloadData;
 import sun.tools.jar.resources.jar;
 import trail.Point;
 import trail.Trail;
+import trail.fineTrail;
 
 public class test {
 	public static void testTimeSegment() {
+		ArrayList<Trail> trails_tmp = downloadData.getTrails("trail");
+		ArrayList<Trail> trails = new ArrayList<>();
+		for(int i = 0; i < 100; i ++) {
+			int rd = (int) (Math.random() * 180000);
+			trails.add(trails_tmp.get(rd));
+		}
 		HashMap<Double, Integer> map = new HashMap<Double, Integer>();
-		ArrayList<Trail> trails = downloadData.getTrails("trail");
 		for(int i = 0; i < trails.size(); i ++) {
-			ArrayList<Trail> dividedTrail = calculations.divideTrace(trails.get(i), 240*60*1000);
+			ArrayList<Trail> dividedTrail = calculations.divideTrace(trails.get(i), 540*60*1000);
 			int sum = 0;
 			for(int j = 0; j < dividedTrail.size(); j ++) {
 				if(dividedTrail.get(j).getSum_points() >= 5) {
@@ -347,12 +358,35 @@ public class test {
 		}
 	}
 	
+	public static void testMongoDB() {
+		//提取对象形式存储的细粒度轨迹
+		long startTime = System.currentTimeMillis();
+		Gson gson = new Gson();
+		ArrayList<fineTrail> fineTrails = new ArrayList<>();
+		MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", "trail_fine");
+		MongoCursor<Document> cursor = coll.find().iterator();
+    	while(cursor.hasNext()) {
+    		Document document = cursor.next();
+			String jString = gson.toJson(document).toString();
+			fineTrails.add(gson.fromJson(jString, fineTrail.class));
+    	}
+    	long endTime = System.currentTimeMillis();
+    	System.out.println("细粒度运行时间：" + (endTime - startTime) + "ms"); //113.567
+    	
+    	//提取原始轨迹并直接整合成轨迹
+    	startTime = System.currentTimeMillis();
+    	downloadData.getTrails("trail");
+    	endTime = System.currentTimeMillis();
+    	System.out.println("原始运行时间：" + (endTime - startTime) + "ms"); //11.32
+	}
+	
 	public static void main(String[] args) throws Exception {
-		//testTimeSegment();
+		testTimeSegment();
 		//testCompressOnNumber();
 		//testCompressOnHausdorff(); // 最后是要计算与（原始轨迹-原始轨迹-距离）的结果进行比较（差值）
 		//testBelta();
-		testCluster();
+		//testCluster();
 		//testFindTopTrails();
+		//testMongoDB();
 	}
 }

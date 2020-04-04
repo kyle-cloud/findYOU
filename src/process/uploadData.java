@@ -56,6 +56,7 @@ public class uploadData {
 				Document document = new Document();
 				document.put("IMSI", IMSI);
 				document.put("cluster_id", 0);
+				document.put("trail_id", null);
 				document.put("tracetimes", dates);
 				document.put("longitudes", longitudes);
 				document.put("latitudes", latitudes);
