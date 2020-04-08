@@ -5,12 +5,24 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.RealMatrix;
+
 import com.sun.mail.util.TraceInputStream;
 import com.sun.org.apache.xpath.internal.operations.And;
 
 import process.downloadData;
 import trail.Point;
 import trail.Trail;
+
+
+import com.mathworks.toolbox.javabuilder.MWArray;  
+import com.mathworks.toolbox.javabuilder.MWClassID;  
+import com.mathworks.toolbox.javabuilder.MWComplexity;
+import com.mathworks.toolbox.javabuilder.MWException;
+import com.mathworks.toolbox.javabuilder.MWNumericArray;  
+  
+import hausdorff.Hausdorff;
 
 public class calculations {
 	
@@ -340,8 +352,9 @@ public class calculations {
 	 *时间插值相似度计算
 	 *输入：两条轨迹
 	 * @throws CloneNotSupportedException 
+	 * @throws MWException 
 	 */
-	public static double innerSimilarity(ArrayList<Trail> topTra, ArrayList<Trail> finTra) throws CloneNotSupportedException {
+	public static double innerSimilarity(ArrayList<Trail> topTra, ArrayList<Trail> finTra) throws CloneNotSupportedException, MWException {
 		double H = 0;
 		for(int i = 0; i < topTra.size() && i < finTra.size(); i ++) {
 				//if(topTra.get(i).getTstart() != finTra.get(j).getTstart()) continue;
@@ -419,8 +432,9 @@ public class calculations {
 	 * @author kyle_cloud
 	 *
 	 *计算轨迹段Hausdorff
+	 * @throws MWException 
 	 */
-	public static double calcH(ArrayList<Trail> trail1, ArrayList<Trail> trail2) {
+	public static double calcH(ArrayList<Trail> trail1, ArrayList<Trail> trail2) throws MWException {
 		double res = 0;
 		for(int i = 0; i < trail1.size() && i < trail2.size(); i ++) {
 			res += calcHk(trail1.get(i).getPoints(), trail2.get(i).getPoints());
@@ -433,23 +447,42 @@ public class calculations {
 	 * @author kyle_cloud
 	 *
 	 *计算子轨迹段Hausdorff
+	 * @throws MWException 
 	 */
-	public static double calcHk(ArrayList<Point> trail1, ArrayList<Point> trail2) {
-		double min1 = Integer.MAX_VALUE, min2 = Integer.MAX_VALUE;
-		double max1 = Integer.MIN_VALUE, max2 = Integer.MIN_VALUE;
+	public static double calcHk(ArrayList<Point> trail1, ArrayList<Point> trail2) throws MWException {
+		double p1[][] = new double[trail1.size()][2];
+		double p2[][] = new double[trail2.size()][2]; 
 		for(int i = 0; i < trail1.size(); i ++) {
-			for(int j = 0; j < trail2.size(); j ++) {
-				min1 = Math.min(min1, calcDistance(trail1.get(i), trail2.get(j)));
-			}
-			max1 = Math.max(max1, min1);
+			p1[i][0] = trail1.get(i).getLat();
+			p1[i][0] = trail1.get(i).getLng();
 		}
 		for(int i = 0; i < trail2.size(); i ++) {
-			for(int j = 0; j < trail1.size(); j ++) {
-				min2 = Math.min(min2, calcDistance(trail2.get(i), trail1.get(j)));
-			}
-			max2 = Math.max(max2, min2);
+			p2[i][0] = trail2.get(i).getLat();
+			p2[i][0] = trail2.get(i).getLng();
 		}
-		return Math.max(max1, max2);
+		Hausdorff temp = new Hausdorff();
+		Object[] result = temp.hausdorff(1, p1, p2);
+		System.out.println("hahah" + result[0]);
+		return 1;
+		
+		
+		
+		
+//		double min1 = Integer.MAX_VALUE, min2 = Integer.MAX_VALUE;
+//		double max1 = Integer.MIN_VALUE, max2 = Integer.MIN_VALUE;
+//		for(int i = 0; i < trail1.size(); i ++) {
+//			for(int j = 0; j < trail2.size(); j ++) {
+//				min1 = Math.min(min1, calcDistance(trail1.get(i), trail2.get(j)));
+//			}
+//			max1 = Math.max(max1, min1);
+//		}
+//		for(int i = 0; i < trail2.size(); i ++) {
+//			for(int j = 0; j < trail1.size(); j ++) {
+//				min2 = Math.min(min2, calcDistance(trail2.get(i), trail1.get(j)));
+//			}
+//			max2 = Math.max(max2, min2);
+//		}
+//		return Math.max(max1, max2);
 	}
 	
 	/**

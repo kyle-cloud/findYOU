@@ -116,7 +116,7 @@ public class Trail implements Cloneable, Serializable {
 	}
 	
 	public void setScore(double score) {
-		this.score = (double) Math.round(score * 1000) / 1000;
+		this.score = (double) Math.round(score * 10000) / 10000;
 	}
 	
 	@Override

@@ -23,9 +23,9 @@ public class compress {
 		ArrayList<Point> coarseTrail = new ArrayList<>();
 		ArrayList<Trail> fineTrail = new ArrayList<>();
 
-		MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", "testTrail_coarse");
-		MongoCollection<Document> coll1 = MongoUtil.instance.getCollection("liu", "testTrail_fine");
-		ArrayList<Trail> trails = downloadData.getTrails("testTrail");
+		MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", "trail_coarse");
+		MongoCollection<Document> coll1 = MongoUtil.instance.getCollection("liu", "trail_fine");
+		ArrayList<Trail> trails = downloadData.getTrails("trail");
 		ArrayList<Long> dates = new ArrayList<>();
 		ArrayList<Double> longitudes = new ArrayList<>();
 		ArrayList<Double> latitudes = new ArrayList<>();

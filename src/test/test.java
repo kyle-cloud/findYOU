@@ -18,6 +18,7 @@ import org.bson.Document;
 import org.eclipse.jdt.internal.compiler.ast.DoubleLiteral;
 
 import com.google.gson.Gson;
+import com.mathworks.toolbox.javabuilder.MWException;
 import com.mongodb.annotations.Beta;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -397,13 +398,25 @@ public class test {
     	System.out.println("原始运行时间：" + (endTime - startTime) + "ms"); //11.32
 	}
 	
+	public static void testTimeOnHarsdorff() throws MWException {
+		ArrayList<Trail> trails = downloadData.getTrails("trail");
+		long startTime = System.currentTimeMillis();
+		for(int i = 0; i < trails.size(); i ++) {
+			calculations.calcHk(trails.get(0).getPoints(), trails.get(i).getPoints());
+			System.out.println(i);
+		}
+		long endTime = System.currentTimeMillis();
+		System.out.println("原始运行时间：" + (endTime - startTime) + "ms"); //11.32
+	}
+	
 	public static void main(String[] args) throws Exception {
 		//testTimeSegment();
 		//testCompressOnNumber();
 		//testCompressOnHausdorff(); // 最后是要计算与（原始轨迹-原始轨迹-距离）的结果进行比较（差值）
-		testBelta();
+		//testBelta();
 		//testCluster();
 		//testFindTopTrails();
 		//testMongoDB();
+		testTimeOnHarsdorff();
 	}
 }
