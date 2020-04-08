@@ -21,8 +21,6 @@ import com.mathworks.toolbox.javabuilder.MWClassID;
 import com.mathworks.toolbox.javabuilder.MWComplexity;
 import com.mathworks.toolbox.javabuilder.MWException;
 import com.mathworks.toolbox.javabuilder.MWNumericArray;  
-  
-import hausdorff.Hausdorff;
 
 public class calculations {
 	
@@ -450,39 +448,21 @@ public class calculations {
 	 * @throws MWException 
 	 */
 	public static double calcHk(ArrayList<Point> trail1, ArrayList<Point> trail2) throws MWException {
-		double p1[][] = new double[trail1.size()][2];
-		double p2[][] = new double[trail2.size()][2]; 
+		double min1 = Integer.MAX_VALUE, min2 = Integer.MAX_VALUE;
+		double max1 = Integer.MIN_VALUE, max2 = Integer.MIN_VALUE;
 		for(int i = 0; i < trail1.size(); i ++) {
-			p1[i][0] = trail1.get(i).getLat();
-			p1[i][0] = trail1.get(i).getLng();
+			for(int j = 0; j < trail2.size(); j ++) {
+				min1 = Math.min(min1, calcDistance(trail1.get(i), trail2.get(j)));
+			}
+			max1 = Math.max(max1, min1);
 		}
 		for(int i = 0; i < trail2.size(); i ++) {
-			p2[i][0] = trail2.get(i).getLat();
-			p2[i][0] = trail2.get(i).getLng();
+			for(int j = 0; j < trail1.size(); j ++) {
+				min2 = Math.min(min2, calcDistance(trail2.get(i), trail1.get(j)));
+			}
+			max2 = Math.max(max2, min2);
 		}
-		Hausdorff temp = new Hausdorff();
-		Object[] result = temp.hausdorff(1, p1, p2);
-		System.out.println("hahah" + result[0]);
-		return 1;
-		
-		
-		
-		
-//		double min1 = Integer.MAX_VALUE, min2 = Integer.MAX_VALUE;
-//		double max1 = Integer.MIN_VALUE, max2 = Integer.MIN_VALUE;
-//		for(int i = 0; i < trail1.size(); i ++) {
-//			for(int j = 0; j < trail2.size(); j ++) {
-//				min1 = Math.min(min1, calcDistance(trail1.get(i), trail2.get(j)));
-//			}
-//			max1 = Math.max(max1, min1);
-//		}
-//		for(int i = 0; i < trail2.size(); i ++) {
-//			for(int j = 0; j < trail1.size(); j ++) {
-//				min2 = Math.min(min2, calcDistance(trail2.get(i), trail1.get(j)));
-//			}
-//			max2 = Math.max(max2, min2);
-//		}
-//		return Math.max(max1, max2);
+		return Math.max(max1, max2);
 	}
 	
 	/**
