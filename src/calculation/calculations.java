@@ -1,5 +1,8 @@
 package calculation;
 
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -7,6 +10,10 @@ import java.util.List;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
+import org.ujmp.core.DenseMatrix;
+import org.ujmp.core.Matrix;
+import org.ujmp.core.calculation.Calculation.Ret;
+import org.ujmp.core.objectmatrix.calculation.Repmat;
 
 import com.sun.mail.util.TraceInputStream;
 import com.sun.org.apache.xpath.internal.operations.And;
@@ -20,7 +27,7 @@ import com.mathworks.toolbox.javabuilder.MWArray;
 import com.mathworks.toolbox.javabuilder.MWClassID;  
 import com.mathworks.toolbox.javabuilder.MWComplexity;
 import com.mathworks.toolbox.javabuilder.MWException;
-import com.mathworks.toolbox.javabuilder.MWNumericArray;  
+import com.mathworks.toolbox.javabuilder.MWNumericArray; 
 
 public class calculations {
 	
@@ -152,6 +159,63 @@ public class calculations {
 	 *输入：一条轨迹
 	 */
 	public static Point calcWeightedTogether(ArrayList<Point> minTra, long lambda) {
+		Point minp = new Point();
+		double sumTime = calcDistOfDate(minTra.get(0), minTra.get(minTra.size()-1));
+		//求权重
+		ArrayList<Double> wp = new ArrayList<>();
+		ArrayList<Point> qc_points = new ArrayList<>();
+		for(int k = 0; k < minTra.size(); k ++) {
+			int stay = k;
+			for(int h = k; h < minTra.size(); h ++) {//查看最后停留在此点的时间
+				if(minTra.get(h).getLng() == minTra.get(k).getLng() && minTra.get(h).getLat() == minTra.get(k).getLat()) {
+					stay = h;
+				} else {
+					break;
+				}
+			}
+			double tp = 0;
+			double lp = 0;
+			if(stay == k) {
+				if(k == 0 && minTra.size() > 1) {
+					tp = calcDistOfDate(minTra.get(1), minTra.get(0)) / 2;
+				} else if(k == 0 && minTra.size() == 1) {
+					tp = lambda;
+				} else if(k == minTra.size()-1 && minTra.size() > 1) {
+					tp = calcDistOfDate(minTra.get(k), minTra.get(k - 1)) / 2;
+				} else {
+					tp = calcDistOfDate(minTra.get(k + 1), minTra.get(k - 1)) / 2;
+				}
+			} else {
+				tp = calcDistOfDate(minTra.get(stay), minTra.get(k)) / sumTime;
+			}
+			lp = ((stay - k + 1) / (double)minTra.size());
+			wp.add(tp * lp);
+			qc_points.add(minTra.get(k));
+			k = stay;
+		}
+		//求聚合点
+		double minp_lng = 0;
+		double minp_lat = 0;
+		double minp_wp = 0;
+		int qc_sum = qc_points.size();
+		for(int k = 0; k < qc_sum; k ++) {
+			minp_lng += qc_points.get(k).getLng() * wp.get(k);
+			minp_lat += qc_points.get(k).getLat() * wp.get(k);
+			minp_wp += wp.get(k);
+		}
+		minp.setLng(minp_lng / minp_wp);
+		minp.setLat(minp_lat / minp_wp);
+		minp.setDate(meanDate(minTra.get(0).getDate(), minTra.get(minTra.size()-1).getDate()));
+		return minp;
+	}
+	
+	/**
+	 * @author kyle_cloud
+	 *
+	 *求权重并聚合_改进版本_兴趣点factor
+	 *输入：一条轨迹
+	 */
+	public static Point calcWeightedTogetherAdvanced(ArrayList<Point> minTra, long lambda) {
 		Point minp = new Point();
 		double sumTime = calcDistOfDate(minTra.get(0), minTra.get(minTra.size()-1));
 		//求权重
@@ -446,8 +510,28 @@ public class calculations {
 	 *
 	 *计算子轨迹段Hausdorff
 	 * @throws MWException 
+	 * @throws IOException 
+	 * @throws InterruptedException 
 	 */
-	public static double calcHk(ArrayList<Point> trail1, ArrayList<Point> trail2) throws MWException {
+	public static double calcHk(ArrayList<Point> trail1, ArrayList<Point> trail2) {
+// 		Matrix p1 = DenseMatrix.Factory.zeros(trail1.size(), 2);
+// 		Matrix p2 = DenseMatrix.Factory.zeros(trail2.size(), 2);
+// 		for(int i = 0; i < trail1.size(); i ++) {
+// 			p1.setAsDouble(trail1.get(i).getLat(), i, 0);
+// 			p1.setAsDouble(trail1.get(i).getLng(), i, 1);
+// 		}
+// 		for(int i = 0; i < trail2.size(); i ++) {
+// 			p2.setAsDouble(trail2.get(i).getLat(), i, 0);
+// 			p2.setAsDouble(trail2.get(i).getLng(), i, 1);
+// 		}
+// 		Matrix dMatrix = DenseMatrix.Factory.zeros(trail1.size(), 1);
+// 	    for(int i = 0; i < trail1.size(); i ++) {
+// 	    	Matrix tMatrix = p2.minus(p1.selectRows(Ret.LINK, i));
+// 	    	dMatrix.setAsDouble(tMatrix.selectColumns(Ret.LINK, 0).times(tMatrix.selectColumns(Ret.LINK, 0)).plus(tMatrix.selectColumns(Ret.LINK, 0).times(tMatrix.selectColumns(Ret.LINK, 0))).getMinValue(), i, 0);
+// 	    }
+// 		
+// 		return 1;
+
 		double min1 = Integer.MAX_VALUE, min2 = Integer.MAX_VALUE;
 		double max1 = Integer.MIN_VALUE, max2 = Integer.MIN_VALUE;
 		for(int i = 0; i < trail1.size(); i ++) {
