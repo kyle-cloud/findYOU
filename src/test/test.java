@@ -409,6 +409,30 @@ public class test {
 		System.out.println("原始运行时间：" + (endTime - startTime) + "ms"); //11.32
 	}
 	
+	public static void testFineCompressAdvanced() throws IOException {
+		ArrayList<Trail> trails = downloadData.getTrails("trail");
+		ArrayList<ArrayList<Trail>> fineTrails = new ArrayList<>();
+		for(int i = 0; i < trails.size(); i ++) {
+			ArrayList<Trail> dividedTrail = calculations.divideTrace(trails.get(i), 480*60*1000);
+			ArrayList<Trail> fineTrail = calculations.fineCompress(dividedTrail, 5000, (long)120*60*1000);
+			fineTrails.add(fineTrail);
+		}
+		
+		File f2 = new File("number_fineTrails.txt");
+		if(!f2.exists()) f2.createNewFile();
+		FileWriter fWriter = new FileWriter(f2, true);
+		BufferedWriter bWriter = new BufferedWriter(fWriter);
+		bWriter.write('\n');
+		for(int i = 0; i < fineTrails.size(); i ++) {
+			ArrayList<Point> points = new ArrayList<>();
+			for(int j = 0; j < fineTrails.get(i).size(); j ++) {
+				points.addAll(fineTrails.get(i).get(j).getPoints());
+			}
+			bWriter.write("" + i + ":" + calculations.calcHk(points, trails.get(i).getPoints()) + "\t");
+		}
+		bWriter.close();
+	}
+	
 	public static void main(String[] args) throws Exception {
 		//testTimeSegment();
 		//testCompressOnNumber();
@@ -417,6 +441,7 @@ public class test {
 		//testCluster();
 		//testFindTopTrails();
 		//testMongoDB();
-		testTimeOnHarsdorff();
+		//testTimeOnHarsdorff();
+		testFineCompressAdvanced();
 	}
 }
