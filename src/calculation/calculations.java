@@ -129,7 +129,7 @@ public class calculations {
 			minTra.add(subTra.getPoints().get(0)); //存储每一个分段
 			for(int j = 1; j < points.size(); j ++) {
 				if(calcDistance(points.get(j), minTra.get(0)) >= l || calcDistOfDate(points.get(j), minTra.get(0)) >= lambda) {
-					tmpTra.add(calcWeightedTogether(minTra, lambda));
+					tmpTra.add(calcWeightedTogetherAdvanced(minTra, lambda));
 					minTra.clear();
 					minTra.add(points.get(j));
 				} else {

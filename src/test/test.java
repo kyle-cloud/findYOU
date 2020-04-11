@@ -400,13 +400,13 @@ public class test {
 	
 	public static void testTimeOnHarsdorff() throws MWException {
 		ArrayList<Trail> trails = downloadData.getTrails("trail");
-		long startTime = System.currentTimeMillis();
 		for(int i = 0; i < trails.size(); i ++) {
+			long startTime = System.currentTimeMillis();
 			calculations.calcHk(trails.get(0).getPoints(), trails.get(i).getPoints());
 			System.out.println(i);
+			long endTime = System.currentTimeMillis();
+			System.out.println("原始运行时间：" + (endTime - startTime) + "ms"); //11.32
 		}
-		long endTime = System.currentTimeMillis();
-		System.out.println("原始运行时间：" + (endTime - startTime) + "ms"); //11.32
 	}
 	
 	public static void testFineCompressAdvanced() throws IOException {
@@ -441,7 +441,7 @@ public class test {
 		//testCluster();
 		//testFindTopTrails();
 		//testMongoDB();
-		//testTimeOnHarsdorff();
-		testFineCompressAdvanced();
+		testTimeOnHarsdorff();
+		//testFineCompressAdvanced();
 	}
 }
