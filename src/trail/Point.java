@@ -9,6 +9,7 @@ public class Point implements Serializable{
 	private double lat;
 	private double cor;
 	private long time;
+	private double weightInterest = 0;
 	
 	public Point() {
 		
@@ -44,5 +45,13 @@ public class Point implements Serializable{
 	
 	public void setDate(long time) {
 		this.time = time;
+	}
+
+	public double getWeightInterest() {
+		return weightInterest;
+	}
+
+	public void setWeightInterest(double weightInterest) {
+		this.weightInterest = weightInterest;
 	}
 }

@@ -212,6 +212,28 @@ public class calculations {
 	/**
 	 * @author kyle_cloud
 	 *
+	 *求兴趣点
+	 *输入：一条轨迹
+	 */
+	public static void getInterestWeight(ArrayList<Trail> trails) {
+		ArrayList<Point> points = new ArrayList<>();
+		for(int i = 0; i < trails.size(); i ++) {
+			points.addAll(trails.get(i).getPoints());
+		}
+		for(int i = 0; i < points.size(); i ++) {
+			int num = 0;
+			for(int j = 0; j < points.size(); j ++) {
+				if(calcDistance(points.get(i), points.get(j)) < 1000) {
+					num ++;
+				}
+			}
+			points.get(i).setWeightInterest((double)num / (double)points.size());
+		}
+	}
+	
+	/**
+	 * @author kyle_cloud
+	 *
 	 *求权重并聚合_改进版本_兴趣点factor
 	 *输入：一条轨迹
 	 */
@@ -246,7 +268,7 @@ public class calculations {
 				tp = calcDistOfDate(minTra.get(stay), minTra.get(k)) / sumTime;
 			}
 			lp = ((stay - k + 1) / (double)minTra.size());
-			wp.add(tp * lp);
+			wp.add(tp * lp * minTra.get(k).getWeightInterest());
 			qc_points.add(minTra.get(k));
 			k = stay;
 		}
