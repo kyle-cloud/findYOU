@@ -129,7 +129,7 @@ public class calculations {
 			minTra.add(subTra.getPoints().get(0)); //存储每一个分段
 			for(int j = 1; j < points.size(); j ++) {
 				if(calcDistance(points.get(j), minTra.get(0)) >= l || calcDistOfDate(points.get(j), minTra.get(0)) >= lambda) {
-					tmpTra.add(calcWeightedTogetherAdvanced(minTra, lambda));
+					tmpTra.add(calcWeightedTogether(minTra, lambda));
 					minTra.clear();
 					minTra.add(points.get(j));
 				} else {
@@ -537,35 +537,27 @@ public class calculations {
 	 * @throws InterruptedException 
 	 */
 	public static double calcHk(ArrayList<Point> trail1, ArrayList<Point> trail2) {
-// 		Matrix p1 = DenseMatrix.Factory.zeros(trail1.size(), 2);
-// 		Matrix p2 = DenseMatrix.Factory.zeros(trail2.size(), 2);
-// 		for(int i = 0; i < trail1.size(); i ++) {
-// 			p1.setAsDouble(trail1.get(i).getLat(), i, 0);
-// 			p1.setAsDouble(trail1.get(i).getLng(), i, 1);
-// 		}
-// 		for(int i = 0; i < trail2.size(); i ++) {
-// 			p2.setAsDouble(trail2.get(i).getLat(), i, 0);
-// 			p2.setAsDouble(trail2.get(i).getLng(), i, 1);
-// 		}
-// 		Matrix dMatrix = DenseMatrix.Factory.zeros(trail1.size(), 1);
-// 	    for(int i = 0; i < trail1.size(); i ++) {
-// 	    	Matrix tMatrix = p2.minus(p1.selectRows(Ret.LINK, i));
-// 	    	dMatrix.setAsDouble(tMatrix.selectColumns(Ret.LINK, 0).times(tMatrix.selectColumns(Ret.LINK, 0)).plus(tMatrix.selectColumns(Ret.LINK, 0).times(tMatrix.selectColumns(Ret.LINK, 0))).getMinValue(), i, 0);
-// 	    }
-// 		
-// 		return 1;
-
 		double min1 = Integer.MAX_VALUE, min2 = Integer.MAX_VALUE;
 		double max1 = Integer.MIN_VALUE, max2 = Integer.MIN_VALUE;
 		for(int i = 0; i < trail1.size(); i ++) {
-			for(int j = 0; j < trail2.size(); j ++) {
+			for(int j = i - 1; j >= 0 && j <= i + 1 && j < trail2.size(); j ++) {
 				min1 = Math.min(min1, calcDistance(trail1.get(i), trail2.get(j)));
+			}
+			if(i == 0) {
+				min1 = Math.min(min1, calcDistance(trail1.get(i), trail2.get(0)));
+				min1 = Math.min(min1, calcDistance(trail1.get(i), trail2.get(1)));
+				min1 = Math.min(min1, calcDistance(trail1.get(i), trail2.get(2)));
 			}
 			max1 = Math.max(max1, min1);
 		}
 		for(int i = 0; i < trail2.size(); i ++) {
-			for(int j = 0; j < trail1.size(); j ++) {
+			for(int j = i - 1; j >= 0 && j <= i + 1 && j < trail1.size(); j ++) {
 				min2 = Math.min(min2, calcDistance(trail2.get(i), trail1.get(j)));
+			}
+			if(i == 0) {
+				min2 = Math.min(min1, calcDistance(trail2.get(i), trail1.get(0)));
+				min2 = Math.min(min1, calcDistance(trail2.get(i), trail1.get(1)));
+				min2 = Math.min(min1, calcDistance(trail2.get(i), trail1.get(2)));
 			}
 			max2 = Math.max(max2, min2);
 		}
