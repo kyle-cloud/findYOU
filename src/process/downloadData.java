@@ -29,7 +29,7 @@ public class downloadData {
 			MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", collname);
 			MongoCursor<Document> cursor = coll.find().iterator();
 			int total = 0;
-			while(total < 100 && cursor.hasNext()) {
+			while(total < 20000 && cursor.hasNext()) {
 				total ++;
 				Document document = cursor.next();
 				
@@ -80,7 +80,6 @@ public class downloadData {
 		MongoCursor<Document> cursor = coll.find().iterator();
 		while(cursor.hasNext()) {
 			Document document = cursor.next();
-			ID_parents.add(document.getObjectId("trail_id"));
 			trails.add((Trail)document.get("trail"));
 		}
 		result.add(trails);

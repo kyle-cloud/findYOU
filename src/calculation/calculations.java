@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -371,32 +373,31 @@ public class calculations {
 	 *输入：多条轨迹
 	 */
 	@SuppressWarnings("unchecked")
-	public static ArrayList<Integer> structCluster(ArrayList<Trail> trails, double alpha, double theta, int Minpts) {
+	public static ArrayList<Trail> structCluster(ArrayList<Trail> trails, double alpha, double theta, int Minpts) {
 		//ArrayList<Object> result = new ArrayList<>();
 		//trails.add(objTrail);//我的目标轨迹例子拿的就是里边的一条轨迹，再加上一次，之后remove只会去掉一个
 		ArrayList<Trail> cores = new ArrayList<>();
-		ArrayList<ArrayList<Integer>> Ntheta = new ArrayList<>();
-		ArrayList<Integer> N_tmp = new ArrayList<>();
+		ArrayList<ArrayList<Trail>> Ntheta = new ArrayList<>();
 		//ArrayList<Integer> cluster = new ArrayList<>();
-		ArrayList<Integer> noises = new ArrayList<>();
+		ArrayList<Trail> noises = new ArrayList<>();
 		for(int i = 0; i < trails.size(); i ++) {
-			N_tmp.clear();
+			ArrayList<Trail> N_tmp = new ArrayList<>();
 			for(int j = 0; j < trails.size(); j ++) {
 				if(j == i) continue;
 				double sim = calcSim(trails.get(i), trails.get(j), alpha);
 				//if(i == 44 && j >= 44 && j < 52) System.out.println(sim); //简单测试了一下相似轨迹的相似数值范围
 				if(sim >= theta && j != i) {
-					N_tmp.add(j);
+					N_tmp.add(trails.get(j));
 				}
 			}
-			System.out.println(i + " : " + N_tmp.size());
+//			System.out.println(i + " : " + N_tmp.size());
 //			if(N_tmp.size() > trails.size() - 20) {
 //				System.out.println(i + " " + N_tmp.size());
 //				System.out.println(trails.get(i).getIMSI());
 //			}
 			if(N_tmp.size() >= Minpts && N_tmp.size() <= trails.size() / 2) {
 				cores.add(trails.get(i));
-				Ntheta.add((ArrayList<Integer>) N_tmp.clone());
+				Ntheta.add(N_tmp);
 			}
 		}
 		int k = 0;
@@ -408,7 +409,7 @@ public class calculations {
 		}
 		for(int i = 0; i < trails.size(); i ++) {
 			if(trails.get(i).getCluster_id() == 0) {
-				noises.add(i);
+				noises.add(trails.get(i));
 			}
 		}
 		return noises;
@@ -419,16 +420,26 @@ public class calculations {
 	 *
 	 *连通集标记
 	 */
-	public static void connectDensity(Trail core, ArrayList<Trail> trails, ArrayList<Trail> cores, ArrayList<ArrayList<Integer>> N_trails, int index, int id) {
-		for(int i = 0; i < N_trails.get(index).size(); i ++) {
-			if(trails.get(N_trails.get(index).get(i)).getCluster_id() == id)
-				continue;
-			trails.get(N_trails.get(index).get(i)).setCluster_id(id);
-			int index_tmp = cores.indexOf(trails.get(N_trails.get(index).get(i)));
-			if(index_tmp != -1) {
-				connectDensity(trails.get(N_trails.get(index).get(i)), trails, cores, N_trails, index_tmp, id);
+	public static void connectDensity(Trail core, ArrayList<Trail> trails, ArrayList<Trail> cores, ArrayList<ArrayList<Trail>> N_trails, int index, int id) {
+		Queue<Trail> queue = new LinkedBlockingQueue<>();
+		queue.add(core);
+		while(!queue.isEmpty()) {
+			Trail curTrail = queue.poll();
+			curTrail.setCluster_id(id);
+			int index_temp = cores.indexOf(curTrail);
+			if(index_temp != -1) {
+				queue.addAll(N_trails.get(index_temp));
 			}
 		}
+//		for(int i = 0; i < N_trails.get(index).size(); i ++) {
+//			if(trails.get(N_trails.get(index).get(i)).getCluster_id() == id)
+//				continue;
+//			trails.get(N_trails.get(index).get(i)).setCluster_id(id);
+//			int index_tmp = cores.indexOf(trails.get(N_trails.get(index).get(i)));
+//			if(index_tmp != -1) {
+//				connectDensity(trails.get(N_trails.get(index).get(i)), trails, cores, N_trails, index_tmp, id);
+//			}
+//		}
 	}
 	
 	/**

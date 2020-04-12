@@ -275,7 +275,7 @@ public class test {
 		trails.addAll(trainTrails);
 		ArrayList<Trail> finTrails = new ArrayList<>();
 		for(int i = 0; i < trails.size(); i ++) {
-			ArrayList<Trail> dividedTrail = calculations.divideTrace(trails.get(i), 240*60*1000);
+			ArrayList<Trail> dividedTrail = calculations.divideTrace(trails.get(i), 480*60*1000);
 			ArrayList<Point> coarseTrail = calculations.coarseCompress(dividedTrail);
 			Trail coarse_finTrail = new Trail();
 			coarse_finTrail.setIMSI(trails.get(i).getIMSI());
@@ -284,7 +284,7 @@ public class test {
 			coarse_finTrail.setTstart(coarseTrail.get(0).getDate());
 			coarse_finTrail.setTend(coarseTrail.get(coarseTrail.size()-1).getDate());
 			finTrails.add(coarse_finTrail);
-			//System.out.println(i);
+			System.out.println(i);
 		}
 
 		System.out.println(calculations.structCluster(finTrails, 0.8, 0.80, 100).size()); //, finTrails.get(0)
@@ -352,7 +352,7 @@ public class test {
 			coarse_finTrail.setTend(coarseTrail.get(coarseTrail.size()-1).getDate());
 			finTrails.add(coarse_finTrail);
 		}
-		ArrayList<Integer> cluseredTrails = calculations.structCluster(finTrails, 0.8, 0.80, 50);//, finTrails.get(0)////
+		ArrayList<Trail> cluseredTrails = calculations.structCluster(finTrails, 0.8, 0.80, 50);//, finTrails.get(0)////
 		
 		ArrayList<Trail> objTrail = calculations.divideTrace(trails.get(0), 420*60*1000);
 		ArrayList<Trail> objFineTrail = calculations.fineCompress(objTrail, 3000, (long)30*60*1000);
@@ -362,7 +362,7 @@ public class test {
 		double min = Integer.MAX_VALUE;
 		double max = 0.0;
 		for(int i = 0; i < finTrails.size(); i ++) {
-			ArrayList<Trail> cmpTrail = calculations.divideTrace(trails.get(cluseredTrails.get(i)), 420*60*1000);
+			ArrayList<Trail> cmpTrail = calculations.divideTrace(cluseredTrails.get(i), 420*60*1000);
 			ArrayList<Trail> cmpFineTrail = calculations.fineCompress(cmpTrail, 3000, (long)30*60*1000);
 			ArrayList<Integer> objTopIndexs = (ArrayList<Integer>)result_topTrails_indexes.get(1);
 			cmpFineTrail = calculations.getTopk(cmpFineTrail, objTopIndexs);
@@ -438,10 +438,10 @@ public class test {
 		//testCompressOnNumber();
 		//testCompressOnHausdorff(); // 最后是要计算与（原始轨迹-原始轨迹-距离）的结果进行比较（差值）
 		//testBelta();
-		//testCluster();
+		testCluster();
 		//testFindTopTrails();
 		//testMongoDB();
-		testTimeOnHarsdorff();
+		//testTimeOnHarsdorff();
 		//testFineCompressAdvanced();
 	}
 }
