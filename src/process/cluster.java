@@ -39,6 +39,9 @@ public class cluster {
 //			for(int i = testTrails.size(); i < finTrails.size(); i ++) {
 //				coll.updateOne(Filters.eq("_id", trainTrails.get(i).getTrail_id()), new Document("$set", new Document("Cluster_id", finTrails.get(i).getCluster_id())));
 //			}
+			for(int i = 0; i < finTrails.size(); i ++) {
+				System.out.println(finTrails.get(i).getCluster_id());
+			}
 			System.out.println("¾ÛÀàÍê³É");
 		} catch (Exception e) {
 			e.printStackTrace();

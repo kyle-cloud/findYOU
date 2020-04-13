@@ -422,12 +422,14 @@ public class calculations {
 	 */
 	public static void connectDensity(Trail core, ArrayList<Trail> trails, ArrayList<Trail> cores, ArrayList<ArrayList<Trail>> N_trails, int index, int id) {
 		Queue<Trail> queue = new LinkedBlockingQueue<>();
-		queue.add(core);
+		queue.addAll(N_trails.get(index));
 		while(!queue.isEmpty()) {
 			Trail curTrail = queue.poll();
-			curTrail.setCluster_id(id);
 			int index_temp = cores.indexOf(curTrail);
-			if(index_temp != -1) {
+			if(index_temp == -1) {
+				curTrail.setCluster_id(id);
+			} else if(curTrail.getCluster_id() == 0) {
+				curTrail.setCluster_id(id);
 				queue.addAll(N_trails.get(index_temp));
 			}
 		}
