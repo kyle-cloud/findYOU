@@ -385,7 +385,7 @@ public class calculations {
 			for(int j = 0; j < trails.size(); j ++) {
 				if(j == i) continue;
 				double sim = calcSim(trails.get(i), trails.get(j), alpha);
-				//if(i == 44 && j >= 44 && j < 52) System.out.println(sim); //简单测试了一下相似轨迹的相似数值范围
+				//System.out.println(sim); //简单测试了一下相似轨迹的相似数值范围
 				if(sim >= theta && j != i) {
 					N_tmp.add(trails.get(j));
 				}

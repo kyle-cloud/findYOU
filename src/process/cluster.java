@@ -28,7 +28,7 @@ public class cluster {
 			finTrails.addAll(testTrails);
 			finTrails.addAll(trainTrails);
 			
-			cluseredTrails = calculations.structCluster(finTrails, 0.8, 0.88, 50);
+			cluseredTrails = calculations.structCluster(finTrails, 0.8, 0.88, 150);
 			
 //			MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", "testTrail");
 //			for(int i = 0; i < testTrails.size(); i ++) {
