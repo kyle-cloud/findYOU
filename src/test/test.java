@@ -443,5 +443,6 @@ public class test {
 		//testMongoDB();
 		//testTimeOnHarsdorff();
 		//testFineCompressAdvanced();
+		//副本集设置成功，牛批
 	}
 }
