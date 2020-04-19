@@ -83,6 +83,72 @@ public class calculations {
 	/**
 	 * @author kyle_cloud
 	 *
+	 *MDL划分
+	 *输入：一条轨迹
+	 */
+	public static ArrayList<Point> partion(ArrayList<Point> points) {
+		ArrayList<Point> cPoints = new ArrayList<>();
+		cPoints.add(points.get(0));
+		int startIndex = 0;
+		int length = 1;
+		while(startIndex + length < points.size()) {
+			int curIndex = startIndex + length;
+			double cost_nopar = Math.log(calcDistance(points.get(startIndex), points.get(curIndex))) / Math.log(2);
+			double cost_par = calcMDL(points, startIndex, curIndex);
+			if(cost_par > cost_nopar) {
+				
+			}
+		}
+	}
+	
+	/**
+	 * @author kyle_cloud
+	 *
+	 *计算MDL
+	 *输入：两个点
+	 */
+	public static double calcMDL(ArrayList<Point> points, int startIndex, int curIndex) {
+		double sum_distance = 0;
+		double sum_angle = 0;
+		for(int i = startIndex; i < curIndex; i ++) { //好像不是这样，得算已经在c里边的特征点
+			ArrayList<Double> result = calcXianduanDistance(points, startIndex, curIndex, i, i + 1);
+			sum_distance += result.get(0);
+			sum_angle += result.get(1);
+		}
+		return Math.log(calcDistance(points.get(startIndex), points.get(curIndex))) / Math.log(2) + Math.log(sum_distance) / Math.log(2) + Math.log(sum_angle) / Math.log(2);
+	}
+	
+	public static ArrayList<Double> calcXianduanDistance(ArrayList<Point> points, int p11, int p12, int p21, int p22) {
+		ArrayList<Double> result = new ArrayList<>();
+		double A = (points.get(p11).getLat() - points.get(p12).getLat()) / (points.get(p11).getLng() - points.get(p12).getLng());
+		double B = (points.get(p11).getLat() - A * points.get(p11).getLng());
+		double m1 = points.get(p21).getLng() + A * points.get(p21).getLat();
+		double m2 = points.get(p22).getLng() + A * points.get(p22).getLat();
+		Point cross1 = new Point();
+		cross1.setLng(((m1 - A*B) / (A*A + 1)));
+		cross1.setLat(A*cross1.getLng() + B);
+		Point cross2 = new Point();
+		cross1.setLng(((m2 - A*B) / (A*A + 1)));
+		cross1.setLat(A*cross2.getLng() + B);
+		double l1 = calcDistance(points.get(p21), cross1);
+		double l2 = calcDistance(points.get(p22), cross2);
+		
+		Point cross_angle = new Point();
+		cross_angle.setLng(cross2.getLng() - l1/l2*(cross2.getLng() - points.get(p22).getLng()));
+		cross_angle.setLat(cross2.getLat() - l1/l2*(cross2.getLat() - points.get(p22).getLat()));
+		double angle = calcAngle(points.get(p21), points.get(p21), cross_angle);
+		
+		double d_chuizhi = (l1*l1 + l2*l2) / (l1 + l2);
+		double d_angle = l2 - l1;
+		if(angle >= 90 && angle <= 180) d_angle = calcDistance(points.get(p21), points.get(p22));
+		result.add(d_chuizhi);
+		result.add(d_angle);
+		return result;
+	}
+	
+	/**
+	 * @author kyle_cloud
+	 *
 	 *粗粒度降维
 	 *输入：一条轨迹
 	 */
