@@ -96,9 +96,15 @@ public class calculations {
 			double cost_nopar = Math.log(calcDistance(points.get(startIndex), points.get(curIndex))) / Math.log(2);
 			double cost_par = calcMDL(points, startIndex, curIndex);
 			if(cost_par > cost_nopar) {
-				
+				cPoints.add(points.get(curIndex - 1));
+				startIndex = curIndex - 1;
+				length = 1;
+			} else {
+				length ++;
 			}
 		}
+		cPoints.add(points.get(points.size() - 1));
+		return cPoints;
 	}
 	
 	/**
@@ -120,23 +126,35 @@ public class calculations {
 	
 	public static ArrayList<Double> calcXianduanDistance(ArrayList<Point> points, int p11, int p12, int p21, int p22) {
 		ArrayList<Double> result = new ArrayList<>();
-		double A = (points.get(p11).getLat() - points.get(p12).getLat()) / (points.get(p11).getLng() - points.get(p12).getLng());
-		double B = (points.get(p11).getLat() - A * points.get(p11).getLng());
-		double m1 = points.get(p21).getLng() + A * points.get(p21).getLat();
-		double m2 = points.get(p22).getLng() + A * points.get(p22).getLat();
+		double dx = points.get(p11).getLng() - points.get(p12).getLng();
+		double dy = points.get(p11).getLat() - points.get(p12).getLat();
+		
+		double m1 = (points.get(p21).getLng() - points.get(p11).getLng()) * dx + (points.get(p21).getLat() - points.get(p11).getLat()) * dy;
+		double m2 = (points.get(p22).getLng() - points.get(p11).getLng()) * dx + (points.get(p22).getLat() - points.get(p11).getLat()) * dy;
+		m1 /= dx*dx + dy*dy;
+		m2 /= dx*dx + dy*dy;
+		
 		Point cross1 = new Point();
-		cross1.setLng(((m1 - A*B) / (A*A + 1)));
-		cross1.setLat(A*cross1.getLng() + B);
+		cross1.setLng(points.get(p11).getLng() + m1 * dx);
+		cross1.setLat(points.get(p11).getLat() + m1 * dy);
 		Point cross2 = new Point();
-		cross1.setLng(((m2 - A*B) / (A*A + 1)));
-		cross1.setLat(A*cross2.getLng() + B);
+		cross2.setLng(points.get(p11).getLng() + m2 * dx);
+		cross2.setLat(points.get(p11).getLat() + m2 * dy);
 		double l1 = calcDistance(points.get(p21), cross1);
 		double l2 = calcDistance(points.get(p22), cross2);
-		
-		Point cross_angle = new Point();
-		cross_angle.setLng(cross2.getLng() - l1/l2*(cross2.getLng() - points.get(p22).getLng()));
-		cross_angle.setLat(cross2.getLat() - l1/l2*(cross2.getLat() - points.get(p22).getLat()));
-		double angle = calcAngle(points.get(p21), points.get(p21), cross_angle);
+		double angle = 0;
+		if(l1 == 0 && l2 == 0) {
+			result.add(0.0);
+			result.add(0.0);
+			return result;
+		} else if(l2 == 0) {
+			angle = calcAngle(points.get(p21), cross2, points.get(p11));
+		} else {
+			Point cross_angle = new Point();
+			cross_angle.setLng(cross2.getLng() - l1/l2*(cross2.getLng() - points.get(p22).getLng()));
+			cross_angle.setLat(cross2.getLat() - l1/l2*(cross2.getLat() - points.get(p22).getLat()));
+			angle = calcAngle(points.get(p22), points.get(p21), cross_angle);
+		}
 		
 		double d_chuizhi = (l1*l1 + l2*l2) / (l1 + l2);
 		double d_angle = l2 - l1;

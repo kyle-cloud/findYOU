@@ -433,16 +433,23 @@ public class test {
 		bWriter.close();
 	}
 	
+	public static void testNewPartion() {
+		ArrayList<Trail> trails = downloadData.getTrails("trail");
+		System.out.println("111");
+		ArrayList<Point> points = calculations.partion(trails.get(0).getPoints());
+		System.out.println(points);
+	}
+	
 	public static void main(String[] args) throws Exception {
 		//testTimeSegment();
 		//testCompressOnNumber();
 		//testCompressOnHausdorff(); // 最后是要计算与（原始轨迹-原始轨迹-距离）的结果进行比较（差值）
 		//testBelta();
-		testCluster();
+		//testCluster();
 		//testFindTopTrails();
 		//testMongoDB();
 		//testTimeOnHarsdorff();
 		//testFineCompressAdvanced();
-		//副本集设置成功，牛批
+		testNewPartion();
 	}
 }
