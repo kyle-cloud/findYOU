@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.apache.commons.math3.analysis.function.Min;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.ujmp.core.DenseMatrix;
@@ -117,50 +118,52 @@ public class calculations {
 		double sum_distance = 0;
 		double sum_angle = 0;
 		for(int i = startIndex; i < curIndex; i ++) { //好像不是这样，得算已经在c里边的特征点
-			ArrayList<Double> result = calcXianduanDistance(points, startIndex, curIndex, i, i + 1);
+			ArrayList<Double> result = calcXianduanDistance(points.get(startIndex), points.get(curIndex), points.get(i), points.get(i + 1));
 			sum_distance += result.get(0);
 			sum_angle += result.get(1);
 		}
 		return Math.log(calcDistance(points.get(startIndex), points.get(curIndex))) / Math.log(2) + Math.log(sum_distance) / Math.log(2) + Math.log(sum_angle) / Math.log(2);
 	}
 	
-	public static ArrayList<Double> calcXianduanDistance(ArrayList<Point> points, int p11, int p12, int p21, int p22) {
+	public static ArrayList<Double> calcXianduanDistance(Point p11, Point p12, Point p21, Point p22) {
 		ArrayList<Double> result = new ArrayList<>();
-		double dx = points.get(p11).getLng() - points.get(p12).getLng();
-		double dy = points.get(p11).getLat() - points.get(p12).getLat();
+		double dx = p11.getLng() - p12.getLng();
+		double dy = p11.getLat() - p12.getLat();
 		
-		double m1 = (points.get(p21).getLng() - points.get(p11).getLng()) * dx + (points.get(p21).getLat() - points.get(p11).getLat()) * dy;
-		double m2 = (points.get(p22).getLng() - points.get(p11).getLng()) * dx + (points.get(p22).getLat() - points.get(p11).getLat()) * dy;
+		double m1 = (p21.getLng() - p11.getLng()) * dx + (p21.getLat() - p11.getLat()) * dy;
+		double m2 = (p22.getLng() - p11.getLng()) * dx + (p22.getLat() - p11.getLat()) * dy;
 		m1 /= dx*dx + dy*dy;
 		m2 /= dx*dx + dy*dy;
 		
 		Point cross1 = new Point();
-		cross1.setLng(points.get(p11).getLng() + m1 * dx);
-		cross1.setLat(points.get(p11).getLat() + m1 * dy);
+		cross1.setLng(p11.getLng() + m1 * dx);
+		cross1.setLat(p11.getLat() + m1 * dy);
 		Point cross2 = new Point();
-		cross2.setLng(points.get(p11).getLng() + m2 * dx);
-		cross2.setLat(points.get(p11).getLat() + m2 * dy);
-		double l1 = calcDistance(points.get(p21), cross1);
-		double l2 = calcDistance(points.get(p22), cross2);
+		cross2.setLng(p11.getLng() + m2 * dx);
+		cross2.setLat(p11.getLat() + m2 * dy);
+		double l1 = calcDistance(p21, cross1);
+		double l2 = calcDistance(p22, cross2);
 		double angle = 0;
 		if(l1 == 0 && l2 == 0) {
 			result.add(0.0);
 			result.add(0.0);
+			result.add(Math.min(calcDistance(p11, cross1), calcDistance(p12, cross2)));
 			return result;
 		} else if(l2 == 0) {
-			angle = calcAngle(points.get(p21), cross2, points.get(p11));
+			angle = calcAngle(p21, cross2, p11);
 		} else {
 			Point cross_angle = new Point();
-			cross_angle.setLng(cross2.getLng() - l1/l2*(cross2.getLng() - points.get(p22).getLng()));
-			cross_angle.setLat(cross2.getLat() - l1/l2*(cross2.getLat() - points.get(p22).getLat()));
-			angle = calcAngle(points.get(p22), points.get(p21), cross_angle);
+			cross_angle.setLng(cross2.getLng() - l1/l2*(cross2.getLng() - p22.getLng()));
+			cross_angle.setLat(cross2.getLat() - l1/l2*(cross2.getLat() - p22.getLat()));
+			angle = calcAngle(p22, p21, cross_angle);
 		}
 		
 		double d_chuizhi = (l1*l1 + l2*l2) / (l1 + l2);
 		double d_angle = l2 - l1;
-		if(angle >= 90 && angle <= 180) d_angle = calcDistance(points.get(p21), points.get(p22));
+		if(angle >= 90 && angle <= 180) d_angle = calcDistance(p21, p22);
 		result.add(d_chuizhi);
 		result.add(d_angle);
+		result.add(Math.min(calcDistance(p11, cross1), calcDistance(p12, cross2)));
 		return result;
 	}
 	
