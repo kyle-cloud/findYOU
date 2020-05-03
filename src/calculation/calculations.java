@@ -87,7 +87,7 @@ public class calculations {
 	 *MDL划分
 	 *输入：一条轨迹
 	 */
-	public static ArrayList<Point> partion(ArrayList<Point> points) {
+	public static ArrayList<Point> MDLpartion(ArrayList<Point> points) {
 		ArrayList<Point> cPoints = new ArrayList<>();
 		cPoints.add(points.get(0));
 		int startIndex = 0;
@@ -658,6 +658,24 @@ public class calculations {
 				min2 = Math.min(min1, calcDistance(trail2.get(i), trail1.get(0)));
 				min2 = Math.min(min1, calcDistance(trail2.get(i), trail1.get(1)));
 				min2 = Math.min(min1, calcDistance(trail2.get(i), trail1.get(2)));
+			}
+			max2 = Math.max(max2, min2);
+		}
+		return Math.max(max1, max2);
+	}
+	
+	public static double calcHk_former(ArrayList<Point> trail1, ArrayList<Point> trail2) {
+		double min1 = Integer.MAX_VALUE, min2 = Integer.MAX_VALUE;
+		double max1 = Integer.MIN_VALUE, max2 = Integer.MIN_VALUE;
+		for(int i = 0; i < trail1.size(); i ++) {
+			for(int j = 0; j < trail2.size(); j ++) {
+				min1 = Math.min(min1, calcDistance(trail1.get(i), trail2.get(j)));
+			}
+			max1 = Math.max(max1, min1);
+		}
+		for(int i = 0; i < trail2.size(); i ++) {
+			for(int j = 0; j < trail1.size(); j ++) {
+				min2 = Math.min(min2, calcDistance(trail2.get(i), trail1.get(j)));
 			}
 			max2 = Math.max(max2, min2);
 		}

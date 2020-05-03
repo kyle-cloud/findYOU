@@ -99,6 +99,7 @@ public class test {
 		}
 		ArrayList<ArrayList<Point>> evenTrails = new ArrayList<>();
 		ArrayList<ArrayList<Point>> coarseTrails = new ArrayList<>();
+		ArrayList<ArrayList<Point>> MDLTrails = new ArrayList<>();
 		ArrayList<ArrayList<Trail>> fineTrails = new ArrayList<>();
 		for(int i = 0; i < trails.size(); i ++) {
 			ArrayList<Point> temp_points = new ArrayList<>();
@@ -106,6 +107,8 @@ public class test {
 				temp_points.add(trails.get(i).getPoints().get(j));
 			}
 			evenTrails.add(temp_points);
+			
+			MDLTrails.add(calculations.MDLpartion(trails.get(i).getPoints()));
 			
 			ArrayList<Trail> dividedTrail = calculations.divideTrace(trails.get(i), 480*60*1000);
 			
@@ -154,6 +157,15 @@ public class test {
 			bWriter.write("" + i + ":" + evenTrails.get(i).size() + "\n");
 		}
 		bWriter.close();
+		
+		File f4 = new File("number_MDLTrails.txt");
+		if(!f4.exists()) f4.createNewFile();
+		fWriter = new FileWriter(f4, true);
+		bWriter = new BufferedWriter(fWriter);
+		for(int i = 0; i < MDLTrails.size(); i ++) {
+			bWriter.write("" + i + ":" + MDLTrails.get(i).size() + "\n");
+		}
+		bWriter.close();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -165,14 +177,18 @@ public class test {
 			trails.add(trails_tmp.get(rd));
 		}
 		ArrayList<ArrayList<Point>> evenTrails = new ArrayList<>();
+		ArrayList<ArrayList<Point>> MDLTrails = new ArrayList<>();
 		ArrayList<ArrayList<Point>> coarseTrails = new ArrayList<>();
 		ArrayList<ArrayList<Trail>> fineTrails = new ArrayList<>();
 		for(int i = 0; i < trails.size(); i ++) {
+			System.out.println(trails.get(i).getID());
 			ArrayList<Point> temp_points = new ArrayList<>();
 			for(int j = 0; j < trails.get(i).getPoints().size(); j += 3) {
 				temp_points.add(trails.get(i).getPoints().get(j));
 			}
 			evenTrails.add(temp_points);
+			
+			MDLTrails.add(calculations.MDLpartion(trails.get(i).getPoints()));
 			
 			ArrayList<Trail> dividedTrail = calculations.divideTrace(trails.get(i), 480*60*1000);
 			
@@ -225,6 +241,14 @@ public class test {
 		bWriter = new BufferedWriter(fWriter);
 		for(int i = 1; i < evenTrails.size(); i ++) {
 			bWriter.write("" + i + ":" + calculations.calcHk(evenTrails.get(0), evenTrails.get(i)) + "\n");
+		}
+		bWriter.close();
+		File f4 = new File("hausdorff_MDLTrails.txt");
+		if(!f4.exists()) f4.createNewFile();
+		fWriter = new FileWriter(f4, true);
+		bWriter = new BufferedWriter(fWriter);
+		for(int i = 1; i < MDLTrails.size(); i ++) {
+			bWriter.write("" + i + ":" + calculations.calcHk(MDLTrails.get(0), MDLTrails.get(i)) + "\n");
 		}
 		bWriter.close();
 	}
@@ -436,8 +460,13 @@ public class test {
 	public static void testNewPartion() {
 		ArrayList<Trail> trails = downloadData.getTrails("trail");
 		System.out.println("111");
-		ArrayList<Point> points = calculations.partion(trails.get(0).getPoints());
+		ArrayList<Point> points = calculations.MDLpartion(trails.get(0).getPoints());
 		System.out.println(points);
+	}
+	
+	public static void testAdvancedHausdorff() {
+		ArrayList<Trail> trails = downloadData.getTrails("trail");
+		
 	}
 	
 	public static void main(String[] args) throws Exception {
@@ -450,6 +479,6 @@ public class test {
 		//testMongoDB();
 		//testTimeOnHarsdorff();
 		//testFineCompressAdvanced();
-		testNewPartion();
+		//testNewPartion();
 	}
 }
