@@ -23,9 +23,9 @@ public class compress {
 		ArrayList<Point> coarseTrail = new ArrayList<>();
 		ArrayList<Trail> fineTrail = new ArrayList<>();
 
-		MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", "trail_coarse");
-		MongoCollection<Document> coll1 = MongoUtil.instance.getCollection("liu", "trail_fine");
-		ArrayList<Trail> trails = downloadData.getTrails("trail");
+		MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", "testTrail_coarse");
+		MongoCollection<Document> coll1 = MongoUtil.instance.getCollection("liu", "testTrail_fine");
+		ArrayList<Trail> trails = downloadData.getTrails("testTrail");
 		ArrayList<Long> dates = new ArrayList<>();
 		ArrayList<Double> longitudes = new ArrayList<>();
 		ArrayList<Double> latitudes = new ArrayList<>();
@@ -43,7 +43,7 @@ public class compress {
 			document.put("tracetimes", dates);
 			document.put("longitudes", longitudes);
 			document.put("latitudes", latitudes);
-			document.put("test", 0);
+			document.put("test", 1);
 			coll.insertOne(document);
 			
 			dividedTrail = calculations.divideTrace(trails.get(i), 480*60*1000);

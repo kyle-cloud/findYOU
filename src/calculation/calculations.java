@@ -644,9 +644,9 @@ public class calculations {
 				min1 = Math.min(min1, calcDistance(trail1.get(i), trail2.get(j)));
 			}
 			if(i == 0) {
-				min1 = Math.min(min1, calcDistance(trail1.get(i), trail2.get(0)));
-				min1 = Math.min(min1, calcDistance(trail1.get(i), trail2.get(1)));
-				min1 = Math.min(min1, calcDistance(trail1.get(i), trail2.get(2)));
+				if(trail2.size() > 0) min1 = Math.min(min1, calcDistance(trail1.get(i), trail2.get(0)));
+				if(trail2.size() > 1) min1 = Math.min(min1, calcDistance(trail1.get(i), trail2.get(1)));
+				if(trail2.size() > 2) min1 = Math.min(min1, calcDistance(trail1.get(i), trail2.get(2)));
 			}
 			max1 = Math.max(max1, min1);
 		}
@@ -655,9 +655,9 @@ public class calculations {
 				min2 = Math.min(min2, calcDistance(trail2.get(i), trail1.get(j)));
 			}
 			if(i == 0) {
-				min2 = Math.min(min1, calcDistance(trail2.get(i), trail1.get(0)));
-				min2 = Math.min(min1, calcDistance(trail2.get(i), trail1.get(1)));
-				min2 = Math.min(min1, calcDistance(trail2.get(i), trail1.get(2)));
+				if(trail1.size() > 0) min2 = Math.min(min1, calcDistance(trail2.get(i), trail1.get(0)));
+				if(trail1.size() > 1) min2 = Math.min(min1, calcDistance(trail2.get(i), trail1.get(1)));
+				if(trail1.size() > 2) min2 = Math.min(min1, calcDistance(trail2.get(i), trail1.get(2)));
 			}
 			max2 = Math.max(max2, min2);
 		}
