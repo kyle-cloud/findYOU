@@ -22,6 +22,7 @@ import com.sun.mail.util.TraceInputStream;
 import com.sun.org.apache.xpath.internal.operations.And;
 
 import process.downloadData;
+import trail.Line;
 import trail.Point;
 import trail.Trail;
 
@@ -500,6 +501,25 @@ public class calculations {
 			}
 		}
 		return noises;
+	}
+	
+	public static void Traclus() {
+		ArrayList<Trail> trails = new ArrayList<>();
+		ArrayList<Line> lines = new ArrayList<>();
+		trails.addAll(downloadData.getTrails("testTrail_coarse"));
+		trails.addAll(downloadData.getTrails("trail_coarse"));
+		for(int i = 0; i < trails.size(); i ++) {
+			ArrayList<Point> points = trails.get(i).getPoints();
+			for(int j = 0; j < points.size() - 1; j ++) {
+				Line line = new Line();
+				line.setStart_point(points.get(j));
+				line.setEnd_point(points.get(j + 1));
+				line.setTrail_id(trails.get(i).getID());
+				lines.add(line);
+			}
+		}
+		ArrayList<ArrayList<Line>> clusters = new ArrayList<>();
+		//clusters = DBSCANCluster
 	}
 	
 	/**
