@@ -203,7 +203,7 @@ public class test {
 		FileWriter fWriter = new FileWriter(f, true);
 		BufferedWriter bWriter = new BufferedWriter(fWriter);
 		for(int i = 1; i < trails.size(); i ++) {
-			bWriter.write("" + i + ":" + calculations.calcHk(trails.get(0).getPoints(), trails.get(i).getPoints()) + "\n");
+			bWriter.write("" + i + ":" + calculations.calcHk_former(trails.get(0).getPoints(), trails.get(i).getPoints()) + "\n");
 		}
 		bWriter.close();
 		
@@ -212,7 +212,7 @@ public class test {
 		fWriter = new FileWriter(f1, true);
 		bWriter = new BufferedWriter(fWriter);
 		for(int i = 1; i < coarseTrails.size(); i ++) {
-			bWriter.write("" + i + ":" + calculations.calcHk(coarseTrails.get(0), coarseTrails.get(i)) + "\n");
+			bWriter.write("" + i + ":" + calculations.calcHk_former(coarseTrails.get(0), coarseTrails.get(i)) + "\n");
 		}
 		bWriter.close();
 		
@@ -231,7 +231,7 @@ public class test {
 				fixed_points = (ArrayList<Point>) points.clone();
 				continue;
 			}
-			bWriter.write("" + i + ":" + calculations.calcHk(fixed_points, points) + "\n");
+			bWriter.write("" + i + ":" + calculations.calcHk_former(fixed_points, points) + "\n");
 		}
 		bWriter.close();
 		
@@ -240,7 +240,7 @@ public class test {
 		fWriter = new FileWriter(f3, true);
 		bWriter = new BufferedWriter(fWriter);
 		for(int i = 1; i < evenTrails.size(); i ++) {
-			bWriter.write("" + i + ":" + calculations.calcHk(evenTrails.get(0), evenTrails.get(i)) + "\n");
+			bWriter.write("" + i + ":" + calculations.calcHk_former(evenTrails.get(0), evenTrails.get(i)) + "\n");
 		}
 		bWriter.close();
 		File f4 = new File("hausdorff_MDLTrails.txt");
@@ -248,7 +248,7 @@ public class test {
 		fWriter = new FileWriter(f4, true);
 		bWriter = new BufferedWriter(fWriter);
 		for(int i = 1; i < MDLTrails.size(); i ++) {
-			bWriter.write("" + i + ":" + calculations.calcHk(MDLTrails.get(0), MDLTrails.get(i)) + "\n");
+			bWriter.write("" + i + ":" + calculations.calcHk_former(MDLTrails.get(0), MDLTrails.get(i)) + "\n");
 		}
 		bWriter.close();
 	}
@@ -464,9 +464,48 @@ public class test {
 		System.out.println(points);
 	}
 	
-	public static void testAdvancedHausdorff() {
+	public static void testAdvancedHausdorff() throws IOException {
+		ArrayList<Trail> trails_tmp = downloadData.getTrails("trail");
+		ArrayList<Trail> trails = new ArrayList<>();
+		for(int i = 0; i < 101; i ++) {
+			int rd = (int) (Math.random() * 180000);
+			trails.add(trails_tmp.get(rd));
+		}
+		File f = new File("hausdorff.txt");
+		if(!f.exists()) f.createNewFile();
+		FileWriter fWriter = new FileWriter(f, true);
+		BufferedWriter bWriter = new BufferedWriter(fWriter);
+		for(int i = 1; i < trails.size(); i ++) {
+			bWriter.write("" + i + ":" + calculations.calcHk_former(trails.get(0).getPoints(), trails.get(i).getPoints()) + "\n");
+		}
+		bWriter.close();
+
+		File f1 = new File("hausdorff_advanced.txt");
+		if(!f1.exists()) f1.createNewFile();
+		FileWriter fWriter1 = new FileWriter(f1, true);
+		BufferedWriter bWriter1 = new BufferedWriter(fWriter1);
+		for(int i = 1; i < trails.size(); i ++) {
+			bWriter1.write("" + i + ":" + calculations.calcHk(trails.get(0).getPoints(), trails.get(i).getPoints()) + "\n");
+		}
+		bWriter1.close();
+	}
+	
+	public static void testAdvancedHausdorff_onTime() throws IOException {
 		ArrayList<Trail> trails = downloadData.getTrails("trail");
+
+		long startTime = System.currentTimeMillis();
+		for(int i = 1; i < 100; i ++) {
+			calculations.calcHk_former(trails.get(0).getPoints(), trails.get(i).getPoints());
+		}
+		long endTime = System.currentTimeMillis();
+		System.out.println("原始运行时间：" + (endTime - startTime) + "ms");
 		
+		startTime = System.currentTimeMillis();
+		for(int i = 1; i < 100; i ++) {
+			calculations.calcHk_former(trails.get(0).getPoints(), trails.get(i).getPoints());
+		}
+		endTime = System.currentTimeMillis();
+		System.out.println("改进后原始运行时间：" + (endTime - startTime) + "ms");
 	}
 	
 	public static void main(String[] args) throws Exception {
@@ -480,5 +519,7 @@ public class test {
 		//testTimeOnHarsdorff();
 		//testFineCompressAdvanced();
 		//testNewPartion();
+		//testAdvancedHausdorff();
+		testAdvancedHausdorff_onTime();
 	}
 }

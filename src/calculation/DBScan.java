@@ -2,6 +2,7 @@ package calculation;
 
 import java.util.ArrayList;
 import java.util.Vector;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import process.downloadData;
 import trail.Line;
@@ -9,11 +10,12 @@ import trail.Point;
 import trail.Trail;
 
 import java.util.Iterator;
+import java.util.Queue;
  
 public class DBScan {
  
-    double Eps = 25000;   //区域半径
-    int MinPts = 4;   //密度
+    double Eps = 20000;   //区域半径
+    int MinPts = 500;   //密度
      
     //由于自己到自己的距离是0,所以自己也是自己的neighbor
     public Vector<Line> getNeighbors(Line p,ArrayList<Line> objects){
@@ -83,6 +85,55 @@ public class DBScan {
             }
         }
     }
+    
+	public ArrayList<Line> structCluster(ArrayList<Line> lines, double theta, int Minpts) {
+		ArrayList<Line> cores = new ArrayList<>();
+		ArrayList<ArrayList<Line>> Ntheta = new ArrayList<>();
+		ArrayList<Line> noises = new ArrayList<>();
+		for(int i = 0; i < lines.size(); i ++) {
+			ArrayList<Line> N_tmp = new ArrayList<>();
+			for(int j = 0; j < lines.size(); j ++) {
+				if(j == i) continue;
+				ArrayList<Double> result = calculations.calcXianduanDistance(lines.get(i).getStart_point(), lines.get(i).getEnd_point(), lines.get(j).getStart_point(), lines.get(j).getEnd_point());
+				double sim = result.get(0) + result.get(1) + result.get(2);
+				if(sim >= theta && j != i) {
+					N_tmp.add(lines.get(j));
+				}
+			}
+			System.out.println(N_tmp.size());
+			if(N_tmp.size() >= Minpts) {
+				cores.add(lines.get(i));
+				Ntheta.add(N_tmp);
+			}
+		}
+		int k = 0;
+		for(int i = 0; i < cores.size(); i ++) {
+			if(cores.get(i).getCid() != 0) continue;
+			k ++;
+			cores.get(i).setCid(k);
+			connectDensity(cores.get(i), lines, cores, Ntheta, i, k);
+		}
+		for(int i = 0; i < lines.size(); i ++) {
+			if(lines.get(i).getCid() == 0) {
+				noises.add(lines.get(i));
+			}
+		}
+		return noises;
+	}
+	public void connectDensity(Line core, ArrayList<Line> lines, ArrayList<Line> cores, ArrayList<ArrayList<Line>> N_lines, int index, int id) {
+		Queue<Line> queue = new LinkedBlockingQueue<>();
+		queue.addAll(N_lines.get(index));
+		while(!queue.isEmpty()) {
+			Line curLine = queue.poll();
+			int index_temp = cores.indexOf(curLine);
+			if(index_temp == -1) {
+				curLine.setCid(id);
+			} else if(curLine.getCid() == 0) {
+				curLine.setCid(id);
+				queue.addAll(N_lines.get(index_temp));
+			}
+		}
+	}
  
     public static void main(String[] args){
     	ArrayList<Trail> trails = new ArrayList<>();
@@ -99,8 +150,12 @@ public class DBScan {
 				lines.add(line);
 			}
 		}
-		System.out.println("开始聚类");
+		System.out.println("开始聚类" + lines.size() + "条线段");
 		DBScan dbScan = new DBScan();
-		dbScan.dbscan(lines);
+//		dbScan.dbscan(lines);
+		dbScan.structCluster(lines, 25000, 2000);
+		for(int i = 0; i < lines.size(); i ++) {
+			System.out.println(lines.get(i).getCid());
+		}
     }
 }
