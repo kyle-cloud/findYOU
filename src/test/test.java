@@ -502,7 +502,14 @@ public class test {
 		
 		startTime = System.currentTimeMillis();
 		for(int i = 1; i < 100; i ++) {
-			calculations.calcHk_former(trails.get(0).getPoints(), trails.get(i).getPoints());
+			calculations.calcHk(trails.get(0).getPoints(), trails.get(i).getPoints());
+		}
+		endTime = System.currentTimeMillis();
+		System.out.println("改进后原始运行时间：" + (endTime - startTime) + "ms");
+		
+		startTime = System.currentTimeMillis();
+		for(int i = 1; i < 100; i ++) {
+			int a = 1+1;
 		}
 		endTime = System.currentTimeMillis();
 		System.out.println("改进后原始运行时间：" + (endTime - startTime) + "ms");
