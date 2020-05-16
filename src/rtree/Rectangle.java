@@ -1,5 +1,7 @@
 package rtree;
 
+import trail.Line;
+
 /**
  * 外包矩形
  * 
@@ -8,6 +10,7 @@ package rtree;
  */
 public class Rectangle implements Cloneable // 继承克隆接口
 {
+	private Line line;
     private Point low; // 左下角的点
     private Point high; // 右上角的点
 
@@ -30,6 +33,23 @@ public class Rectangle implements Cloneable // 继承克隆接口
         low = (Point) p1.clone();
         high = (Point) p2.clone();
     }
+    
+    public Rectangle(Line line) {
+		// TODO Auto-generated constructor stub
+    	this.line = line; //?????需不需要克隆??????
+    	float[] point1 = {(float) Math.min(line.getStart_point().getLng(), line.getEnd_point().getLng()), (float) Math.min(line.getStart_point().getLat(), line.getEnd_point().getLat())};
+    	float[] point2 = {(float) Math.max(line.getStart_point().getLng(), line.getEnd_point().getLng()), (float) Math.max(line.getStart_point().getLat(), line.getEnd_point().getLat())};
+    	Point p1 = new Point(point1);
+    	Point p2 = new Point(point2);
+    	// 先左下角后右上角
+        for (int i = 0; i < p1.getDimension(); i++) {
+            if (p1.getFloatCoordinate(i) > p2.getFloatCoordinate(i)) {
+                throw new IllegalArgumentException("坐标点为先左下角后右上角");
+            }
+        }
+        low = (Point) p1.clone();
+        high = (Point) p2.clone();
+	}
 
     /**
      * 返回Rectangle左下角的Point

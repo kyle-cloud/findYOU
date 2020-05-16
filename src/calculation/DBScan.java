@@ -152,8 +152,8 @@ public class DBScan {
 		}
 		System.out.println("开始聚类" + lines.size() + "条线段");
 		DBScan dbScan = new DBScan();
-//		dbScan.dbscan(lines);
-		dbScan.structCluster(lines, 25000, 2000);
+		dbScan.dbscan(lines);
+		//dbScan.structCluster(lines, 25000, 2000);
 		for(int i = 0; i < lines.size(); i ++) {
 			System.out.println(lines.get(i).getCid());
 		}
