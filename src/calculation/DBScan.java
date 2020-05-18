@@ -5,6 +5,9 @@ import java.util.Vector;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import process.downloadData;
+import rtree.Constants;
+import rtree.RTree;
+import rtree.Rectangle;
 import trail.Line;
 import trail.Point;
 import trail.Trail;
@@ -31,8 +34,20 @@ public class DBScan {
         }
         return neighbors;
     }
+    
+    public RTree createRTree(ArrayList<Line> lines) {
+    	// 结点容量：4、填充因子：0.4、树类型：二维
+        RTree tree = new RTree(4, 0.4f, Constants.RTREE_QUADRATIC, 2);
+        for(int i = 0; i < lines.size(); i ++) {
+        	final Rectangle rectangle = new Rectangle(lines.get(i));
+        	tree.insert(rectangle);
+        }
+        return tree;
+	}
      
     public int dbscan(ArrayList<Line> objects){
+    	RTree rTree = createRTree(objects);
+    	
     	int clusterID = 0;
         boolean AllVisited = false;
         while(!AllVisited){
