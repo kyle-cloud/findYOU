@@ -39,10 +39,15 @@ public class DBScan {
     	// 结点容量：4、填充因子：0.4、树类型：二维
         RTree tree = new RTree(4, 0.4f, Constants.RTREE_QUADRATIC, 2);
         for(int i = 0; i < lines.size(); i ++) {
+        	//System.out.println(i);
         	final Rectangle rectangle = new Rectangle(lines.get(i));
         	tree.insert(rectangle);
         }
         return tree;
+	}
+    
+    public Vector<Line> getNeighbors(RTree rTree, Rectangle rectangle) {
+		
 	}
      
     public int dbscan(ArrayList<Line> objects){
