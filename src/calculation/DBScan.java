@@ -48,7 +48,7 @@ public class DBScan {
         return tree;
 	}
     
-    public Vector<Line> getNeighbors(RTree rTree, Rectangle rectangle) {
+    public Vector<Line> getNeighborsByRTree(RTree rTree, Rectangle rectangle) {
 		Vector<Line> lines = new Vector<>();
     	RTNode leaf_upper = rTree.root.findLeaf(rectangle).getParent(); //找到上一层
 		lines.addAll(rTree.findAllLines(leaf_upper));
@@ -68,7 +68,8 @@ public class DBScan {
                 	continue;
                 AllVisited = false;
                 p.setVisited(true);     //设为visited后就已经确定了它是核心点还是边界点
-                Vector<Line> neighbors = getNeighbors(p, objects);
+                Rectangle rectangle = new Rectangle(p);
+                Vector<Line> neighbors = getNeighborsByRTree(rTree, rectangle);
                 System.out.println(neighbors.size());
                 if(neighbors.size() < MinPts){
                     if(p.getCid() <= 0)
