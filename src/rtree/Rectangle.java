@@ -68,6 +68,15 @@ public class Rectangle implements Cloneable // 继承克隆接口
     public Point getHigh() {
         return high;
     }
+    
+    /**
+     * 返回Rectangle de line
+     * 
+     * @return Line
+     */
+    public Line getLine() {
+        return line;
+    }
 
     /**
      * @param rectangle

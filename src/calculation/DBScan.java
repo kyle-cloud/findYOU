@@ -6,6 +6,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import process.downloadData;
 import rtree.Constants;
+import rtree.RTDataNode;
+import rtree.RTNode;
 import rtree.RTree;
 import rtree.Rectangle;
 import trail.Line;
@@ -47,12 +49,15 @@ public class DBScan {
 	}
     
     public Vector<Line> getNeighbors(RTree rTree, Rectangle rectangle) {
-		
+		Vector<Line> lines = new Vector<>();
+    	RTNode leaf_upper = rTree.root.findLeaf(rectangle).getParent(); //找到上一层
+		lines.addAll(rTree.findAllLines(leaf_upper));
+		return lines;
 	}
      
     public int dbscan(ArrayList<Line> objects){
     	RTree rTree = createRTree(objects);
-    	
+    	System.out.println("R树创建完成");
     	int clusterID = 0;
         boolean AllVisited = false;
         while(!AllVisited){

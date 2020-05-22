@@ -326,6 +326,6 @@ public abstract class RTNode {
      * @param rectangle
      * @return 返回包含rectangle的叶节点
      */
-    protected abstract RTDataNode findLeaf(Rectangle rectangle);
+    public abstract RTDataNode findLeaf(Rectangle rectangle);
 
 }

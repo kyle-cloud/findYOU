@@ -156,7 +156,7 @@ public class RTDataNode extends RTNode {
     }
 
     @Override
-    protected RTDataNode findLeaf(Rectangle rectangle) {
+    public RTDataNode findLeaf(Rectangle rectangle) {
         for (int i = 0; i < usedSpace; i++) {
             if (datas[i].enclosure(rectangle)) {
                 deleteIndex = i;// ¼ÇÂ¼ËÑË÷Â·¾¶

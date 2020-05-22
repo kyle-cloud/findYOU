@@ -2,15 +2,17 @@ package rtree;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import rtree.Constants;
+import trail.Line;
 
 /**
  * @ClassName RTree
  * @Description
  */
 public class RTree {
-    private RTNode root; // 根节点
+    public RTNode root; // 根节点
     private int tree_type; // 树类型
     private int nodeCapacity = -1; // 结点容量
     private float fillFactor = -1; // 结点填充因子 ，用于计算每个结点最小条目个数
@@ -128,6 +130,46 @@ public class RTree {
 
         return list;
     }
+    
+    /**
+     * 从给定的结点root开始遍历所有的叶子结点
+     * 
+     * @param node
+     * @return 所有遍历的叶子结点集合
+     */
+    public List<RTNode> findAllLeaves(RTNode root) {
+        if (root == null)
+            throw new IllegalArgumentException("Node cannot be null.");
+
+        List<RTNode> list = new ArrayList<RTNode>();
+
+        if (!root.isLeaf()) {
+            for (int i = 0; i < root.usedSpace; i++) {
+                List<RTNode> a = traversePostOrder(((RTDirNode) root).getChild(i));
+            }
+        } else {
+        	list.add(root);
+        }
+
+        return list;
+    }
+    
+    /**
+     * 返回所有Line
+     * 
+     * @param node
+     * @return 所有Line
+     */
+    public Vector<Line> findAllLines(RTNode root) {
+		Vector<Line> vector = new Vector<>();
+		List<RTNode> nodes = findAllLeaves(root);
+		for(int i = 0; i < nodes.size(); i ++) {
+			for(int j = 0; j < nodes.get(i).usedSpace; j ++) {
+				vector.add(nodes.get(i).datas[j].getLine()); 
+			}
+		}
+		return vector;
+	}
 
     public static void main(String[] args) throws Exception {
         // 结点容量：4、填充因子：0.4、树类型：二维
