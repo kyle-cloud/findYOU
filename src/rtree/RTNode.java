@@ -33,6 +33,13 @@ public abstract class RTNode {
     public RTNode getParent() {
         return parent;
     }
+    
+    /**
+     * @return 返回父节点
+     */
+    public int getLevel() {
+        return level;
+    }
 
     /**
      * -->向结点中添加Rectangle，即添加条目

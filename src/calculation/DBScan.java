@@ -57,7 +57,7 @@ public class DBScan {
      
     public int dbscan(ArrayList<Line> objects){
     	RTree rTree = createRTree(objects);
-    	System.out.println("R树创建完成");
+    	System.out.println(rTree.root.getLevel() + "层R树创建完成");
     	int clusterID = 0;
         boolean AllVisited = false;
         while(!AllVisited){
@@ -180,8 +180,8 @@ public class DBScan {
 		DBScan dbScan = new DBScan();
 		dbScan.dbscan(lines);
 		//dbScan.structCluster(lines, 25000, 2000);
-		for(int i = 0; i < lines.size(); i ++) {
-			System.out.println(lines.get(i).getCid());
-		}
+//		for(int i = 0; i < lines.size(); i ++) {
+//			System.out.println(lines.get(i).getCid());
+//		}
     }
 }
