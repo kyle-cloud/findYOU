@@ -146,9 +146,7 @@ public class RTree {
         if (!root.isLeaf()) {
             for (int i = 0; i < root.usedSpace; i++) {
                 List<RTNode> a = findAllLeaves(((RTDirNode) root).getChild(i));
-                if(root.level == 1) {
-	                list.addAll(a);
-                }
+                list.addAll(a);
             }
         } else {
         	list.add(root);

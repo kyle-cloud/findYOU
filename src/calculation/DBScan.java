@@ -39,7 +39,7 @@ public class DBScan {
     
     public RTree createRTree(ArrayList<Line> lines) {
     	// 结点容量：4、填充因子：0.4、树类型：二维
-        RTree tree = new RTree(4, 0.4f, Constants.RTREE_QUADRATIC, 2);
+        RTree tree = new RTree(5, 0.4f, Constants.RTREE_QUADRATIC, 2);
         for(int i = 0; i < lines.size(); i ++) {
         	//System.out.println(i);
         	final Rectangle rectangle = new Rectangle(lines.get(i));
@@ -50,7 +50,7 @@ public class DBScan {
     
     public Vector<Line> getNeighborsByRTree(RTree rTree, Rectangle rectangle) {
 		Vector<Line> lines = new Vector<>();
-    	RTNode leaf_upper = rTree.root.findLeaf(rectangle).getParent(); //找到上一层
+    	RTNode leaf_upper = rTree.root.findLeaf(rectangle).getParent().getParent(); //找到上一层
 		lines.addAll(rTree.findAllLines(leaf_upper));
 		return lines;
 	}
@@ -60,6 +60,7 @@ public class DBScan {
     	System.out.println(rTree.root.getLevel() + "层R树创建完成");
     	int clusterID = 0;
         boolean AllVisited = false;
+        int i = 0;
         while(!AllVisited){
             Iterator<Line> iter = objects.iterator();
             while(iter.hasNext()){
@@ -70,7 +71,8 @@ public class DBScan {
                 p.setVisited(true);     //设为visited后就已经确定了它是核心点还是边界点
                 Rectangle rectangle = new Rectangle(p);
                 Vector<Line> neighbors = getNeighborsByRTree(rTree, rectangle);
-                System.out.println(neighbors.size());
+                System.out.println(i + ":" + neighbors.size());
+                i ++;
                 if(neighbors.size() < MinPts){
                     if(p.getCid() <= 0)
                         p.setCid(-1);       //cid初始为0,表示未分类；分类后设置为一个正数；设置为-1表示噪声。
