@@ -490,25 +490,47 @@ public class test {
 		bWriter1.close();
 	}
 	
+	public static void testAdvancedHausdorff_2() throws IOException {
+		ArrayList<Trail> trails = downloadData.getTrails("trail_fine");
+
+		for(int i = 0; i < trails.size(); i ++) {
+			trails.get(i).setHm(calculations.calcHk(trails.get(135).getPoints(), trails.get(i).getPoints()));
+		}
+		System.out.println(trails.get(135).getIMSI());
+		trails.sort(new Comparator<Trail>() {
+            @Override
+            public int compare(Trail t1, Trail t2) {
+            	if(t1.getHm() > t2.getHm())
+    				return 1;
+            	else if(t1.getHm() == t2.getHm())
+            		return 0;
+    			return -1;
+            }
+        });
+		for(int i = 0; i < 10; i ++) {
+			System.out.println(trails.get(i).getIMSI() + ":" +trails.get(i).getHm());
+		}
+	}
+	
 	public static void testAdvancedHausdorff_onTime() throws IOException {
-		ArrayList<Trail> trails = downloadData.getTrails("trail");
+		ArrayList<Trail> trails = downloadData.getTrails("trail_fine");
 
 		long startTime = System.currentTimeMillis();
-		for(int i = 1; i < 100; i ++) {
+		for(int i = 1; i < 100001; i ++) {
 			calculations.calcHk_former(trails.get(0).getPoints(), trails.get(i).getPoints());
 		}
 		long endTime = System.currentTimeMillis();
 		System.out.println("原始运行时间：" + (endTime - startTime) + "ms");
 		
 		startTime = System.currentTimeMillis();
-		for(int i = 1; i < 100; i ++) {
+		for(int i = 1; i < 100001; i ++) {
 			calculations.calcHk(trails.get(0).getPoints(), trails.get(i).getPoints());
 		}
 		endTime = System.currentTimeMillis();
 		System.out.println("改进后原始运行时间：" + (endTime - startTime) + "ms");
 		
 		startTime = System.currentTimeMillis();
-		for(int i = 1; i < 100; i ++) {
+		for(int i = 1; i < 2001; i ++) {
 			int a = 1+1;
 		}
 		endTime = System.currentTimeMillis();
@@ -527,6 +549,7 @@ public class test {
 		//testFineCompressAdvanced();
 		//testNewPartion();
 		//testAdvancedHausdorff();
+		//testAdvancedHausdorff_2();
 		testAdvancedHausdorff_onTime();
 	}
 }

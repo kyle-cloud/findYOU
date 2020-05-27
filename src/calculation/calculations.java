@@ -659,47 +659,94 @@ public class calculations {
 	public static double calcHk(ArrayList<Point> trail1, ArrayList<Point> trail2) {
 		double min1 = Integer.MAX_VALUE, min2 = Integer.MAX_VALUE;
 		double max1 = Integer.MIN_VALUE, max2 = Integer.MIN_VALUE;
+		Point p1_min = new Point(); Point p2_min = new Point();
+		Point p1_max = new Point(); Point p2_max = new Point();
 		for(int i = 0; i < trail1.size(); i ++) {
 			for(int j = i - 1; j >= 0 && j <= i + 1 && j < trail2.size(); j ++) {
-				min1 = Math.min(min1, calcDistance(trail1.get(i), trail2.get(j)));
+				double temp = calcDistanceSimple(trail1.get(i), trail2.get(j));
+				if(temp < min1) {
+					p1_min = trail1.get(i); p2_min = trail2.get(j);
+					min1 = temp;
+				}
 			}
 			if(i == 0) {
-				if(trail2.size() > 0) min1 = Math.min(min1, calcDistance(trail1.get(i), trail2.get(0)));
-				if(trail2.size() > 1) min1 = Math.min(min1, calcDistance(trail1.get(i), trail2.get(1)));
-				if(trail2.size() > 2) min1 = Math.min(min1, calcDistance(trail1.get(i), trail2.get(2)));
+				if(trail2.size() > 0) {
+					double temp = calcDistanceSimple(trail1.get(i), trail2.get(0));
+					if(temp < min1) {
+						p1_min = trail1.get(i); p2_min = trail2.get(0);
+						min1 = temp;
+					}
+				}
+				if(trail2.size() > 1) {
+					double temp = calcDistanceSimple(trail1.get(i), trail2.get(1));
+					if(temp < min1) {
+						p1_min = trail1.get(i); p2_min = trail2.get(1);
+						min1 = temp;
+					}
+				}
+				if(trail2.size() > 2) {
+					double temp = calcDistanceSimple(trail1.get(i), trail2.get(2));
+					if(temp < min1) {
+						p1_min = trail1.get(i); p2_min = trail2.get(2);
+						min1 = temp;
+					}
+				}
 			}
-			max1 = Math.max(max1, min1);
+			if(min1 > max1) {
+				p1_max = p1_min; p2_max = p2_min;
+				max1 = min1;
+			}
 		}
-		for(int i = 0; i < trail2.size(); i ++) {
-			for(int j = i - 1; j >= 0 && j <= i + 1 && j < trail1.size(); j ++) {
-				min2 = Math.min(min2, calcDistance(trail2.get(i), trail1.get(j)));
-			}
-			if(i == 0) {
-				if(trail1.size() > 0) min2 = Math.min(min1, calcDistance(trail2.get(i), trail1.get(0)));
-				if(trail1.size() > 1) min2 = Math.min(min1, calcDistance(trail2.get(i), trail1.get(1)));
-				if(trail1.size() > 2) min2 = Math.min(min1, calcDistance(trail2.get(i), trail1.get(2)));
-			}
-			max2 = Math.max(max2, min2);
-		}
-		return Math.max(max1, max2);
+//		for(int i = 0; i < trail2.size(); i ++) {
+//			for(int j = i - 1; j >= 0 && j <= i + 1 && j < trail1.size(); j ++) {
+//				min2 = Math.min(min2, calcDistance(trail2.get(i), trail1.get(j)));
+//			}
+//			if(i == 0) {
+//				if(trail1.size() > 0) min2 = Math.min(min1, calcDistance(trail2.get(i), trail1.get(0)));
+//				if(trail1.size() > 1) min2 = Math.min(min1, calcDistance(trail2.get(i), trail1.get(1)));
+//				if(trail1.size() > 2) min2 = Math.min(min1, calcDistance(trail2.get(i), trail1.get(2)));
+//			}
+//			max2 = Math.max(max2, min2);
+//		}
+//		
+//		return Math.max(max1, max2);
+		return calcDistance(p1_max, p2_max);
 	}
 	
 	public static double calcHk_former(ArrayList<Point> trail1, ArrayList<Point> trail2) {
 		double min1 = Integer.MAX_VALUE, min2 = Integer.MAX_VALUE;
 		double max1 = Integer.MIN_VALUE, max2 = Integer.MIN_VALUE;
+		Point p1_min = new Point(); Point p2_min = new Point();
+		Point p1_max = new Point(); Point p2_max = new Point();
 		for(int i = 0; i < trail1.size(); i ++) {
 			for(int j = 0; j < trail2.size(); j ++) {
-				min1 = Math.min(min1, calcDistance(trail1.get(i), trail2.get(j)));
+				double temp = calcDistanceSimple(trail1.get(i), trail2.get(j));
+				if(temp < min1) {
+					p1_min = trail1.get(i); p2_min = trail2.get(j);
+					min1 = temp;
+				}
 			}
-			max1 = Math.max(max1, min1);
+			if(min1 > max1) {
+				p1_max = p1_min; p2_max = p2_min;
+				max1 = min1;
+			}
 		}
+		Point p1_min_2 = new Point(); Point p2_min_2 = new Point();
+		Point p1_max_2 = new Point(); Point p2_max_2 = new Point();
 		for(int i = 0; i < trail2.size(); i ++) {
 			for(int j = 0; j < trail1.size(); j ++) {
-				min2 = Math.min(min2, calcDistance(trail2.get(i), trail1.get(j)));
+				double temp = calcDistanceSimple(trail2.get(i), trail1.get(j));
+				if(temp < min2) {
+					p1_min_2 = trail2.get(i); p2_min_2 = trail1.get(j);
+					min2 = temp;
+				}
 			}
-			max2 = Math.max(max2, min2);
+			if(min2 > max2) {
+				p1_max_2 = p1_min_2; p2_max_2 = p2_min_2;
+				max2 = min2;
+			}
 		}
-		return Math.max(max1, max2);
+		return Math.max(calcDistance(p1_max, p2_max), calcDistance(p1_max_2, p2_max_2));
 	}
 	
 	/**
@@ -707,6 +754,10 @@ public class calculations {
 	 *
 	 *两点之间的距离
 	 */
+	public static double calcDistanceSimple(Point first, Point second) {
+		return Math.pow((first.getLat()-second.getLat()), 2) + Math.pow((first.getLng()-second.getLng()), 2);
+	}
+	
 	public static double calcDistance(Point first, Point second) {
 		return Distance(first.getLat(), first.getLng(), second.getLat(), second.getLng());
 	}
