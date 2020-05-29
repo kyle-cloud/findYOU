@@ -516,14 +516,14 @@ public class test {
 		ArrayList<Trail> trails = downloadData.getTrails("trail_fine");
 
 		long startTime = System.currentTimeMillis();
-		for(int i = 1; i < 100001; i ++) {
+		for(int i = 1; i < 180001; i ++) {
 			calculations.calcHk_former(trails.get(0).getPoints(), trails.get(i).getPoints());
 		}
 		long endTime = System.currentTimeMillis();
 		System.out.println("原始运行时间：" + (endTime - startTime) + "ms");
 		
 		startTime = System.currentTimeMillis();
-		for(int i = 1; i < 100001; i ++) {
+		for(int i = 1; i < 180001; i ++) {
 			calculations.calcHk(trails.get(0).getPoints(), trails.get(i).getPoints());
 		}
 		endTime = System.currentTimeMillis();

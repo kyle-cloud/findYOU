@@ -1,8 +1,11 @@
 package calculation;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Vector;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import org.bson.types.ObjectId;
 
 import process.downloadData;
 import rtree.Constants;
@@ -39,7 +42,7 @@ public class DBScan {
     
     public RTree createRTree(ArrayList<Line> lines) {
     	// 结点容量：4、填充因子：0.4、树类型：二维
-        RTree tree = new RTree(5, 0.4f, Constants.RTREE_QUADRATIC, 2);
+        RTree tree = new RTree(5, 0.5f, Constants.RTREE_QUADRATIC, 2);
         for(int i = 0; i < lines.size(); i ++) {
         	//System.out.println(i);
         	final Rectangle rectangle = new Rectangle(lines.get(i));
@@ -181,9 +184,48 @@ public class DBScan {
 		System.out.println("开始聚类" + lines.size() + "条线段");
 		DBScan dbScan = new DBScan();
 		dbScan.dbscan(lines);
-		//dbScan.structCluster(lines, 25000, 2000);
+//		dbScan.structCluster(lines, 25000, 2000);
 //		for(int i = 0; i < lines.size(); i ++) {
 //			System.out.println(lines.get(i).getCid());
 //		}
+		lines.sort(new Comparator<Line>() {
+            @Override
+            public int compare(Line t1, Line t2) {
+            	if(t1.getCid() > t2.getCid())
+    				return 1;
+            	else if(t1.getCid() == t2.getCid()) {
+            		if(t1.getTrail_id().compareTo(t2.getTrail_id()) > 0) {
+            			return 1;
+            		} else if(t1.getTrail_id().compareTo(t2.getTrail_id()) < 0) {
+            			return -1;
+            		} else {
+            			return 0;
+            		}
+            	}
+    			return -1;
+            }
+        });
+		int cur = lines.get(0).getCid();
+		ObjectId objectId = lines.get(0).getTrail_id();
+		int min = Integer.MAX_VALUE;
+		int max = Integer.MIN_VALUE;
+		int count = 1;
+		for(int i = 1; i < lines.size(); i ++) {
+			if(cur == lines.get(i).getCid()) {
+				if(objectId.equals(lines.get(i).getTrail_id())) {
+					continue;
+				} else {
+					count ++;
+				}
+			} else {
+				min = Math.min(min, count);
+				max = Math.max(max, count);
+				count = 1;
+				cur = lines.get(i).getCid();
+				objectId = lines.get(i).getTrail_id();
+			}
+		}
+		System.out.println("最小簇中轨迹数：" + min);
+		System.out.println("最大簇中轨迹数：" + max);
     }
 }
