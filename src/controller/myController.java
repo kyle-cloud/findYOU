@@ -219,7 +219,9 @@ public class myController {
 		ArrayList<Trail> trails = new ArrayList<>();
 		MongoCollection<Document> coll = MongoUtil.instance.getCollection("liu", collection);
 		MongoCursor<Document> cursor = coll.find(bson).iterator();
-    	while(cursor.hasNext()) {
+		int total = 0;
+    	while(total < 10000 && cursor.hasNext()) {
+    		total ++;
     		Document document = cursor.next();
 			ID = document.getObjectId("_id");
 			trail_ID = document.getObjectId("trail_id");

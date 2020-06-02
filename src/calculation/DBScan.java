@@ -23,7 +23,7 @@ import java.util.Queue;
 public class DBScan {
  
     double Eps = 20000;   //区域半径
-    int MinPts = 500;   //密度
+    int MinPts = 80;   //密度
      
     //由于自己到自己的距离是0,所以自己也是自己的neighbor
     public Vector<Line> getNeighbors(Line p,ArrayList<Line> objects){
@@ -182,8 +182,11 @@ public class DBScan {
 			}
 		}
 		System.out.println("开始聚类" + lines.size() + "条线段");
+		long startTime = System.currentTimeMillis();
 		DBScan dbScan = new DBScan();
 		dbScan.dbscan(lines);
+		long endTime = System.currentTimeMillis();
+		System.out.println("聚类运行时间：" + (endTime - startTime) + "ms");
 //		dbScan.structCluster(lines, 25000, 2000);
 //		for(int i = 0; i < lines.size(); i ++) {
 //			System.out.println(lines.get(i).getCid());
@@ -216,6 +219,7 @@ public class DBScan {
 					continue;
 				} else {
 					count ++;
+					objectId = lines.get(i).getTrail_id();
 				}
 			} else {
 				min = Math.min(min, count);
