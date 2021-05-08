@@ -18,6 +18,7 @@
 # Final visualization
 
 https://user-images.githubusercontent.com/32561992/117544277-9aef2680-b018-11eb-8289-a9526501049a.mp4
+
 ![chooseTaxi](https://user-images.githubusercontent.com/32561992/117544321-cf62e280-b018-11eb-8e15-e743779c34fe.png)
 ![findSimilar](https://user-images.githubusercontent.com/32561992/117544323-d12ca600-b018-11eb-9181-9b9d1a225ab3.png)
 
